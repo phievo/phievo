@@ -1,0 +1,134 @@
+Networks package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    Networks.IL-2
+    Networks.Immune
+    Networks.PlotGraph
+
+Submodules
+----------
+
+Networks.CorePromoter module
+----------------------------
+
+.. automodule:: Networks.CorePromoter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.Degradation module
+---------------------------
+
+.. automodule:: Networks.Degradation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.LR module
+------------------
+
+.. automodule:: Networks.LR
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.PPI module
+-------------------
+
+.. automodule:: Networks.PPI
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.Phosphorylation module
+-------------------------------
+
+.. automodule:: Networks.Phosphorylation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.TFHill module
+----------------------
+
+.. automodule:: Networks.TFHill
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.classes_eds2 module
+----------------------------
+
+.. automodule:: Networks.classes_eds2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.deriv2 module
+----------------------
+
+.. automodule:: Networks.deriv2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.initialization module
+------------------------------
+
+.. automodule:: Networks.initialization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.interaction module
+---------------------------
+
+.. automodule:: Networks.interaction
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.lovelyGraph module
+---------------------------
+
+.. automodule:: Networks.lovelyGraph
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.mutation module
+------------------------
+
+.. automodule:: Networks.mutation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.palette module
+-----------------------
+
+.. automodule:: Networks.palette
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Networks.plotdata module
+------------------------
+
+.. automodule:: Networks.plotdata
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: Networks
+    :members:
+    :undoc-members:
+    :show-inheritance:

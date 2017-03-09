@@ -1,0 +1,7 @@
+In this directory, we provide explicit examples of specific  C codes (i.e. fitness definition, input definition and initialization of other variables)  and init file. test*.py contains an example of network evolved with the code
+- Adaptation is an example of evolution of adaptive networks based on maximization of one function and minimization of the other as published in Francois & Siggia, Phys Biol 2008. 
+- StaticHox is an example of evolution of embryonic patterning based on a mutual info fitness  as published in Francois and Siggia, 2010, with input being a morphogen gradient
+- SlidingHox is an example of evolution of embryonic patterning based on a mutual info fitness  as published in Francois and Siggia, 2010, with input being a sliding input step. For this example we initialize simulations with a predefined network in base.py (see function init_network() )
+- Somites is an example of evolution of embryonic stripes under control of a morphogen step, very similar to what has been published in Francois, Hakim, Siggia, Mol Syst Biol 2007
+- Immune is an example of evolution of absolute ligand discrimination similar to what has been published in Lalanne, Francois, 2003
+- Compensation is an example of computational evolution of parameter compensation, published in Francois, Despierre, Siggia, Plos Comp Biol 2012

@@ -1,0 +1,15 @@
+ccode_dir
+/home/mathieu/Documents/Ptolos/16_Post-doc/evolution_code/CCodes/
+
+cfile dictionary
+{'geometry': 'linear_geometry.c', 'integrator': 'euler_integrator.c', 'utilities': 'utilities.c', 'init_history': 'Examples/Adaptation/init_history_adaptation1.c', 'header': 'integrator_header.h', 'fitness': 'Examples/Adaptation/fitness_adaptation_multistep_general.c', 'input': 'Examples/Adaptation/input_adaptation1.c', 'main': 'main_general.c'}
+
+prmt dictionary
+{'multipro_level': 1, 'freq_stat': 5, 'ncelltot': 1, 'ngeneration': 801, 'ninput': 1, 'plot': 0, 'freq_plot': 10, 'nseed': 20, 'frac_mutate': 0.5, 'langevin_noise': 0, 'restart': {'kgeneration': 2, 'same_seed': True, 'freq': 50, 'file': None}, 'firstseed': 0, 'tgeneration': 1.0, 'redo': 1, 'ntries': 10, 'nneighbor': 3, 'dt': 0.05, 'pareto': 0, 'npopulation': 10, 'nstep': 30000, 'noutput': 1}
+
+ranges dictionary
+{'TFHill.threshold': 1.0, 'PPI.association': 1.0, 'Phosphorylation.dephosphorylation': 1.0, 'LR.association': 1.0, 'LR.concentration': 1.0, 'Phosphorylation.hill': 5.0, 'TFHill.hill': 5.0, 'TModule.basal': 0.0, 'Phosphorylation.threshold': 1.0, 'TModule.rate': 1.0, 'PPI.disassociation': 1.0, 'CorePromoter.delay': 0, 'Species.degradation': 1.0, 'Species.diffusion': 1.0, 'Phosphorylation.rate': 1.0}
+
+mutation dictionary
+{"random_Interaction('Phosphorylation')": 0.002, "remove_Interaction('CorePromoter')": 0.01, "mutate_Node('TFHill')": 0.1, "remove_Interaction('LR')": 0.0, "random_Interaction('PPI')": 0.002, "mutate_Node('Species')": 0.1, "mutate_Node('PPI')": 0.1, 'random_change_output()': 0.1, "random_gene('Receptor')": 0.0, "mutate_Node('LR')": 0.0, "remove_Interaction('PPI')": 0.005, "random_Interaction('LR')": 0.0, 'random_add_output()': 0.0, "random_Interaction('TFHill')": 0.002, 'random_gene()': 0.01, "remove_Interaction('TFHill')": 0.005, 'random_remove_output()': 0.0, "random_gene('Ligand')": 0.0, "mutate_Node('CorePromoter')": 0.1, "remove_Interaction('Phosphorylation')": 0.005, "random_gene('TF')": 0.01, "mutate_Node('TModule')": 0.1, "mutate_Node('Phosphorylation')": 0.1, "random_gene('Kinase')": 0.01}
+

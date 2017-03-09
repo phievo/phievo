@@ -1,0 +1,25 @@
+digraph G {
+	graph [bb="0,0,42,152"];
+	node [label="\N"];
+	0	 [fillcolor="#0df20d",
+		fixedsize=true,
+		fontcolor="#FFFFFF",
+		fontsize=25,
+		height=0.80556,
+		pos="21,123",
+		shape=invtriangle,
+		style=filled,
+		width=0.59028];
+	1	 [fillcolor="#f20df2",
+		fixedsize=true,
+		fontcolor="#FFFFFF",
+		fontsize=25,
+		height=0.80556,
+		pos="21,29",
+		shape=triangle,
+		style=filled,
+		width=0.59028];
+	0 -> 1	 [arrowsize=2,
+		color="0.3 1 0.5",
+		pos="e,21,58.248 21,93.897 21,88.95 21,83.675 21,78.358"];
+}

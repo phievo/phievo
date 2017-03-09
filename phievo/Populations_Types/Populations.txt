@@ -1,0 +1,2 @@
+These different py files define different classes of network populations, derived from the basic class defined in evolution_gillespie.py, for different evolutionary algorithm used. They redefine integration methods at the network populations level : for instance parallel_population encodes the methods to deal with networks when parallelizing the evolutionary process.
+If you want to change the evolutionary algorithm, this is the place to define new methods.

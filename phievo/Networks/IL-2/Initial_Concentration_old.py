@@ -1,0 +1,44 @@
+
+# importing all relevant modules.
+import classes_eds2 
+import mutation 
+import copy        
+import deriv2_pMHC
+
+# parameters needed to perform evolution.
+mutation.dictionary_ranges['Initial_Concentration.concentration']=mutation.C
+
+
+class Initial_Concentration(classes_eds2.Interaction):
+    """ Fixes concentration of kinase or phosphatase of a given type, conc : concentration of the species of interest. """
+
+    # This is almost a trivial class, which essentially only holds a concentration.
+    def __init__(self,c=0):
+        classes_eds2.Node.__init__(self)
+        self.conc=c
+        self.label='Initial_Concentration'
+        self.input=['Species']
+        self.output=['Species']
+
+
+    def outputs_to_delete(self,net):
+        """ Returns the species to delete when deleting a Initial_Concentration"""
+        return net.Init_Conc_to_remove(self)
+        
+def Init_Conc_to_remove(self,interaction):
+        """Returns the species whose initial concentration is specified by Initial_Concentration."""
+        listOut=self.graph.predecessors(interaction)        
+        return listOut
+
+# important function that adds the interaction to the actual graph. 
+def new_Initial_Concentration(self,species,conc):
+
+        Init_Conc=Initial_Concentration(conc) #creates the interaction (see function above, an instance of the Node classe)
+        if Init_Conc.check_grammar([species],[species]):
+            self.add_Node(Init_Conc)
+            self.graph.add_edge(species,Init_Conc)
+            self.graph.add_edge(Init_Conc,species)
+
+setattr(classes_eds2.Network,'new_Initial_Concentration',new_Initial_Concentration)
+
+
