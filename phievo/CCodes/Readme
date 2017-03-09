@@ -1,9 +1,0 @@
-There is one version of every file needed to create the build_integrator.c
-programs by deriv2.py.  In some cases these are just templates, or a template
-plus example of file.
-
-The main, header, utilities, euler*integrator* files are meant to be generic and
-cover all applications
-
-More specific, development code is contained in the subdirectories defined by 
-initials.
