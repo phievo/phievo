@@ -3,6 +3,9 @@ pull:
 	git reset --hard origin/master
 	git pull
 
+push:
+	git push origin master
+
 package:
 	python3 setup.py sdist
 
