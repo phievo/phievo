@@ -157,7 +157,7 @@ def pretty_graph(net,extended=True):
                                 for compo in PPI_components:                                        
                                         param["label"] = ""
                                         param["arrowstyle"]="-"
-                                        graph.add_edge(produce_species_name(compo),namePPI,**param,)
+                                        graph.add_edge(produce_species_name(compo),namePPI,**param)
                         
                         elif isinstance(nn,Degradation):
                                 nameDegrad = produce_Degradation_name(nn)
