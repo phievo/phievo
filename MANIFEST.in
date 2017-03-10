@@ -1,1 +1,2 @@
  recursive-include phievo/CCodes *[ch]
+ include README.md
