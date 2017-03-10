@@ -9,6 +9,12 @@ setup(
     author='P. Francois, A. Henry, M. Hemery',
     author_email='paulf@physics.mcgill.ca',
     url='https://bitbucket.org/onnetworkevolution/phievo',
-    
+    install_requires=[
+        "matplotlib>=1.5.3",
+        "networkx>=1.11",
+        "numpy>=1.11.3",
+        "scipy>=0.18.1",
+        "Sphinx>=1.5.3",
+    ]
     long_description=open('README.md').read(),
 )
