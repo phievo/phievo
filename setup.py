@@ -16,5 +16,5 @@ setup(
         "scipy>=0.18.1",
         "Sphinx>=1.5.3",
     ],
-    long_description=open('README.md').read(),
+    long_description=open('README').read(),
 )
