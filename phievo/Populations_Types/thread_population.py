@@ -29,9 +29,9 @@ class thread_Population(Population):
         list_thread=[]
         self.n_mutations=0
         for nnetwork in range(initial,first_mutated):
-            list_thread.append(threading.Thread(None,self.genus_mutate_and_integrate,None,(prmt, nnetwork,0,)))
+            list_thread.append(threading.Thread(None,self.genus_mutate_and_integrate,None,(prmt, nnetwork,0)))
         for nnetwork in range(first_mutated,last_mutated):
-            list_thread.append(threading.Thread(None,self.genus_mutate_and_integrate,None,(prmt, nnetwork,1,)))
+            list_thread.append(threading.Thread(None,self.genus_mutate_and_integrate,None,(prmt, nnetwork,1)))
         
         #now we send the thread to the procs
         for index in list_thread: index.start()

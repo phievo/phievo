@@ -198,7 +198,7 @@ def pretty_graph(net,extended=True):
                                 for compo in binding_components:                                        
                                         param["label"] = ""
                                         param["arrowstyle"]="-"
-                                        graph.add_edge(produce_species_name(compo),binding_name,**param,)
+                                        graph.add_edge(produce_species_name(compo),binding_name,**param)
                         
                         elif nn.label == "Initial_Concentration":
                                 name_conc = nn.id
