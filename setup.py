@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='phievo',
     version='1.0',
-    packages=['phievo','phievo.Networks','phievo.AnalysisTools','phievo.Populations_Types','phievo.Networks'],
+    packages=['phievo','phievo.Networks','phievo.AnalysisTools','phievo.Populations_Types','phievo.Networks','phievo.Networks.PlotGraph'],
     license='GNU LESSER GENERAL PUBLIC LICENSE',
     description='In silico gene network evolution algorithm.',
     author='P. Francois, A. Henry, M. Hemery',
