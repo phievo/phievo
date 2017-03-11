@@ -204,7 +204,7 @@ prmt['multipro_level'] = 1
 # Parameters for pareto evolution module. Pareto optimization allows one to use multiple
 # fitness functions. When running pareto optimization, network X is only considered better
 # than network Y if the all fitness functions evaluated for X are less than or equal to those for
-# Y (with at least one that is less than, not equal). Networks of pareto rank 1 are those for which there is
+# Y (with at least one that is less than, not equal). phievo.Networks of pareto rank 1 are those for which there is
 # no other network which is considered better
 #To increase the diversity of networks, fitness sharing is implemented. If two networks are closer than ['rshare']
 # in the space of fitness functions, their pareto ranks are increased (but are still consider better than those of pareto rank 2)
@@ -239,7 +239,7 @@ prmt['restart']['same_seed'] = True # get seed of random() from restart file to 
 
 # necessary imports to define following functions
 import random
-from Networks import mutation
+from phievo.Networks import mutation
 
 # generic init network function that just creates desired number of input/output species
 

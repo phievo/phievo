@@ -161,7 +161,7 @@ list_types_output=['TF']
 
 # necessary imports to define following functions
 import random                                              
-from Networks import mutation
+from phievo.Networks import mutation
 
 # Two optional functions to add input species or output genes, with IO index starting from 0.
 # Will overwrite default variants in evol_gillespie if supplied below

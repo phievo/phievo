@@ -16,28 +16,20 @@ Among other things, anaconda provides the standard package manager of python _pi
 
 When python2 and python3 are installed on the same computer, it is common to need to specify the version of python or pip you are using: `python` (`pip`) for python2 and `python3` (`pip3`) for python3. Make sure you verify which command correspond to python3 on you computer.
 
-### install dependencies
-	
-Go to the root of the project and run the following command as the superuser:
-
-```bash 
-	pip install -r requirements.txt
-```
-
 ### install the package
 
 
-
+Simply run the following command:
 ```bash 
-	sudo pip install phievo --no-index --find-links file:<pathto>dist/phievo-1.0.tar.gz
+	sudo pip install dist/phievo-1.0.tar.gz
 ```
 
-### Known Errors
+## Example: Static Hox
 
-#### On Debian:
+Copy the project directory `StaticHox` from `Examples` where you want to run it. Then copy `run_evolution` at the same place as `StaticHox`.
 
-Debian may require the freetype and pg packages:
+To launch the evolution, simply run
 
 ```bash
-	# apt-get install libfreetype6-dev	
+	./run_evolution -m StaticHox
 ```
