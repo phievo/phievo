@@ -1,3 +1,3 @@
-from phievo.run_evolution import launch_evolution
+from phievo.launch_function import launch_evolution,test_network
 
 
