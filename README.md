@@ -10,7 +10,7 @@ I you do not have python already installed on you computer, we recommand to inst
 
 Among other things, anaconda provides the standard package manager of python _pip_. _pip_ can upgrade itself, it is generally recommanded to do so before starting the installation process.
 
-```bash 
+```bash
 	pip install --upgrade pip
 ```
 
@@ -20,9 +20,28 @@ When python2 and python3 are installed on the same computer, it is common to nee
 
 
 Simply run the following command:
-```bash 
+```bash
 	sudo pip install dist/phievo-1.0.tar.gz
 ```
+
+## Instruction specific to windows
+
+### Install gcc
+Windows does not come with the `gcc` compiler installed but the free software foundation provides a minimal distribution of gnu software for windows, it is called [MinGW](http://mingw.org/).
+
+Once you have downloaded `mingw-get-setup.exe`, run it. A selection panel will open. We recommend you to install at least the two following packages(the others are not relevant for phievo):
+- mingw-developper-toolkit
+- mingw32-base
+
+Choose the default directory.
+
+After the installation is finished, update windows `PATH` so that i knows where is the _gcc_ command. Open a the command prompt and run:
+
+```bash
+PATH=%PATH%C:\MinGW\bin
+```
+
+**Note:** If you may use other coding distribution such as code blocks or visual basics that already  contain the _gcc_ compiler. In such case, you do not need to install MinGw. Just upload you `PATH` so that windows knows where is the gcc compiler.
 
 ## Example: Static Hox
 

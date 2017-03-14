@@ -21,7 +21,6 @@ def launch_evolution(options):
     #initializes deriv2 and mutation for all processors
     [model_dir, inits, init_dir] = check_model_dir(options["model"])
     if options["clear"]:
-        import pdb;pdb.set_trace()
         for directory in glob.glob(os.path.join(model_dir,"Seed*"))+glob.glob(os.path.join(model_dir,"Workplace*")):
             shutil.rmtree(directory)
         
@@ -37,10 +36,8 @@ def launch_evolution(options):
         if pypar.rank() == 0: main_loop = True
     else:
         main_loop = True
-
     if main_loop: # this part describe only the master processor 0
         # Recovery from restart file
-
         if (inits.prmt['restart']['activated']
             and inits.prmt['restart']['same_seed']
             and inits.prmt['nseed'] > 1):
