@@ -52,3 +52,9 @@ To launch the evolution, simply run
 ```bash
 	./run_evolution -m StaticHox
 ```
+
+On windows machine  we recommand that you explicitly tell the system that you are running python (make sure you use the good version).
+
+```bash
+	python run_evolution -m StaticHox
+```

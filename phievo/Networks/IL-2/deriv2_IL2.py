@@ -328,17 +328,16 @@ def compile_and_integrate(net, prmt, nnetwork, bool,Cseed=0):
         program=compute_program(net,prmt,bool,Cseed)
 	integrator_ = workplace_dir + 'built_integrator' + str(nnetwork)
 	open(integrator_ + '.c','w').write(program)
-	string = Ccompiler + ' ' + integrator_ + '.c -lm -o ' +  integrator_
-
+        cmd = [Ccompiler , integrator_ +'.c', '-lm', '-o' + integrator_]    
        	# See http://pydoc.org/2.4.1/subprocess.htm for interface to run C code
-	out = subprocess.Popen(string, shell=True, stderr=subprocess.PIPE).communicate()
+        
+	out = subprocess.Popen(cmd, stderr=subprocess.PIPE).communicate()
 	# print 'first out', out
 	if out[1]:
             print('bug in Ccompile for',integrator_, 'err=', out[1], 'BYE')
 	    sys.exit(1)
 
-	string = 'chmod +x ' + integrator_ + '\n' + integrator_ + '\n'
-	out = subprocess.Popen(string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+	out = subprocess.Popen(integrator_, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 	# print 'second out', out
 	if out[1] or len(out[0])<1:    # some floating exceptions do not get to stderr, but loose stdout
             print('bug during run (or no stdout) for', integrator_, out[1], 'BYE')

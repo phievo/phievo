@@ -289,16 +289,19 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
         write_program(cfile,network, prmt, print_buf, Cseed)
 
     # Compile the program
-    string = Ccompiler + ' ' + cfile_directory + '.c -lm -o ' + cfile_directory
-    out = subprocess.Popen(string, shell=True, stderr=subprocess.PIPE).communicate()
+    # cmd contains the command in the same order as they would be on a full bash commans
+    # ex: cmd = ["gcc", "-o", "run",  "test.c"] for "gcc -o run test.c" 
+    cmd = [Ccompiler , cfile_directory+".c" , "-lm" , "-o" , cfile_directory]    
+    out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()
+    
+    
     if out[1]:
         print('bug in Ccompile for', cfile_directory, 'err=', out[1], 'BYE')
         sys.exit(1)
-
+    
     # Execute the programm
-    string = 'chmod +x ' + cfile_directory + '\n' + cfile_directory + '\n'
-    out = subprocess.Popen(string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-
+    out = subprocess.Popen(cfile_directory, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+    
     if out[1] or len(out[0]) < 1:  # some floating exceptions do not get to stderr, but loose stdout
         print('bug during run (or no stdout) for', cfile_directory, out[1], 'BYE')
         sys.exit(1)

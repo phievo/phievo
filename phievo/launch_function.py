@@ -21,9 +21,10 @@ def launch_evolution(options):
     #initializes deriv2 and mutation for all processors
     [model_dir, inits, init_dir] = check_model_dir(options["model"])
     if options["clear"]:
-        for directory in glob.glob(os.path.join(model_dir,"Seed*"))+glob.glob(os.path.join(model_dir,"Workplace*")):
-            shutil.rmtree(directory)
-        
+        toClear = glob.glob(os.path.join(model_dir,"Seed*"))+glob.glob(os.path.join(model_dir,"Workplace*"))
+        for directory in toClear:            
+            shutil.rmtree(directory, ignore_errors=True)
+#            assert 1==2, "hello"
     [classes_eds2, pretty_graph] = init_classes_eds2(inits)
     workplace_dir = make_workplace_dir(model_dir)
     deriv2 = init_deriv2(inits, workplace_dir, inits.prmt)
