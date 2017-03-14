@@ -1,6 +1,6 @@
 from phievo.initialization_code import *
 from importlib import import_module
-import os
+import os,shutil,glob
 
 ### Functions ###
 def launch_evolution(options):
@@ -21,7 +21,10 @@ def launch_evolution(options):
     #initializes deriv2 and mutation for all processors
     [model_dir, inits, init_dir] = check_model_dir(options["model"])
     if options["clear"]:
-        os.system("rm -r %s %s"%(os.path.join(model_dir,"Seed*"),os.path.join(model_dir,"Workplace")))
+        import pdb;pdb.set_trace()
+        for directory in glob.glob(os.path.join(model_dir,"Seed*"))+glob.glob(os.path.join(model_dir,"Workplace*")):
+            shutil.rmtree(directory)
+        
     [classes_eds2, pretty_graph] = init_classes_eds2(inits)
     workplace_dir = make_workplace_dir(model_dir)
     deriv2 = init_deriv2(inits, workplace_dir, inits.prmt)
