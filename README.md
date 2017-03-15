@@ -24,7 +24,7 @@ Simply run the following command:
 	sudo pip install dist/phievo-1.0.tar.gz
 ```
 
-## Instruction specific to windows
+## Instructions specific to windows
 
 ### Install gcc
 Windows does not come with the `gcc` compiler installed but the free software foundation provides a minimal distribution of gnu software for windows, it is called [MinGW](http://mingw.org/).
@@ -42,6 +42,16 @@ PATH=%PATH%C:\MinGW\bin
 ```
 
 **Note:** If you may use other coding distribution such as code blocks or visual basics that already  contain the _gcc_ compiler. In such case, you do not need to install MinGw. Just upload you `PATH` so that windows knows where is the gcc compiler.
+
+## Instructions specific to OSX
+
+OSX does not have the gcc compiler installed by default. There are different way to install it. The fastest is probably via [homebrew](https://brew.sh/):
+
+```bash
+brew install gcc
+```
+
+If _gcc_ is not already installed on you system (via macports or Xcode), _homebrew_'s _gcc_ should be automatically in the system's `PATH`.
 
 ## Example: Static Hox
 
