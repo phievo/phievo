@@ -35,10 +35,10 @@ Once you have downloaded `mingw-get-setup.exe`, run it. A selection panel will o
 
 Choose the default directory.
 
-After the installation is finished, update windows `PATH` so that i knows where is the _gcc_ command. Open a the command prompt and run:
+After the installation is finished, update windows `PATH` so that it knows where to look for _gcc_ command. Open a the command prompt and run:
 
 ```bash
-PATH=%PATH%C:\MinGW\bin
+setx PATH "%path%;C:\MinGW\bin"
 ```
 
 **Note:** If you may use other coding distribution such as code blocks or visual basics that already  contain the _gcc_ compiler. In such case, you do not need to install MinGw. Just upload you `PATH` so that windows knows where is the gcc compiler.
