@@ -1,29 +1,29 @@
-Networks.PlotGraph package
-==========================
+phievo.Networks.PlotGraph package
+=================================
 
 Submodules
 ----------
 
-Networks.PlotGraph.Components module
-------------------------------------
+phievo.Networks.PlotGraph.Components module
+-------------------------------------------
 
-.. automodule:: Networks.PlotGraph.Components
+.. automodule:: phievo.Networks.PlotGraph.Components
     :members:
     :undoc-members:
     :show-inheritance:
 
-Networks.PlotGraph.Graph module
--------------------------------
+phievo.Networks.PlotGraph.Graph module
+--------------------------------------
 
-.. automodule:: Networks.PlotGraph.Graph
+.. automodule:: phievo.Networks.PlotGraph.Graph
     :members:
     :undoc-members:
     :show-inheritance:
 
-Networks.PlotGraph.Layout module
---------------------------------
+phievo.Networks.PlotGraph.Layout module
+---------------------------------------
 
-.. automodule:: Networks.PlotGraph.Layout
+.. automodule:: phievo.Networks.PlotGraph.Layout
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,7 +32,7 @@ Networks.PlotGraph.Layout module
 Module contents
 ---------------
 
-.. automodule:: Networks.PlotGraph
+.. automodule:: phievo.Networks.PlotGraph
     :members:
     :undoc-members:
     :show-inheritance:

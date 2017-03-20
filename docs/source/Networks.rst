@@ -1,5 +1,5 @@
-Networks package
-================
+phievo.Networks package
+=======================
 
 Subpackages
 -----------
@@ -11,114 +11,114 @@ Subpackages
 Submodules
 ----------
 
-Networks.CorePromoter module
-----------------------------
+phievo.Networks.CorePromoter module
+-----------------------------------
 
-.. automodule:: Networks.CorePromoter
+.. automodule:: phievo.Networks.CorePromoter
     :members:
     :undoc-members:
     :show-inheritance:
 
-Networks.Degradation module
----------------------------
+phievo.Networks.Degradation module
+----------------------------------
 
-.. automodule:: Networks.Degradation
+.. automodule:: phievo.Networks.Degradation
     :members:
     :undoc-members:
     :show-inheritance:
 
-Networks.LR module
-------------------
+phievo.Networks.LR module
+-------------------------
 
-.. automodule:: Networks.LR
+.. automodule:: phievo.Networks.LR
     :members:
     :undoc-members:
     :show-inheritance:
 
-Networks.PPI module
--------------------
+phievo.Networks.PPI module
+--------------------------
 
-.. automodule:: Networks.PPI
+.. automodule:: phievo.Networks.PPI
     :members:
     :undoc-members:
     :show-inheritance:
 
-Networks.Phosphorylation module
+phievo.Networks.Phosphorylation module
+--------------------------------------
+
+.. automodule:: phievo.Networks.Phosphorylation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+phievo.Networks.TFHill module
+-----------------------------
+
+.. automodule:: phievo.Networks.TFHill
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+phievo.Networks.classes_eds2 module
+-----------------------------------
+
+.. automodule:: phievo.Networks.classes_eds2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+phievo.Networks.deriv2 module
+-----------------------------
+
+.. automodule:: phievo.Networks.deriv2
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+phievo.Networks.initialization module
+-------------------------------------
+
+.. automodule:: phievo.Networks.initialization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+phievo.Networks.interaction module
+----------------------------------
+
+.. automodule:: phievo.Networks.interaction
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+phievo.Networks.lovelyGraph module
+----------------------------------
+
+.. automodule:: phievo.Networks.lovelyGraph
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+phievo.Networks.mutation module
 -------------------------------
 
-.. automodule:: Networks.Phosphorylation
+.. automodule:: phievo.Networks.mutation
     :members:
     :undoc-members:
     :show-inheritance:
 
-Networks.TFHill module
-----------------------
-
-.. automodule:: Networks.TFHill
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Networks.classes_eds2 module
-----------------------------
-
-.. automodule:: Networks.classes_eds2
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Networks.deriv2 module
-----------------------
-
-.. automodule:: Networks.deriv2
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Networks.initialization module
+phievo.Networks.palette module
 ------------------------------
 
-.. automodule:: Networks.initialization
+.. automodule:: phievo.Networks.palette
     :members:
     :undoc-members:
     :show-inheritance:
 
-Networks.interaction module
----------------------------
+phievo.Networks.plotdata module
+-------------------------------
 
-.. automodule:: Networks.interaction
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Networks.lovelyGraph module
----------------------------
-
-.. automodule:: Networks.lovelyGraph
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Networks.mutation module
-------------------------
-
-.. automodule:: Networks.mutation
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Networks.palette module
------------------------
-
-.. automodule:: Networks.palette
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Networks.plotdata module
-------------------------
-
-.. automodule:: Networks.plotdata
+.. automodule:: phievo.Networks.plotdata
     :members:
     :undoc-members:
     :show-inheritance:
@@ -126,7 +126,7 @@ Networks.plotdata module
 Module contents
 ---------------
 
-.. automodule:: Networks
+.. automodule:: phievo.Networks
     :members:
     :undoc-members:
     :show-inheritance:
