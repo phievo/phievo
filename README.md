@@ -6,7 +6,7 @@
 Since _phievo_ is not pusblished on any offical repository yet, you need to install it manually.
 
 ### install Anaconda
-I you do not have python already installed on you computer, we recommand to install it via the [anaconda distribution](https://www.continuum.io/downloads).
+In case python is not already installed on your computer, we recommand to install it via the [anaconda distribution](https://www.continuum.io/downloads).
 
 Among other things, anaconda provides the standard package manager of python _pip_. _pip_ can upgrade itself, it is generally recommanded to do so before starting the installation process.
 
@@ -27,7 +27,7 @@ Simply run the following command:
 ## Instructions specific to windows
 
 ### Install gcc
-Windows does not come with the `gcc` compiler installed but the free software foundation provides a minimal distribution of gnu software for windows, it is called [MinGW](http://mingw.org/).
+Windows does not come with the `gcc` compiler installed but the free software foundation provides a minimal distribution of the gnu softwares for windows, it is called [MinGW](http://mingw.org/).
 
 Once you have downloaded `mingw-get-setup.exe`, run it. A selection panel will open. We recommend you to install at least the two following packages(the others are not relevant for phievo):
 - mingw-developper-toolkit
@@ -45,6 +45,7 @@ setx PATH "%path%;C:\MinGW\bin"
 
 ## Instructions specific to OSX
 
+### Install gcc
 OSX does not have the gcc compiler installed by default. There are different way to install it. The fastest is probably via [homebrew](https://brew.sh/):
 
 ```bash
@@ -68,3 +69,14 @@ On windows machine  we recommand that you explicitly tell the system that you ar
 ```bash
 	python run_evolution -m StaticHox
 ```
+
+## Build the documentation
+
+To build the documentation, go to the `docs` directory and run
+
+```bash
+make html
+```
+the documentation is built in `docs/build/html` by default.
+
+Note that you may need to run make html twice because the build process uses the package _numfig_ that first needs to list all the figures before numbering them.
