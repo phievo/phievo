@@ -15,7 +15,6 @@ setup(
         "numpy>=1.11.3",
         "scipy>=0.18.1",
         "Sphinx>=1.5.3",
-        "pygraphviz==1.3.1",
     ],
     long_description=open('README.md').read(),
 )
