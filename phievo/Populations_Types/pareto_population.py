@@ -11,10 +11,10 @@ Coder: A. Warmflash, P. François
 """
 print('Execute pareto_population.py')
 
-from Populations_Types.evolution_gillespie import Population
-from Populations_Types.thread_population import thread_Population
+from phievo.Populations_Types.evolution_gillespie import Population
+from phievo.Populations_Types.thread_population import thread_Population
 import random
-from Networks import classes_eds2
+from phievo.Networks import classes_eds2
 from math import log,sqrt
 
 #######################
