@@ -42,10 +42,10 @@ dictionary_ranges['LR.concentration']=C
 cfile = {}
 #cfile['header'] = 'integrator_header.h'
 #cfile['utilities'] = 'utilities.c'
-cfile['fitness'] = 'StaticHox/fitness_static_hox_pareto.c'
+cfile['fitness'] = 'StaticHox_pareto/fitness_static_hox_pareto.c'
 #cfile['geometry'] = 'linear_geometry.c'
-cfile['init_history'] = 'StaticHox/init_history_0.c'
-cfile['input'] =  'StaticHox/input_Hox_static.c'
+cfile['init_history'] = 'StaticHox_pareto/init_history_0.c'
+cfile['input'] =  'StaticHox_pareto/input_Hox_static.c'
 #cfile['integrator'] = 'euler_integrator.c'
 #cfile['main'] = 'main_general.c'
 
@@ -146,7 +146,7 @@ prmt['plot']=0
 
 prmt['restart'] = {}
 prmt['restart']['activated'] = False #indicate if you want to restart or not
-prmt['restart']['dir'] =  "StaticHox/Seed1" # the directory of the population you want to restart from
+prmt['restart']['dir'] =  "StaticHox_pareto/Seed1" # the directory of the population you want to restart from
 prmt['restart']['kgeneration'] = 2150  # restart from After this generation number (see loop in Population.evolution)
 prmt['restart']['freq'] = 50  # save population every freq generations
 prmt['restart']['same_seed'] = True  # get seed of random() from restart file to reproduce prior data.
