@@ -105,4 +105,5 @@ Note that you may need to run make html twice because the build process uses the
 We provide a jupyter notebook to help with the analysis of the runs. If you wand to run it, you will need to install several extra python libraries, to help with this, they are writen in [extra.txt](extra.txt).
 ```bash
 pip install -r extra.txt
+jupyter nbextension enable --py --sys-prefix widgetsnbextension
 ```

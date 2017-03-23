@@ -106,7 +106,7 @@ def new_TFHill(self, tf, hill, threshold, module, activity=0):
     Return:
         :class:`Networks.TFHill.TFHill`: return the new interaction or None if an error occured
     """
-    print("Activity settings:",self.fixed_activity_for_TF)
+
     if self.fixed_activity_for_TF:
         activity_tfh=tf.activity
     else:

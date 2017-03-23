@@ -2,12 +2,12 @@ import pickle
 import shelve
 import glob,os,sys
 import re
-import AnalysisTools.main_functions as MF
+from phievo.AnalysisTools import main_functions as MF
 import matplotlib.pyplot as plt
 
 import numpy as np
 import importlib.util
-from Networks import mutation,classes_eds2,plotdata
+from phievo.Networks import mutation,classes_eds2,plotdata
 
 
 class Simulation:
