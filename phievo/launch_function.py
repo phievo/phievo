@@ -36,6 +36,7 @@ def launch_evolution(options):
     # to distinguish master and slave nodes when running on cluster with pypar
     main_loop = False
     if (inits.prmt['multipro_level'] == 2):
+        raise NotImplementedError("pypar belongs to the past. We will release a version working with Multiprocess soon.")
         import pypar #parallel programming module
         if pypar.rank() == 0: main_loop = True
     else:
