@@ -54,6 +54,25 @@ brew install gcc
 
 If _gcc_ is not already installed on you system (via macports or Xcode), _homebrew_'s _gcc_ should be automatically in the system's `PATH`.
 
+
+## Install pygraphviz
+
+_pygraphviz_ is not istalled by default with _phievo_ because it does not exist natively on windows and we wanted to publish a version that that run on al the systems. _pygraphviz_ is used only to display network layouts. If it is not install _phievo_ will print a warning and use _networkx_ spring layout instead.
+
+On mac install pygraphviz is done as follows:
+```bash
+brew install graphviz
+pip install pygraphviz
+```
+
+On GNU/linux, installing the dependencies varies depanding on the distribution. We tested the following on debian
+
+```bash
+sudo apt-get install graphviz graphviz-dev pkg-config
+sudo pip install pygraphviz
+```
+On other distribution, you may want to find the equivalent of _graphviz_, _graphviz-dev_, and _pkg-config_.
+
 ## Example: Static Hox
 
 Copy the project directory `StaticHox` from `Examples` where you want to run it. Then copy `run_evolution` at the same place as `StaticHox`.
@@ -80,3 +99,10 @@ make html
 the documentation is built in `docs/build/html` by default.
 
 Note that you may need to run make html twice because the build process uses the package _numfig_ that first needs to list all the figures before numbering them.
+
+## Analyse notebook
+
+We provide a jupyter notebook to help with the analysis of the runs. If you wand to run it, you will need to install several extra python libraries, to help with this, they are writen in [extra.txt](extra.txt).
+```bash
+pip install -r extra.txt
+```
