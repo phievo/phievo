@@ -1,4 +1,5 @@
 from phievo.initialization_code import *
+from phievo import create_STOP_file
 from importlib import import_module
 import os,shutil,glob
 
@@ -17,14 +18,16 @@ def launch_evolution(options):
     Returns:
         None
     """
-    
+
     #initializes deriv2 and mutation for all processors
     [model_dir, inits, init_dir] = check_model_dir(options["model"])
+    ### Write STOP file
     if options["clear"]:
         toClear = glob.glob(os.path.join(model_dir,"Seed*"))+glob.glob(os.path.join(model_dir,"Workplace*"))
-        for directory in toClear:            
+        for directory in toClear:
             shutil.rmtree(directory, ignore_errors=True)
 #            assert 1==2, "hello"
+    inits.prmt["stop_file"] = create_STOP_file(model_dir)
     [classes_eds2, pretty_graph] = init_classes_eds2(inits)
     workplace_dir = make_workplace_dir(model_dir)
     deriv2 = init_deriv2(inits, workplace_dir, inits.prmt)
@@ -127,17 +130,18 @@ def test_network(options):
         None
     """
     plotdata = import_module(name_plotdata)
-    
+
     print(plotdata)
     # Define the model to be used
 
-    if (options["init"]):        
+    if (options["init"]):
         inits = initialize_test(options["init"])
         test_output_dir = './'
         [classes_eds2, pretty_graph] = init_classes_eds2(inits)
     elif (options["model"]):
         [model_dir, inits, init_dir] = check_model_dir(options["model"])
         test_output_dir = model_dir
+
         [classes_eds2, pretty_graph] = init_classes_eds2(inits)
     else:
         inits = False

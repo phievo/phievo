@@ -27,6 +27,7 @@ import copy,os,random,sys,glob
 import shelve
 import time, pickle, dbm  # for restart's
 import phievo.Populations_Types.population_stat as pop_stat
+from phievo import test_STOP_file
 
 #########################
 ### Global Parameters ###
@@ -54,14 +55,14 @@ for i in count_interactions:
 
 def fitness_treatment(population):
     """default function for fitness treatment
-    
+
     If necessary, should be implemented in the init*.py file
     """
     pass
 
 def init_network(mutation):
     """Default function to create network
-    
+
     It must be overwritten with function from the init*.py file
     otherwise stop the programm
     """
@@ -76,7 +77,7 @@ def restart(directory, generation, verbose = True):
         Args:
             directory (str): the directory of the restart file
             generation (int): the generation number
-        
+
         Returns:
             rprmt (dict): the parameters of the run
             genus (list): the list of individuals of the population
@@ -97,7 +98,7 @@ class Population(object):
     """Define a population as a list of networks called Population. genus and a principal method evolution; object means it is a newstyle class ! See the web for distinction between new and olds style class, important for inheritance"""
 
     """Define a population as a list of networks called Population.genus
-    
+
     Attributes:
         best_fitness (float): keep trace of the best fitness in the population
         genus (list): the list of individuals of the population
@@ -105,7 +106,7 @@ class Population(object):
         tgeneration (float): starting hop time for the gillespie algorithm
         npopulation (int): size of te population
         bests_file (str): directory to save the data of evolution
-    
+
     Main methods:
         evolution: launch the evolutionary algorithm
         pop_mutate_and_integrate: update the whole population
@@ -159,7 +160,7 @@ class Population(object):
 
     def save_bests_file(self, data_str):
         """Write the data_str at the bottom of self.bests_file
-        
+
         Deprecated function, use storing instead
         """
         ff = open(self.bests_file, 'a')
@@ -168,26 +169,26 @@ class Population(object):
 
     def storing(self,t_gen,net):
         """Store the work and various data for later analysis
-        
+
         Network object are stored in individual pickle file in Seed{}/data
         Data are stored in a shelve called the Seed{}/Bests_{}.net
-        
+
         Args:
             t_gen: the key (normally the generation number)
             net (Network): the object to be saved
-        
+
         Return:
             None
         """
         def add(data,key,value):
             data[key] = data.get(key,[])+[value]
-        
+
         with shelve.open(self.data_file) as data:
             add(data,'generation',t_gen)
             add(data,'fitness',net.fitness)
             add(data,'n_interactions',len(net.list_types['Interaction']))
             add(data,'n_species',len(net.list_types['Species']))
-            
+
         with open(self.bests_file.format(t_gen),'wb') as freezer:
             pickle.dump(net,freezer)
 
@@ -210,11 +211,11 @@ class Population(object):
 
     def update_fitness(self,nnetwork,integration_result):
         """Update (in place) the fitness and the dlt_fitness
-        
+
         Args:
             nnetwork (int): the index of the network in the population
             integration_result (list): the output of compile_and_integrate
-        
+
         Returns:
             None: in place modification
         """
@@ -224,7 +225,7 @@ class Population(object):
         else: #catches the None fitness
             current_fitness = None
             self.genus[nnetwork].data_evolution = None
-            
+
         #update dlt_fitness and handle the None fitness option
         if current_fitness and self.genus[nnetwork].fitness:
             self.genus[nnetwork].dlt_fitness = current_fitness - self.genus[nnetwork].fitness
@@ -238,12 +239,12 @@ class Population(object):
 
     def genus_mutate_and_integrate(self,prmt,nnetwork,mutation=True):
         """mutate, and update the fitness of one individual
-        
+
         Args:
             prmt (dict): the inits parameters for integration
             nnetwork (int): the index of the network in the population
             mutation (bool): a flag to activate mutation
-        
+
         Returns:
             int: the number of mutation
             int: the index of the network in the population
@@ -256,14 +257,14 @@ class Population(object):
 
     def pop_mutate_and_integrate(self,initial,first_mutated,last_mutated,prmt,net_stat):
         """ Recompute the fitness for half the population and mutate/compute the fitness for the rest. Save all the data in net_stat
-        
+
         Args:
             initial (int): index of the first individual in population
             first_mutated (int): index of the first mutated individual in population
             last_mutated (int): index of the last mutated individual in population
             prmt (dict): the inits parameters for integration
             net_stat (NetworkStat): to store the population data
-        
+
         Returns:
             None: in place modification
         """
@@ -278,10 +279,6 @@ class Population(object):
 
     def evolution(self):
         """Main method to evolve population
-        
-        Args:
-            -
-        
         Return:
             None
         """
@@ -301,16 +298,17 @@ class Population(object):
 
         # MAIN EVOLUTIONARY LOOP
         for t_gen in range(self.generation0, prmt['ngeneration'] + self.generation0):
+
             net_stat = pop_stat.NetworkStat(stat_dict)
             gen_stat = pop_stat.GenusStat()
-
+            test_STOP_file(prmt["stop_file"])
             # mutate a fraction of networks in population (those least fit)
             if (prmt['redo']==1): # in this case, recompute the fitness of non-mutated ind.
                 self.pop_mutate_and_integrate(0,first_mutated,self.npopulation,prmt,net_stat)
             else: #only mutation
                 self.pop_mutate_and_integrate(first_mutated,first_mutated,self.npopulation,prmt,net_stat)
             print("Total number of mutations in the population :%i"%self.n_mutations)
-            
+
             # Adjust the tgeneration time to have roughly one mutation per individual in pop
             if (self.n_mutations>0):
                 self.tgeneration=self.tgeneration*self.npopulation*prmt['frac_mutate']/self.n_mutations
@@ -330,11 +328,11 @@ class Population(object):
             print("New generation time: %f"%self.tgeneration)
             sys.stdout.flush()
             self.storing(t_gen,self.genus[0])
-            
+
             # Handling of different options
             if prmt['pareto'] == 1 and t_gen % prmt['freq_plot'] == 0:
                 self.pop_print_pareto(self.namefolder+'/pareto'+str(t_gen),self.namefolder+'/rank1_nets'+str(t_gen))
-            
+
             # Selection step, replace less fit networks by the fitter ones.
             for nnetwork in range( self.npopulation//2 ):
                 self.genus[-1-nnetwork]=copy.deepcopy(self.genus[nnetwork]) # duplicates best half
@@ -356,7 +354,7 @@ class Population(object):
 
             # save an exact copy of genus and relevant parameters for continuing loop
             if( t_gen%prmt['restart']['freq'] == 0):
-                
+
                 self.save_restart_file( t_gen, header, self.tgeneration )
 
             sys.stdout.flush()
