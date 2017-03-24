@@ -16,7 +16,10 @@ as argument to Population.__init__ stdout basic info each generation:
 * Restart* = binary dbm type file with data to restart evolution at selected generation numbers
 * graphic files with time course and best network diagram at selected generations
 """
-print('Execute evolution_gillespie.py')
+from phievo import __verbose__,__silent__
+
+if __verbose__:
+    print('Execute evolution_gillespie.py')
 
 import phievo.Networks.classes_eds2 as classes_eds2
 import phievo.Networks.plotdata as plotdata

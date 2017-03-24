@@ -25,7 +25,9 @@ Arguments to functions are in order implied by directed graph, eg
 check_grammar( nodes_in, node_tested, nodes_out)
 add_interaction( upstream_species, interaction, downstream species)
 """
-print("Execute classes_eds2.py")
+from phievo import __silent__,__verbose__
+if __verbose__:
+    print("Execute classes_eds2.py")
 from phievo.initialization_code import display_error
 import networkx as NX    # keep name spaces distinct
 import numpy as np

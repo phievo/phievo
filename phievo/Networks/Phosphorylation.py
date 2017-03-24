@@ -8,12 +8,14 @@ then remove Phosphorylable. Also update n_phospho accordingly when phosphorylate
 Creation: unknown
 Last edition: 2016-10-26
 """
-print("Execute Phosphorylation (Interaction Template)")
+from phievo import __silent__,__verbose__
+if __verbose__:
+    print("Execute Phosphorylation (Interaction Template)")
 
-from . import classes_eds2 
-from . import mutation 
+from . import classes_eds2
+from . import mutation
 from . import deriv2
-import copy        
+import copy
 
 #default range
 mutation.dictionary_ranges['Phosphorylation.rate']=1.0/mutation.T
@@ -27,7 +29,7 @@ mutation.dictionary_ranges['Phosphorylation.dephosphorylation']=1.0/mutation.T
 
 class Phosphorylation(classes_eds2.Interaction):
     """Phosphorylation interaction
-    
+
     Attributes:
         rate (float): the phosphorylation rate
         threshold (float): the Michaelis-Menten constant
@@ -46,7 +48,7 @@ class Phosphorylation(classes_eds2.Interaction):
         self.label='Phosphorylation'
         self.input=['Kinase','Phosphorylable']
         self.output=['Kinase','Phospho']
-        
+
     def __str__(self):
         return "{0.id} Phosphorylation: rate = {0.rate:.2f}, thres. = {0.threshold:.2f}, H_coeff. = {0.hill:.2f}, dissoc. = {0.dephosphorylation:.2f}".format(self)
 
@@ -60,10 +62,10 @@ class Phosphorylation(classes_eds2.Interaction):
 
 def check_existing_Phosphorylation(self,signature):
     """check if a particular phosphorylation exists in the network
-    
+
     Args:
         signature (list): The signature of the phospho in the form [Kinase,Input]
-    
+
     Return:
         bool: if this phosphorylation exist
     """
@@ -83,7 +85,7 @@ def number_Phosphorylation(self):
 
 def new_Phosphorylation(self,kinase,species,rate,threshold,hill,dephospho):
     """Create a new Phosphorylation, its associated product and add them to the network.
-        
+
     Args:
         kinase (Species): -
         species (Species): -
@@ -91,13 +93,13 @@ def new_Phosphorylation(self,kinase,species,rate,threshold,hill,dephospho):
         threshold (float): the Michaelis-Menten constant
         hill (float): the hill coefficient of the reaction
         dephospho (float): the dephosphorylation rate of the product
-    
+
     Return:
         list: of the form [Phosphorylation,phosphorylated_Species]
         or None if an error occured
     """
     phospho=Phosphorylation(rate,threshold,hill,dephospho)#creates the interaction
-    species_P=copy.deepcopy(species)# the phosphorylated species has the same properties   
+    species_P=copy.deepcopy(species)# the phosphorylated species has the same properties
     species_P.clean_type('Input')#Remove Input, output types from the copied species
     species_P.clean_type('Output')#Remove Input, output types from the copied species
     if species.isinstance('Phospho'):#allow at most two phosphorylations : if species is already phosphorylated, the product is no longer phosphorylable
@@ -126,11 +128,11 @@ setattr(classes_eds2.Network,'new_Phosphorylation',new_Phosphorylation)
 
 def new_random_Phosphorylation(self, kinase, species):
     """Creates a Phosphorylation of species by kinase with random parameters
-    
+
     Args:
         kinase (Species): the kinase came first
         species (Species): -
-    
+
     Return:
         list: of the form [Phosphorylation,phosphorylated_Species]
         or None if an error occured
@@ -143,8 +145,8 @@ def new_random_Phosphorylation(self, kinase, species):
 
 def random_Phosphorylation(self):
     """Creates a new Phosphorylation among all possibles
-    
-    
+
+
     Return:
         list: of the form [Phosphorylation,phosphorylated_Species]
         or None if an error occured
@@ -182,7 +184,7 @@ setattr(mutation.Mutable_Network,'new_random_Phosphorylation',new_random_Phospho
 
 def Phospho_deriv_inC(net):
     """gives the string corresponding to Phosphorylation for integration
-    
+
     Return:
         str: a single string for all Phosphorylations in the network
     """
@@ -213,4 +215,3 @@ def Phospho_deriv_inC(net):
 
 #update deriv2
 deriv2.Phospho_deriv_inC=Phospho_deriv_inC
-

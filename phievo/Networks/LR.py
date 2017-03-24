@@ -3,9 +3,11 @@ Definition of Ligand-Receptor Interaction
 Creation: unknown
 Last edition: 2016-10-26
 """
-print("Execute LR (Interaction Template)")
+from phievo import __silent__,__verbose__
+if __verbose__:
+    print("Execute LR (Interaction Template)")
 
-from . import classes_eds2 
+from . import classes_eds2
 from . import deriv2
 from . import mutation
 import copy
@@ -20,11 +22,11 @@ mutation.dictionary_ranges['LR.threshold']=mutation.C
 
 class LR(classes_eds2.Interaction):
     """Ligand-Receptor interaction between two species
-    
+
 Note that LR Interaction work on an enzymatic frame, (there is a
     threshold but no dissociation rate). For as assoc./dissoc. frame,
     use PPI instead.
-    
+
     Attributes:
         association (float): the association rate
         threshold (float): the Michaelis Menten constant
@@ -34,7 +36,7 @@ Note that LR Interaction work on an enzymatic frame, (there is a
     """
     def __init__(self,association=0,threshold=0):
         """Constructor of a new Ligand-Receptor
-        
+
         Args:
             association (float): the association rate
             threshold (float): the Michaelis Menten constant
@@ -64,14 +66,14 @@ def number_LR(self):
 
 def new_LR(self,ligand,receptor,association,threshold,types):
         """Create a new LR, its associated complex and add then to the network.
-        
+
         Args:
             ligand (Species): ligand species
             receptor (Species): receptor species
             association (float): -
             threshold (float): -
             types (list): the types of the complex species
-        
+
         Return:
             list: of the form [LR interaction,complex created]
             or None if an error occured
@@ -97,11 +99,11 @@ setattr(classes_eds2.Network,'new_LR',new_LR)
 
 def new_random_LR(self, ligand, receptor):
     """Creates a LR with random parameters between the Species
-    
+
     Args:
         ligand (Species): ligand species
         receptor (Species): receptor species
-    
+
     Return:
         list: of the form [lr interaction,complex created]
     """
@@ -113,15 +115,15 @@ def new_random_LR(self, ligand, receptor):
 
 def random_LR(self):
     """Create new random LR among all those possible
- 
-    
+
+
     Return:
         list: of the form [lr interaction,complex created]
         or None if an error occured
     """
     if 'Ligand' in self.list_types and 'Receptor' in self.list_types:
         #Evaluate all possible LR interactions
-        possible_LR = [(lig,rec) for lig in self.list_types['Ligand'] 
+        possible_LR = [(lig,rec) for lig in self.list_types['Ligand']
                                  for rec in self.list_types['Receptor']
                                  if not self.check_existing_binary([lig,rec],'LR Interaction')]
         n_pLR=len(possible_LR)
@@ -133,7 +135,7 @@ def random_LR(self):
             return None
         else:
             [L,R] = possible_LR[int(self.Random.random()*n_pLR)]
-            return self.new_random_LR(L, R) 
+            return self.new_random_LR(L, R)
     else:
         print("Error in random_LR (try to create a LR from non exsiting pieces)")
         return None
@@ -146,7 +148,7 @@ setattr(mutation.Mutable_Network,'new_random_LR',new_random_LR)
 
 def compute_LR(net):
     """gives the string corresponding to LR for integration
-    
+
     Return:
         str: a single string for all LR in the network
     """

@@ -5,7 +5,9 @@ species. It is used to conserve the bipartite nature of the network.
 Creation: unknown
 Last edition: 2016-10-26
 """
-print("Execute TFHill (Interaction Template)")
+from phievo import __silent__,__verbose__
+if __verbose__:
+    print("Execute TFHill (Interaction Template)")
 
 from phievo.initialization_code import * #is it necessary ?
 from . import classes_eds2
@@ -23,7 +25,7 @@ mutation.dictionary_ranges['TFHill.threshold']=mutation.C
 
 class TFHill(classes_eds2.Interaction):
     """Implement the link between TModule and the TF
-    
+
     Args:
         hill (float): the hill coefficient of the reaction
         threshold (float): the Michaelis-Menten constant
@@ -56,12 +58,12 @@ class TFHill(classes_eds2.Interaction):
 
 def add_TFHill(self, tf, inter, module):
     """Add a TF, a TModule and a :class:`Networks.TFHill.TFHill` interaction to the network
-    
+
     Args:
         tf (Species): with the 'TF' tag
         inter (:class:`Networks.TFHill.TFHill`): will link tf and module
         module (TModule): TModule to link the TFHill to
-    
+
     Return:
         None: in place modification
     """
@@ -83,7 +85,7 @@ def number_TFHill(self):
 
 def propagate_activity_TFHill(self):
     """Ensure that TFHill activity correspond to the one of their predecessor - done for compatibility with older versions
-    
+
     Return:
         None: in place modification
     """
@@ -95,14 +97,14 @@ def propagate_activity_TFHill(self):
 
 def new_TFHill(self, tf, hill, threshold, module, activity=0):
     """Create a new TFHill with given parameters and link it to the network.
-        
+
     Args:
         tf (Species): the upstrem Species
         hill (float): the hill coefficient of the reaction
         threshold (float): the Michaelis-Menten constant
         module (TModule): the downstream TModule
         activity (int): if fixed_activity_for_TF is True, always use the activity of tf
-    
+
     Return:
         :class:`Networks.TFHill.TFHill`: return the new interaction or None if an error occured
     """
@@ -122,13 +124,13 @@ def new_TFHill(self, tf, hill, threshold, module, activity=0):
 
 def duplicate_TFHill(self,D_species,interaction,module,D_module):
     """duplicate a TFHill interaction
-    
+
     Args:
         D_species (Species): the new species
         interaction (:class:`Networks.TFHill.TFHill`): the interaction you want to duplicate
         module (TModule): the original module
         D_module (TModule): the new module
-    
+
     Return:
         None: in place modification
     """
@@ -160,11 +162,11 @@ setattr(classes_eds2.Network,'duplicate_TFHill',duplicate_TFHill)
 
 def new_random_TFHill(self, tf, module):
     """Creates a TFHill between tf and module with random parameters
-    
+
     Args:
         tf (Species): must have the 'TF' tag
         module (TModule): TModule associated to the TFHill
-    
+
     Return:
         :class:`Networks.TFHill.TFHill`: return the new interaction or None if an error occured
     """
@@ -175,7 +177,7 @@ def new_random_TFHill(self, tf, module):
 
 def random_TFHill(self):
     """Creates a new :class:`Networks.TFHill.TFHill` among all possibles
-        
+
     Return:
         :class:`Networks.TFHill.TFHill`: return the new interaction or None if an error occured
     """
@@ -205,12 +207,12 @@ setattr(mutation.Mutable_Network,'new_random_TFHill',new_random_TFHill)
 
 def compute_transcription(net,module):
     """Determine the transcription rate of a given module
-    
+
     Used for integration in transcription_deriv_inC
-    
+
     Args:
         module (TModule): TModule to compute .
-    
+
     Return:
         str: the algebraic transcription rate of module
     """
@@ -253,7 +255,7 @@ def compute_transcription(net,module):
 
 def transcription_deriv_inC(net):
     """gives the string corresponding to transcription for integration
-    
+
     Return:
         str: a single string for all transcriptions in the network
     """

@@ -6,7 +6,9 @@ If you want to add a new interaction, you have to add:
     an import at the beginning
     an add() call in the write_deriv_inC function
 """
-print("Execute interaction.py")
+from phievo import __silent__,__verbose__
+if __verbose__:
+    print("Execute interaction.py")
 
 #import the different interaction module
 from .CorePromoter import *
@@ -19,9 +21,9 @@ from . import deriv2
 
 def write_deriv_inC(net,programm_file):
     """Write the integration equation in the C-file
-    
+
     This function is an update from the one in deriv2
-    
+
     Args:
         net (Network): the network under study
         programm_file (TextIOWrapper): the built_integrator file
@@ -36,7 +38,7 @@ def write_deriv_inC(net,programm_file):
     add(start)
     add("\t for (index=0;index<SIZE;index++) ds[index]=0;//initialization\n")
     add("\t double increment=0;\n")
-    add("\t double rate=0;\n")    
+    add("\t double rate=0;\n")
     add(deriv2.degrad_deriv_inC(net))#add degradation rates
     add(deriv2.transcription_deriv_inC(net))#add transcription rates
     add(deriv2.PPI_deriv_inC(net))#add PPIs

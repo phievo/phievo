@@ -1,6 +1,8 @@
 """Module in charge of creating various utilities to initialize evolutionary codes: loading specific modules, test files, creating directories,etc. """
 
-print("execute initialization_code.py")
+from phievo import __silent__,__verbose__
+if __verbose__:
+    print("execute initialization_code.py")
 
 import os
 import optparse
@@ -74,7 +76,8 @@ def init_evolution(inits, deriv2):
 
     try:
         evo_gis.init_network = inits.init_network
-        print('initializing with network from initization file')
+        if __verbose__:
+            print('initializing with network from initization file')
     except Exception:
         msg = 'initial network from initialization file could not be found, bye'
         display_error(msg)
@@ -99,10 +102,10 @@ def check_model_dir(model):
     Args:
         model (str): name of the model directory.
     Returns:
-        list: [model_dir, init_module] with 
+        list: [model_dir, init_module] with
             - model_dir(str): name of the model directory
             - init_module(dictionary): dictionary with the model's options
-    
+
     """
 
     model_dir =  model + os.sep  # works as well as full path
@@ -110,7 +113,8 @@ def check_model_dir(model):
     inits = [ff for ff in model_files if ff.startswith('init') & ff.endswith('.py')]
 
     try:
-        print('initializing with file=', inits[0], 'in model dir=', model_dir)
+        if __verbose__:
+            print('initializing with file=', inits[0], 'in model dir=', os.path.abspath(model_dir))
     except IndexError:
         msg = "The program did not find any init file in the %s repository."%model_dir
         display_error(msg)
@@ -122,7 +126,7 @@ def check_model_dir(model):
     init_module = import_module(inits)
     return [model_dir, init_module, model_dir+os.sep+init_name]
 
-def init_classes_eds2(inits):    
+def init_classes_eds2(inits):
     import phievo.Networks.classes_eds2 as net_class
     for k in list(inits.__dict__.keys()):
         #copies all attributes, but might restrict to some only in the future
@@ -144,7 +148,7 @@ def init_deriv2(inits, workplace_dir, prmt):
     deriv2.cfile['main'] = os.path.join(ccode_dir,'main_general.c')
     for k, v in inits.cfile.items():
         path = os.path.join(python_path,v)
-        
+
         if os.path.isfile(path):
             deriv2.cfile[k] = path
         else:
@@ -164,16 +168,16 @@ def get_network_from_test(test_py, classes_eds2):
         test_py: Python file defining a classes_eds2 network.
         classes_eds2: An instance of the the class_eds2 used to interprete the network
     Returns:
-        Network object    
-    """    
+        Network object
+    """
     test_file = test_py.replace('.py', '')
     test_file = import_module(test_file)
     ## Test every modules imported from the source file to find one of the type classes_eds2.Network
-    for kk in  dir(test_file):                
+    for kk in  dir(test_file):
         obj = getattr(test_file,kk)
         if isinstance(obj, classes_eds2.Network):
             return obj
-    
+
     print('No Network object located in file=', test_py)
     return None
 
@@ -218,11 +222,11 @@ def make_workplace_dir(parent_dir):
 
 def display_error(msg = 'ERROR',filename = 'error.txt'):
     """A pretty function to display the catched errors and log them in a file
-    
+
     Args:
         msg (str): A commentary on the error you wan't to add
         file (str): the file where errors are loged
-    
+
     Returns:
         None: print and write in file only
     """
@@ -236,4 +240,3 @@ def display_error(msg = 'ERROR',filename = 'error.txt'):
     print(out)
     with open(filename,'a') as myfile:
         myfile.write(time.ctime(time.time())+'\n'+out+'-'*50+'\n')
-

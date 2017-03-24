@@ -1,4 +1,6 @@
-print('Execute plotdata.py')
+from phievo import __silent__,__verbose__
+if __verbose__:
+    print('Execute plotdata.py')
 
 from phievo.initialization_code import *
 import numpy
@@ -20,7 +22,7 @@ from phievo.Networks.palette import *
 
 A row corresponds to a time step. The first number of the row is the index of the time step. Then, concentrations of proteins are displayed in order. A typical line of the File to plot is organized like this :
 
-Time_step P_0_Cell_0 ... P_N_Cell_0 P_0_Cell_1 ... P_N_Cell_1 P_0_Cell_2 ... P_N_Cell_2 ... 
+Time_step P_0_Cell_0 ... P_N_Cell_0 P_0_Cell_1 ... P_N_Cell_1 P_0_Cell_2 ... P_N_Cell_2 ...
 
 where P_i_Cell_j is the concentration of protein i in cell j at the time step Time_Step. You therefore need to give the number of proteins per cell as an argument of the fonction to now which  float corresponds to which cells and proteins
 """
@@ -56,7 +58,7 @@ def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_outpu
                     # with previous convention s[1+ncell*size+ngene] contains P_ngene_Cell_ncell
                 except Exception:
                     msg = "Error in Plot_data, on string {}, unable to reach index {}"
-                    msg = msg.format(s,1 + ncell * size + ngene) 
+                    msg = msg.format(s,1 + ncell * size + ngene)
                     display_error(msg)
     for i in range(size):
         style = '-'
@@ -98,7 +100,7 @@ def Plot_Profile(Name, ncelltot, size, nline, position='best', list_species=[],l
     plt.rc('axes', linewidth=2)
     fig = plt.figure()
     ax = fig.gca()
-    s = line.split()    
+    s = line.split()
     if list_species==[]:
         list_toplot=range(size)
     else:
@@ -151,7 +153,7 @@ def Plot_Profile(Name, ncelltot, size, nline, position='best', list_species=[],l
     plt.legend(legendkey)
     #ax.set_yscale('log')
     plt.show()
-    
+
 
 
 def Plot_pMHC(Name, ncelltot, size, ntau, position='best', list_species=[],list_AP=[], list_output=[]):
@@ -183,7 +185,7 @@ def Plot_pMHC(Name, ncelltot, size, ntau, position='best', list_species=[],list_
                     result[ngene, ncell, idtau] = float(index)  #assigns it to the table result
             except Exception:
                 display_error(str(ngene)+' '+str(ncell)+' '+str(idtau)+' '+str(index)+"\nError in Plot_Profile")
-                
+
         cursor += 1
     n_position = numpy.zeros((ncelltot), dtype=float)
     # print "Tab filled"
@@ -214,14 +216,14 @@ def Plot_pMHC(Name, ncelltot, size, ntau, position='best', list_species=[],list_
         plt.xlim(0,20)
     plt.legend(legendkey,bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
     plt.show()
-        
+
 
 def net_test_plot(net, prmt, namefolder, generation, my_ntries=1, index_cell=-1,list_species=[]):
     """Given network, prmt dictionary, run CCode and send the network graph and time history tonamefolder, with suitable name built from generation number
     """
     print("Plotting")
     net.draw()
-    
+
     plt.figure()
     # comment from here not to display results
     my_prmt = copy.copy(prmt)
@@ -259,7 +261,7 @@ def plot_linear(net, k, prmt, nnetwork, namefolder):
     size = len(net.list_types['Species'])
     ncell = prmt['ncelltot']
     nstep = prmt['nstep']
-    
+
     for i in range(prmt['ntries']):
         Plot_Profile("Buffer%i" % i, ncell, size, nstep)
         plt.savefig(namefolder + "/Step%iProfile%i" % (k, i))

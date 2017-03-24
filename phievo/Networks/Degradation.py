@@ -4,7 +4,9 @@ Coder: M.Hemery
 Creation: 2016-08-16
 Last edition: 2016-10-25
 """
-print("Execute Degradation (Interaction Template)")
+from phievo import __silent__,__verbose__
+if __verbose__:
+    print("Execute Degradation (Interaction Template)")
 
 from . import classes_eds2
 from . import mutation
@@ -20,7 +22,7 @@ mutation.dictionary_ranges['Degradation.rate']=1.0/mutation.T
 
 class Degradation(classes_eds2.Interaction):
     """Catalyse the degradation of a given species
-    
+
     Attributes:
         rate (float): the degradation constant
         label (str): 'Degradation' by default
@@ -29,7 +31,7 @@ class Degradation(classes_eds2.Interaction):
     """
     def __init__(self,rate=0.):
         """Constructor of a new Degradation
-        
+
         Args:
             rate (float): the degradation constant
         """
@@ -38,17 +40,17 @@ class Degradation(classes_eds2.Interaction):
         self.label='Degradation'
         self.input=['Species','Degradable']
         self.output=['Species']
-    
+
     def __str__(self):
         return "{0.id} Degradation: rate = {0.rate:.2f}".format(self)
 
-    
+
     def outputs_to_delete(self,net):
         """indicate the Nodes to remove when deleting the Degradation
-        
+
         Args:
             net (Networks): The network to which the interaction belongs
-            
+
         Return:
             list: here an empty list
         """
@@ -58,12 +60,12 @@ class Degradation(classes_eds2.Interaction):
 
 def new_Degradation(self,Input1, Input2, rate):
     """Create a new Degradation and add it to the network
-    
+
     Args:
         Input1 (Species): the 'enzyme'
         Input2 (Species): the species degraded (have to be Degradable)
         rate (float): the degradation rate
-    
+
     Return:
         list: of the form [Degradation]
         or None if an error occured
@@ -80,11 +82,11 @@ def new_Degradation(self,Input1, Input2, rate):
 
 def check_existing_Degradation(self,i1,i2):
     """Check if a Degradation exists between species i1 and i2
-    
+
     Args:
         i1 (Species): the 'enzyme'
         i2 (Species): the species degraded
-    
+
     Return:
         bool: if i1 is known to degrade i2
     """
@@ -120,11 +122,11 @@ setattr(classes_eds2.Network,'number_Degradation',number_Degradation)
 
 def new_random_Degradation(self, Input1, Input2):
     """Creates a Degradation with random parameters between the Species
-    
+
     Args:
         Input1 (Species): the 'enzyme'
         Input2 (Species): the species degraded (have to be Degradable)
-    
+
     Return:
         list: of the form [Degradation]
     """
@@ -134,10 +136,10 @@ def new_random_Degradation(self, Input1, Input2):
 
 def random_Degradation(self):
     """Create new random Degradation among all possible ones
-    
+
     Args:
         -
-    
+
     Return:
         list: of the form [Degradation]
         or None if an error occured
@@ -145,11 +147,11 @@ def random_Degradation(self):
     if 'Degradable' in self.list_types:
         #First generate a list of all possible couples of Inputs for non existing Degradation
         list_possible = self.list_possible_Degradation()
-        
+
         if list_possible:
             [Input1,Input2]=self.Random.choice(list_possible)
             [Deg]=self.new_random_Degradation(Input1,Input2)
-            return [Deg]  
+            return [Deg]
         else:
             print("In random_Degradation : no (other) possible random_Degradation, Error")
             return None
@@ -165,7 +167,7 @@ setattr(mutation.Mutable_Network,'new_random_Degradation',new_random_Degradation
 
 def Degradation_deriv_inC(net):
     """gives the string corresponding to degradations for integration
-    
+
     Return:
         str: a single string for all degradation in the network
     """

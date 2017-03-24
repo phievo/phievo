@@ -23,7 +23,9 @@ TODO:  it would be nice to include in header.h declaration of all C functions us
 so that they can then be loaded in any order, currently order constrained by declare
 before use.
 """
-print("Execute deriv2")
+from phievo import __silent__,__verbose__
+if __verbose__:
+    print("Execute deriv2")
 
 from phievo.initialization_code import display_error
 from phievo.Networks.classes_eds2 import *
@@ -42,14 +44,14 @@ noise_flag = False
 
 def compute_leap(list_input_id, list_output_id, rate):
     """Routine to compute strings for derivative in C associated to an interaction
-    
+
     if noise_flag, adds a Langevin noise term which scaled with concentration
-    
+
     Args:
         list_input_id (list): contains id of the input, i.e. the depleted species
         list_output_id (list): contains id of the created species
         rate (str): the rate, should be positive
-    
+
     Return:
         str: a C-formatted string
     """
@@ -57,20 +59,20 @@ def compute_leap(list_input_id, list_output_id, rate):
     func += "\t \t increment=compute_noisy_increment(rate);\n" if noise_flag else "\t \t increment=rate;\n"
     func += ''.join("\t \t d" + id + "-=increment;\n" for id in list_input_id)
     func += ''.join("\t \t d" + id + "+=increment;\n" for id in list_output_id)
-    
+
     return func
 
 def track_variable(net, name):
     """Return a list of the indices of the species with type name
-    
+
     This is way of keeping track of fixed IO variables.
     Use this function only if the output or input are fixed in the
     algorithm, otherwise, use track_changing_variable
-    
+
     Args:
         net (Networks): -
         name (str): a Species tag, usually 'Input' or 'Output'
-    
+
     Return:
         list: the id species list ordered by growing n_put
     """
@@ -91,14 +93,14 @@ def track_variable(net, name):
 
 def track_changing_variable(net, name):
     """Return a list of the indices of the species with type name
-    
+
     Use this function when Output or Input may be added
     (we do not care about their order)
-    
+
     Args:
         net (Networks): -
         name (str): a Species tag, usually 'Input' or 'Output'
-    
+
     Return:
         list: the id species list ordered by growing n_put
     """
@@ -109,7 +111,7 @@ def track_changing_variable(net, name):
 
 def degrad_deriv_inC(net):
     """gives the string corresponding to the degradation integration
-    
+
     Return:
         str: a single string for all degradations in the network
     """
@@ -121,9 +123,9 @@ def degrad_deriv_inC(net):
 
 def write_deriv_inC(net,programm_file):
     """Write the integration equations in the C-file
-    
+
     This function is a default and should be updated in Networks/interaction.py
-    
+
     Args:
         net (Network): the network under study
         programm_file (TextIOWrapper): the built_integrator file
@@ -141,15 +143,15 @@ def write_deriv_inC(net,programm_file):
 
 def all_params2C(net, prmt, print_buf, Cseed=0):
     """ Collect all the numerical constants and format them to C like
-    
+
     neelocalneig,diff,index_ligand,ded
-    
+
     Args:
         net (Network): -
         prmt (dict): dictionary from initialization file
         print_buf (bool): control printing of time history by C codes
         Cseed (int): seed for the integrator random number generator
-    
+
     Return:
         str: a C formated string of parameters
     """
@@ -231,17 +233,17 @@ def all_params2C(net, prmt, print_buf, Cseed=0):
 
 def write_program(programm_file,net, prmt, print_buf, Cseed=0):
     """Write the built_integrator of the network in the C file
-    
+
     Collect python encoded C and the stored files selected via cfile
     dictionary and write them in the correct order.
-    
+
     Args:
         programm_file (TextIOWrapper): the built_integrator file
         net (Network): -
         prmt (dict): passed to all_params2C
         print_buf (bool): passed to all_params2C
         Cseed (int): passed to all_params2C
-    
+
     Return:
         str: the C programm as a python string
     """
@@ -261,25 +263,25 @@ def write_program(programm_file,net, prmt, print_buf, Cseed=0):
 
 def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
     """Compile and integrate a network
-    
+
     Run the code in 'workplace_dir defined top of this file.
     Wait for process completion before launching another integration
     See https://www.python.org/dev/peps/pep-0324/ for interface to run C code
-    
+
     Args:
         network (Network): -
         prmt (dict): dictionary from initialization file
         nnetwork (int): an id to separate the different C-file
         print_buf (bool): control printing of time history by C codes to a file
         Cseed (int): seed for the integrator random number generator
-    
+
     Return:
         list: corresponding to the different line of the output of treatment_fitness
         (see your fitness.c file) or None if an error occured
     """
     network.write_id()
     cfile_directory = workplace_dir+'built_integrator'+str(nnetwork)
-    
+
     # check for outputs
     if 'Output' not in network.list_types:
         print("No Output for network %i" % nnetwork)
@@ -290,18 +292,18 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
 
     # Compile the program
     # cmd contains the command in the same order as they would be on a full bash commans
-    # ex: cmd = ["gcc", "-o", "run",  "test.c"] for "gcc -o run test.c" 
-    cmd = [Ccompiler , cfile_directory+".c" , "-lm" , "-o" , cfile_directory]    
+    # ex: cmd = ["gcc", "-o", "run",  "test.c"] for "gcc -o run test.c"
+    cmd = [Ccompiler , cfile_directory+".c" , "-lm" , "-o" , cfile_directory]
     out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()
-    
-    
+
+
     if out[1]:
         print('bug in Ccompile for', cfile_directory, 'err=', out[1], 'BYE')
         sys.exit(1)
-    
+
     # Execute the programm
     out = subprocess.Popen(cfile_directory, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-    
+
     if out[1] or len(out[0]) < 1:  # some floating exceptions do not get to stderr, but loose stdout
         print('bug during run (or no stdout) for', cfile_directory, out[1], 'BYE')
         sys.exit(1)
@@ -311,4 +313,3 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
         for arg in out_list:
             if not arg: return None
         return out_list
-
