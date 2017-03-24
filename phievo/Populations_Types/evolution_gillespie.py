@@ -323,10 +323,12 @@ class Population(object):
             gen_stat.process_sorted_genus( self )
 
             # print info after mutation step so built_integrator*.c consistent with Bests file
-            header = "\nAfter generation {0:d} Best fitness={1}\ndata=[]\n".format(t_gen,self.genus[0].fitness)
-            for data in self.genus[0].data_evolution:
-                if data and len(data) > 0:
-                    header=header+"data.append("+data+")\n"
+            header = "\nAfter generation {0:d} Best fitness={1}".format(t_gen,self.genus[0].fitness)
+            if __verbose__:
+                header+="data=[]\n"
+                for data in self.genus[0].data_evolution:
+                    if data and len(data) > 0:
+                        header=header+"data.append("+data+")\n"
             print(header)
             print("New generation time: %f"%self.tgeneration)
             sys.stdout.flush()

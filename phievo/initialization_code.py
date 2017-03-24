@@ -87,11 +87,6 @@ def init_evolution(inits, deriv2):
     except Exception:
         msg = 'Using default fitness_treatment() in module evolution_gillespie'
         display_error(msg)
-    try:
-        evo_gis.compare = inits.compare
-    except Exception:
-        msg = 'Using default fitness_treatment() in module evolution_gillespie'
-        display_error(msg)
 
     return [mutation, evo_gis]
 
