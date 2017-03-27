@@ -17,13 +17,21 @@ class Notebook(object):
     """
     def __init__(self):
         self.sim = None
-        self.load_project = Load_Project(self)
-        self.select_seed = Select_Seed(self)
-        self.project = None
-        self.seed = None
-        self.generation = None
 
-class Load_Project(object):
+        self.project = None
+        self.depends_on_project = [] ## List of cell objects to update when project changes
+        self.seed = None
+        self.depends_on_seed = [] ## List of cell objects to update when seed changes
+        self.generation = None
+        self.depends_on_generation = [] ## List of cell objects to update when generation changes
+
+        self.select_project = Select_Project(self)
+        self.select_seed = Select_Seed(self)
+        self.plot_evolution_observable = Plot_Evolution_Observable(self)
+
+
+
+class Select_Project(object):
         def __init__(self,Notebook):
             self.widget_select_project = widgets.Text(value='',placeholder='Name of project directory',description='Directory:',disabled=False)
             self.widget_loadDir = widgets.Button(description="Load Run",disabled=True)
@@ -53,12 +61,10 @@ class Load_Project(object):
             """
             self.notebook.sim = Simulation(self.widget_select_project.value)
             self.notebook.project = self.widget_select_project.value
-            self.notebook.select_seed.update()
-            self.notebook.generation = None
             self.widget_loadDir.button_style = "success"
             self.widget_loadDir.disabled=True
-
-            #seed = {"Seed%d"%i:i for i,seed in self.notebook.seeds.items()}
+            for cell in self.notebook.depends_on_project:
+                cell.update()
 
         def display(self):
             self.widget_loadDir.on_click(self.load_project)
@@ -78,6 +84,7 @@ class Select_Seed:
     def __init__(self,Notebook):
         self.notebook = Notebook
         self.widget_select_seed = widgets.Dropdown(options={"None":None},value=None,description='Seed:',disabled=True)
+        self.notebook.depends_on_project.append(self)
 
     def read_seed(self,seed_name):
         self.notebook.seed =  seed_name
@@ -102,8 +109,8 @@ class Select_Seed:
 class Plot_Evolution_Observable:
     def __init__(self,Notebook):
         self.notebook = Notebook
-        self.widget_Xobs = widgets.Dropdown(options=choices,value="generation",description='x-axis:',disabled=True)
-        self.widget_Yobs = widgets.Dropdown(options=choices,value="fitness",description='y-axis:',disabled=True)
+        self.widget_Xobs = widgets.Dropdown(options={None:None},value=None,description='x-axis:',disabled=True)
+        self.widget_Yobs = widgets.Dropdown(options={None:None},value=None,description='y-axis:',disabled=True)
         self.widget_replot_observable = widgets.Button(description="Plot",disabled=True)
 
     def replot_fitness(self,b):
@@ -118,4 +125,11 @@ class Plot_Evolution_Observable:
         display(plot_observable_options)
 
     def update(self):
-        NotImplemented
+        if self.notebook.seed is None:
+            self.widget_Xobs.disabled = self.widget_Yobs.disabled = self.widget_replot_observable.disabled = True
+            self.widget_Xobs.value = self.widget_Yobs.value = None
+        else:
+            self.widget_Xobs.disabled = self.widget_Yobs.disabled = self.widget_replot_observable.disabled = False
+            self.widget_Xobs.options = self.notebook.sim.seeds[self.notebook.seed].observables
+            self.widget_Xobs.value = "generation"
+            self.widget_Yobs.value = "fitness"

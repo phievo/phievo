@@ -152,6 +152,7 @@ class Seed:
             for i in indexes}
         self.indexes = indexes
 
+        self.observables = ["generation"] + list(self.generations[list(self.generations)[0]])
 
 
     def show_fitness(self,smoothen=0,**kwargs):
@@ -183,7 +184,6 @@ class Seed:
             X (str): x-axis observable
             Y (str): y-axis observable
         """
-        print("Hey")
         x_val = self.get_observable(X)
         y_val = self.get_observable(Y)
         fig = plt.figure()
@@ -233,7 +233,7 @@ class Seed_Pareto(Seed):
         self.nbFunctions = nbFunctions
         with shelve.open(restart_path) as data:
             self.restart_generations = sorted([int(xx) for xx in data.dict.keys()])
-        print(self.restart_generations)
+        
 
     def show_fitness(self,smoothen=0,index=None):
         """Plot the fitness as a function of time
