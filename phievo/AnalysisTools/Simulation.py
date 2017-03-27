@@ -8,39 +8,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 import importlib.util
 from phievo.Networks import mutation,classes_eds2,plotdata
-
+from phievo import  initialization_code
 
 class Simulation:
     """
     The simulation class is a container in which the informations about a simulation are unpacked. This is used for easy access to a simulation results.
     """
-    def  __init__(self, path,verbose=False):        
+    def  __init__(self, path,verbose=False):
         self.root = path
         if self.root[-1] != os.sep:
             self.root += os.sep
 
         ## Upload Run parameters
         model_files = os.listdir(self.root)
-        inits = [ff for ff in model_files if ff.startswith('init') & ff.endswith('.py')]
-        try:
-            a = inits[0]
-            del a
-            if verbose:
-                print('initializing with file=', inits[0], 'in model dir=', self.root)
-        except IndexError:
-            
-            msg = "The program did not find any init file in the %s repository."%model_dir
-            display_error(msg)
-            raise SystemExit
+        (model_dir , self.inits , init_file) =tuple(initialization_code.check_model_dir(self.root))
 
-        
-        inits = inits[0].replace('.py', '')
-        
-        spec = importlib.util.spec_from_file_location(inits, self.root+inits+".py")
-        self.inits = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.inits)
-
-        
         searchSeed  = re.compile("\d+$") ## integer ## at the end of the string "project_root/Seed##"
         seeds = [int(searchSeed.search(seed).group(0)) for seed in glob.glob(self.root+"Seed*")]
         seeds.sort()
@@ -55,13 +37,13 @@ class Simulation:
         self.buffer_data = None
 
 
-        
+
     def show_fitness(self,seed,smoothen=0,**kwargs):
         """Plot the fitness as a function of time
-    
-        Args:            
+
+        Args:
             seed (int): the seed-number of the run
-    
+
         Returns:
             list: fitness as a function of time
         """
@@ -70,18 +52,18 @@ class Simulation:
 
     def custom_plot(self,seed,X,Y):
         """Plot the Y as a function of X. X and Y can be chosen in the list ["fitness","generation","n_interactions","n_species"]
-    
-        Args:  
+
+        Args:
             seed (int): number of the seed to look at
             X (str): x-axis observable
-            Y (str): y-axis observable    
-        """        
+            Y (str): y-axis observable
+        """
         x_val = self.seeds[seed].custom_plot(X,Y)
 
     def get_best_net(self,seed,generation):
         """ The functions returns the best network of the selected generation
-    
-        Args:            
+
+        Args:
             seed (int): number of the seed to look at
             generation (int): number of the generation
 
@@ -103,7 +85,7 @@ class Simulation:
         Returns: data (dict) : dictionnary conatining the time steps
             at the "time" key and the corresponding time series for
             the indexes 0...nb_trials.
-        
+
         """
         if net is None:
             net = self.seeds[seed].get_best_net(generation)
@@ -117,7 +99,7 @@ class Simulation:
         Clears the variable self.buffer_data.
         """
         self.buffer_data = None
-        
+
 
 
     def Plot_Data(self,trial_index,cell=0):
@@ -135,21 +117,21 @@ class Simulation:
         nstep = self.inits.prmt['nstep']
         size = len(net.list_types['Species'])
         ncelltot = self.inits.prmt['ncelltot']
-        
+
         try:
             plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time)
         except FileNotFoundError:
             print("Make sure you have run the function run_dynamics with the correct number of trials.")
             raise
-        
-        
+
+
 class Seed:
     """
     This is a container to load the information about a Simulation seed. It contains mainly the indexes of the generations and some extra utilities to analyse them.
     """
 
-    
-    def  __init__(self, path):       
+
+    def  __init__(self, path):
         self.root = path
         if self.root[-1] != os.sep:
             self.root += os.sep
@@ -170,14 +152,14 @@ class Seed:
             for i in indexes}
         self.indexes = indexes
 
-        
-        
+
+
     def show_fitness(self,smoothen=0,**kwargs):
         """Plot the fitness as a function of time
-    
-        Args:            
+
+        Args:
             seed (int): the seed-number of the run
-    
+
         Returns:
             list: fitness as a function of time
         """
@@ -192,18 +174,18 @@ class Seed:
         ax.set_ylabel('Fitness')
         fig.show()
         return fig
-    
+
     def custom_plot(self,X,Y):
         """Plot the Y as a function of X. X and Y can be chosen in the list ["fitness","generation","n_interactions","n_species"]
-    
-        Args:  
+
+        Args:
             seed (int): number of the seed to look at
             X (str): x-axis observable
-            Y (str): y-axis observable    
+            Y (str): y-axis observable
         """
         print("Hey")
         x_val = self.get_observable(X)
-        y_val = self.get_observable(Y)        
+        y_val = self.get_observable(Y)
         fig = plt.figure()
         ax = fig.gca()
         ax.plot(x_val,y_val,lw=2,color='#B41111',label='fitness')
@@ -211,11 +193,11 @@ class Seed:
         ax.set_ylabel(Y)
         fig.show()
         return fig
-    
+
     def get_observable(self,observable):
         """
         Generates the list of all the values taken by the observable during the run. The observable is chosen in ["fitness","generation","n_interactions","n_species"].
-        
+
         Args:
             str : name of the observable
 
@@ -230,8 +212,8 @@ class Seed:
 
     def get_best_net(self,generation):
         """ The functions returns the best network of the selected generation
-    
-        Args:            
+
+        Args:
             seed (int): number of the seed to look at
 
         Returns:
@@ -242,7 +224,7 @@ class Seed:
 
     def compute_best_fitness(self,generation):
         pass
-        
+
 
 class Seed_Pareto(Seed):
     def __init__(self,path,nbFunctions):
@@ -252,25 +234,25 @@ class Seed_Pareto(Seed):
         with shelve.open(restart_path) as data:
             self.restart_generations = sorted([int(xx) for xx in data.dict.keys()])
         print(self.restart_generations)
-        
+
     def show_fitness(self,smoothen=0,index=None):
         """Plot the fitness as a function of time
-    
-        Args:            
+
+        Args:
             seed (int): the seed-number of the run
-            index(array): index of of the fitness to plot. If None, all the fitnesses are ploted 
+            index(array): index of of the fitness to plot. If None, all the fitnesses are ploted
         Returns:
             list: fitness as a function of time
         """
         gen = self.get_observable("generation")
-        
+
         fit = np.array(self.get_observable("fitness"))
-        
+
         if not index :
             index = range(fit.shape[1])
-        
-        
-        
+
+
+
         fig = plt.figure()
         ax = fig.gca()
 
@@ -288,9 +270,9 @@ class Seed_Pareto(Seed):
 
     def pareto_scatter(self,generation):
         """Display one generation as pareto fronts
-    
+
         Run on 2D and 3D and use the Restart_file to retrieve whole population
-    
+
         Args:
            generation (int): must be a whole generation saved (from restart file)
         Returns:
@@ -300,14 +282,14 @@ class Seed_Pareto(Seed):
         with shelve.open(restart_path) as data:
             dummy,pop_list = data[str(generation)]
         fitness_dico = {}
-    
+
         fitnesses = self.get_observable("fitness")
         for ind in pop_list:
             try:
                 fitness_dico[ind.prank].append([ind.fitness[i] for i in range(self.nbFunctions)])
             except KeyError:
                 fitness_dico[ind.prank] = [[ind.fitness[i] for i in range(self.nbFunctions)]]
-            
+
         if self.nbFunctions == 2:
             pareto_plane(fitness_dico,fitnesses)
         elif self.nbFunctions == 3:
@@ -327,7 +309,7 @@ def pareto_plane(fitness_dico,fitnesses):
         func("fitness_{}".format(index))
     plt.legend(loc=0)
     plt.show()
-    
+
 def pareto_space(fitness_dico,fitnesses):
     """3d plotting subroutine of pareto_scatter"""
     from mpl_toolkits.mplot3d import Axes3D
@@ -336,10 +318,8 @@ def pareto_space(fitness_dico,fitnesses):
     for rank,points in fitness_dico.items():
         F1,F2,F3 = list(zip(*points))
         ax.plot(F1,F2,F3,label='rank {}'.format(rank))
-    
+
     for func,index in zip([plt.xlabel,plt.ylabel,plt.zlabel],fitnesses):
         func("fitness_{}".format(index))
     plt.legend(loc=0)
     plt.show()
-
-

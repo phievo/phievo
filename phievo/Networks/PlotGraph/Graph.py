@@ -228,6 +228,5 @@ class Graph:
         plt.axis("scaled")
         if file:
             fig.savefig(file)
-        else:
-            print("plotted")     
+        else:  
             plt.show()
