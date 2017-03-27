@@ -30,7 +30,6 @@ def configuration(directory='default'):
         name_plotdata='phievo.Networks.plotdata'
         return multiple_phospho,name_deriv2,name_interaction,name_pretty_graph,name_plotdata
     elif directory == 'immune':
-
         multiple_phospho=1 #do we allow for multiple phoshorylations of species or not ? For now, put this parameter to 0 except if working with KPR/pMHC. Need to modify Phosphorylation.py to account for this properly
         name_deriv2='phievo.Networks.Immune.deriv2_pMHC'
         name_interaction='phievo.Networks.Immune.interaction_pMHC'
@@ -38,7 +37,6 @@ def configuration(directory='default'):
         name_plotdata='phievo.Networks.Immune.plotdata_pMHC'
         return multiple_phospho,name_deriv2,name_interaction,name_pretty_graph,name_plotdata
     elif directory == 'IL-2':
-
         multiple_phospho=1 #do we allow for multiple phoshorylations of species or not ? For now, put this parameter to 0 except if working with KPR/pMHC. Need to modify Phosphorylation.py to account for this properly
         name_deriv2='phievo.Networks.IL-2.deriv2_IL2'
         name_interaction='phievo.Networks.IL-2.interaction_IL2'

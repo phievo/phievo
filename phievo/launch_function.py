@@ -26,7 +26,6 @@ def launch_evolution(options):
         toClear = glob.glob(os.path.join(model_dir,"Seed*"))+glob.glob(os.path.join(model_dir,"Workplace*"))
         for directory in toClear:
             shutil.rmtree(directory, ignore_errors=True)
-#            assert 1==2, "hello"
     inits.prmt["stop_file"] = create_STOP_file(model_dir)
     [classes_eds2, pretty_graph] = init_classes_eds2(inits)
     workplace_dir = make_workplace_dir(model_dir)
