@@ -21,7 +21,7 @@ class Simulation:
 
         ## Upload Run parameters
         model_files = os.listdir(self.root)
-        (model_dir , self.inits , init_file) =tuple(initialization_code.check_model_dir(self.root))
+        (model_dir , self.inits , init_file) = tuple(initialization_code.check_model_dir(self.root))
 
         searchSeed  = re.compile("\d+$") ## integer ## at the end of the string "project_root/Seed##"
         seeds = [int(searchSeed.search(seed).group(0)) for seed in glob.glob(self.root+"Seed*")]
@@ -233,7 +233,6 @@ class Seed_Pareto(Seed):
         self.nbFunctions = nbFunctions
         with shelve.open(restart_path) as data:
             self.restart_generations = sorted([int(xx) for xx in data.dict.keys()])
-        
 
     def show_fitness(self,smoothen=0,index=None):
         """Plot the fitness as a function of time

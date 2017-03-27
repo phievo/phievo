@@ -28,7 +28,8 @@ class Notebook(object):
         self.select_project = Select_Project(self)
         self.select_seed = Select_Seed(self)
         self.plot_evolution_observable = Plot_Evolution_Observable(self)
-
+        self.select_generation = Select_Generation(self)
+        self.plot_layout = Plot_Layout(self)
 
 
 class Select_Project(object):
@@ -88,6 +89,8 @@ class Select_Seed:
 
     def read_seed(self,seed_name):
         self.notebook.seed =  seed_name
+        for cell in self.notebook.depends_on_seed:
+            cell.update()
 
     def display(self):
         interactive(self.read_seed,seed_name=self.widget_select_seed)
@@ -109,19 +112,19 @@ class Select_Seed:
 class Plot_Evolution_Observable:
     def __init__(self,Notebook):
         self.notebook = Notebook
-        self.widget_Xobs = widgets.Dropdown(options={None:None},value=None,description='x-axis:',disabled=True)
-        self.widget_Yobs = widgets.Dropdown(options={None:None},value=None,description='y-axis:',disabled=True)
+        self.widget_Xobs = widgets.Dropdown(options=[None],value=None,description='x-axis:',disabled=True)
+        self.widget_Yobs = widgets.Dropdown(options=[None],value=None,description='y-axis:',disabled=True)
         self.widget_replot_observable = widgets.Button(description="Plot",disabled=True)
-
-    def replot_fitness(self,b):
+        self.notebook.depends_on_seed.append(self)
+    def replot_observable(self,b):
         plt.close()
         clear_output()
-        self.notebook.sim.show_fitness(seed)
+        self.notebook.sim.custom_plot(self.notebook.seed,self.widget_Xobs.value,self.widget_Yobs.value)
 
 
     def display(self):
-        widget_replot_observable.on_click(self.replot_fitness)
-        plot_observable_options = widgets.VBox([widgets.HBox([widget_Xobs,widget_Yobs]),widgets.HBox([widget_replot_observable])])
+        self.widget_replot_observable.on_click(self.replot_observable)
+        plot_observable_options = widgets.VBox([widgets.HBox([self.widget_Xobs,self.widget_Yobs]),widgets.HBox([self.widget_replot_observable])])
         display(plot_observable_options)
 
     def update(self):
@@ -130,6 +133,55 @@ class Plot_Evolution_Observable:
             self.widget_Xobs.value = self.widget_Yobs.value = None
         else:
             self.widget_Xobs.disabled = self.widget_Yobs.disabled = self.widget_replot_observable.disabled = False
-            self.widget_Xobs.options = self.notebook.sim.seeds[self.notebook.seed].observables
+            self.widget_Xobs.options = list(self.notebook.sim.seeds[self.notebook.seed].observables)
+            self.widget_Yobs.options = list(self.widget_Xobs.options)
             self.widget_Xobs.value = "generation"
             self.widget_Yobs.value = "fitness"
+
+
+class Select_Generation:
+    def __init__(self,Notebook):
+        self.notebook = Notebook
+        self.notebook.depends_on_seed.append(self)
+        self.widget_gen = widgets.IntSlider(value = 0,min=0,max=0,description = 'Gen:',disabled=True)
+
+    def read_generation(self,gen_index):
+        self.notebook.generation = gen_index
+        for cell in self.notebook.depends_on_generation:
+            cell.update()
+
+    def display(self):
+        interactive(self.read_generation,gen_index=self.widget_gen)
+        display(self.widget_gen)
+
+    def update(self):
+        if self.notebook.seed is None:
+            self.widget_gen.value = 0
+            self.widget_gen.min = self.widget_gen.max = 0
+            self.widget_gen.min.disabled = True
+        else:
+            self.widget_gen.value = 0
+            self.widget_gen.disabled = False
+            self.widget_gen.max = len(self.notebook.sim.seeds[self.notebook.seed].generations)-1
+
+class Plot_Layout:
+    def __init__(self,Notebook):
+        self.notebook = Notebook
+        self.notebook.depends_on_generation.append(self)
+        self.button_plotLayout = widgets.Button(description="Plot network layout",disabled=True)
+
+    def plot_layout(self,button):
+        net = self.notebook.sim.get_best_net(self.notebook.seed,self.notebook.generation)
+        plt.close()
+        clear_output()
+        net.draw()
+
+    def update(self):
+        if self.notebook.generation is None:
+            self.button_plotLayout.disabled = True
+        else:
+            self.button_plotLayout.disabled = False
+
+    def display(self):
+        self.button_plotLayout.on_click(self.plot_layout)
+        display(self.button_plotLayout)
