@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 import numpy as np
 import importlib.util
-from phievo.Networks import mutation,classes_eds2,plotdata
+from phievo.Networks import mutation,classes_eds2
 from phievo import  initialization_code
 
 class Simulation:
@@ -22,7 +22,7 @@ class Simulation:
         ## Upload Run parameters
         model_files = os.listdir(self.root)
         (model_dir , self.inits , init_file) =tuple(initialization_code.check_model_dir(self.root))
-
+        plotdata = initialization_code.import_module(inits.pfile['plotdata'])
         searchSeed  = re.compile("\d+$") ## integer ## at the end of the string "project_root/Seed##"
         seeds = [int(searchSeed.search(seed).group(0)) for seed in glob.glob(self.root+"Seed*")]
         seeds.sort()
@@ -35,8 +35,6 @@ class Simulation:
             self.seeds = {seed:Seed(self.root+"Seed%d"%seed) for seed in seeds}
 
         self.buffer_data = None
-
-
 
     def show_fitness(self,seed,smoothen=0,**kwargs):
         """Plot the fitness as a function of time

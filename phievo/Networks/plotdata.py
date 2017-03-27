@@ -4,15 +4,9 @@ if __verbose__:
 
 from phievo.initialization_code import *
 import numpy
-#import pylab
 from matplotlib import pyplot as plt
 import subprocess
 import linecache, copy
-
-#exec('from '+name_pretty_graph+' import *')
-exec('from '+name_deriv2+' import compile_and_integrate')
-
-
 
 from phievo.Networks.palette import *
 
@@ -27,7 +21,6 @@ Time_step P_0_Cell_0 ... P_N_Cell_0 P_0_Cell_1 ... P_N_Cell_1 P_0_Cell_2 ... P_N
 where P_i_Cell_j is the concentration of protein i in cell j at the time step Time_Step. You therefore need to give the number of proteins per cell as an argument of the fonction to now which  float corresponds to which cells and proteins
 """
 ylimmax = 1.2
-
 
 def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_output=[], npoints=500):
     """ Plot the concentrations of all proteins in one cell vs time
@@ -218,7 +211,7 @@ def Plot_pMHC(Name, ncelltot, size, ntau, position='best', list_species=[],list_
     plt.show()
 
 
-def net_test_plot(net, prmt, namefolder, generation, my_ntries=1, index_cell=-1,list_species=[]):
+def net_test_plot(compile_and_integrate, net, prmt, namefolder, generation, my_ntries=1, index_cell=-1,list_species=[],):
     """Given network, prmt dictionary, run CCode and send the network graph and time history tonamefolder, with suitable name built from generation number
     """
     print("Plotting")
@@ -255,8 +248,7 @@ def net_test_plot(net, prmt, namefolder, generation, my_ntries=1, index_cell=-1,
             plt.figure()
             Plot_Profile(name_c, ncelltot, size, nstep, list_species=list_species,list_output=list_output)
 
-
-def plot_linear(net, k, prmt, nnetwork, namefolder):
+def plot_linear(compile_and_integrate, net, k, prmt, nnetwork, namefolder):
     compile_and_integrate(net, prmt, nnetwork, 1)
     size = len(net.list_types['Species'])
     ncell = prmt['ncelltot']

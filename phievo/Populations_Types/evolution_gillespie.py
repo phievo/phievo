@@ -352,11 +352,6 @@ class Population(object):
                 print("Total number of mutations: %i"%self.n_mutations)
                 gen_stat.output()
 
-            #plot the best network and its time course
-            if (t_gen%prmt['freq_plot'] == 0) and (prmt['plot']==1):
-                print("Plotting")
-                plotdata.net_test_plot(self.genus[0], prmt, self.namefolder, t_gen)
-
             # save an exact copy of genus and relevant parameters for continuing loop
             if( t_gen%prmt['restart']['freq'] == 0):
 

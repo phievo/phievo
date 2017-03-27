@@ -157,11 +157,10 @@ def test_network(options):
     # Launch the integraion with relevant parameters
     if inits:
         deriv2 = init_deriv2(inits, workplace_dir, inits.prmt)
-        plotdata.compile_and_integrate = deriv2.compile_and_integrate
         print('running test file with initialization,')
         my_ntries = inits.prmt['ntries']
         ncell = int(options["ncell"]) if options["ncell"] else -1 #default value
         liszt = [int(n) for n in options["list"].split(',')] if options["list"] else [] #default value
-        plotdata.net_test_plot(net, inits.prmt, test_output_dir, 0, my_ntries,ncell,liszt)
+        plotdata.net_test_plot(deriv2.compile_and_integrate, net, inits.prmt, test_output_dir, 0, my_ntries,ncell,liszt)
     else:
         print("No init* file found, use -m or -i option to specify one")
