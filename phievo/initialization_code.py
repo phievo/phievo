@@ -17,33 +17,7 @@ python_path = os.getcwd()
 sys.path.insert(1, python_path)  # make evol modules second item in path after cwd.
 ccode_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'CCodes')
 
-### Configuration of various directory ###
-# previously done through config.py
-def configuration(directory='default'):
-    """Define the different scripts to use along the run"""
-    if directory == 'default':
-        #Default configuration
-        multiple_phospho=0
-        name_deriv2='phievo.Networks.deriv2'
-        name_interaction='phievo.Networks.interaction'
-        name_pretty_graph='phievo.Networks.lovelyGraph'
-        name_plotdata='phievo.Networks.plotdata'
-        return multiple_phospho,name_deriv2,name_interaction,name_pretty_graph,name_plotdata
-    elif directory == 'immune':
-        multiple_phospho=1 #do we allow for multiple phoshorylations of species or not ? For now, put this parameter to 0 except if working with KPR/pMHC. Need to modify Phosphorylation.py to account for this properly
-        name_deriv2='phievo.Networks.Immune.deriv2_pMHC'
-        name_interaction='phievo.Networks.Immune.interaction_pMHC'
-        name_pretty_graph='phievo.Networks.Immune.pretty_graph_2_pMHC'
-        name_plotdata='phievo.Networks.Immune.plotdata_pMHC'
-        return multiple_phospho,name_deriv2,name_interaction,name_pretty_graph,name_plotdata
-    elif directory == 'IL-2':
-        multiple_phospho=1 #do we allow for multiple phoshorylations of species or not ? For now, put this parameter to 0 except if working with KPR/pMHC. Need to modify Phosphorylation.py to account for this properly
-        name_deriv2='phievo.Networks.IL-2.deriv2_IL2'
-        name_interaction='phievo.Networks.IL-2.interaction_IL2'
-        name_pretty_graph='phievo.Networks.IL-2.pretty_graphIL2'
-        return multiple_phospho,name_deriv2,name_interaction,name_pretty_graph,name_plotdata
-
-multiple_phospho,name_deriv2,name_interaction,name_pretty_graph,name_plotdata = configuration()
+multiple_phospho = 0
 
 # ################################################################################
 # routines to use imported initialization.py module (inits), extract data and add
@@ -100,10 +74,9 @@ def check_model_dir(model):
             - init_module(dictionary): dictionary with the model's options
 
     """
-
     model_dir =  model + os.sep  # works as well as full path
     model_files = os.listdir(model_dir)
-    inits = [ff for ff in model_files if ff.startswith('init') & ff.endswith('.py')]
+    init_candidate = [ff for ff in model_files if ff.startswith('init') & ff.endswith('.py')]
 
     try:
         if __verbose__:
@@ -114,9 +87,22 @@ def check_model_dir(model):
         raise SystemExit
     ##adding to sys.modules does not work, syntax with <> ??  insert ahead of CWD
     sys.path.insert(0, model_dir)  # put model_dir ahead of '' incase duplicate names.
-    init_name = inits[0]
-    inits = init_name.replace('.py', '')
-    init_module = import_module(inits)
+    init_name = init_candidate[0]
+    init_name_nopy = init_name.replace('.py', '')
+    init_module = import_module(init_name_nopy)
+    inits = init_module
+
+    # add default configuration for pfile
+    pfile = {"deriv2":"phievo.Networks.deriv2",
+             "interaction":"phievo.Networks.interaction",
+             "pretty_graph":"phievo.Networks.lovelyGraph",
+             "plotdata":"phievo.Networks.plotdata"}
+    try:
+        pfile.update(init_module.pfile)
+    except AttributeError:
+        print('Remark: No pfile object in init* file, use default one (see check_model_dir)!')
+    init_module.pfile = pfile
+    
     return [model_dir, init_module, model_dir+os.sep+init_name]
 
 def init_classes_eds2(inits):
@@ -125,14 +111,14 @@ def init_classes_eds2(inits):
         #copies all attributes, but might restrict to some only in the future
         setattr(net_class, k, inits.__dict__[k])
     net_class.list_unremovable = inits.list_unremovable
-    interaction = import_module(name_interaction)
-    pretty_graph2 = import_module(name_pretty_graph)
+    interaction = import_module(inits.pfile["interaction"])
+    pretty_graph2 = import_module(inits.pfile["pretty_graph"])
     return [net_class, pretty_graph2]
 
 def init_deriv2(inits, workplace_dir, prmt):
     """import module deriv2 and setup C files dictionary as per initialization & set workplace_dir
     """
-    deriv2 = import_module(name_deriv2)
+    deriv2 = import_module(inits.pfile["deriv2"])
     # Define default directory for cfile then overwrite with information from inits
     deriv2.cfile['header'] = os.path.join(ccode_dir,'integrator_header.h')
     deriv2.cfile['utilities'] = os.path.join(ccode_dir,'utilities.c')
