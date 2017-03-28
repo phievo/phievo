@@ -890,63 +890,6 @@ class Network(object):
         graph = pretty_graph(self,extended=extended)
         graph.draw(file,edgeLegend=edgeLegend)
 
-    def run_dynamics(self,project_dir,inits,trial=1,erase_buffer=True):
-        """ This function will call the C functions written for the evolution in order to generate a new dynamics.
-
-        Args:
-            file : None
-
-        Returns:
-            data (dict): One of the key returns the times steps and the others are the index of the corresponding run. A key corresponding to a run returns a other dictionnary where each key stands for a cell. The data stored for a run cell is the time time course of the species.
-        """
-        if project_dir[-1] != os.sep:
-            project_dir = project_dir + os.sep
-        workplace_dir = project_dir + "Workplace/"
-        working_dir = os.getcwd() + os.sep
-
-        cfile = inits.cfile
-        prmt = inits.prmt
-        prmt["ntries"] =trial
-        from importlib import import_module
-        deriv2 = import_module("phievo.Networks.deriv2")
-
-        here, this_filename = os.path.split(__file__)
-        here += "/"
-        # Define default directory for cfile then overwrite with information from inits
-        deriv2.cfile['header'] = here +  '../CCodes/integrator_header.h'
-        deriv2.cfile['utilities'] = here + '../CCodes/utilities.c'
-        deriv2.cfile['geometry'] = here + '../CCodes/linear_geometry.c'
-        deriv2.cfile['integrator'] = here + '../CCodes/euler_integrator.c'
-        deriv2.cfile['main'] = here + '../CCodes/main_general.c'
-
-        for k, v in cfile.items():
-            path = working_dir + v
-            if os.path.isfile(path):
-                deriv2.cfile[k] = path
-            else:
-                raise FileNotFoundError("ERROR to find the C code:\n{} doesn't match a file.".format(path))
-                sys.exit()
-
-        deriv2.workplace_dir = workplace_dir
-        if ('langevin_noise' in prmt):
-            if (prmt['langevin_noise'] > 0):
-                deriv2.noise_flag = 1
-        deriv2.compile_and_integrate(self,prmt,1000,True)
-
-        data = {"time":np.arange(0,prmt["dt"]*(prmt["nstep"]),prmt["dt"])}
-        N_species = len(self.list_types['Species'])
-        N_cell = prmt["ncelltot"]
-        for i in range(trial):
-            temp = np.genfromtxt('Buffer%d'%i, delimiter='\t')[::,1:]
-            data[i] = {cell:temp[::,cell:cell+N_species] for cell in range(N_cell)}
-            if erase_buffer:
-                os.system("rm Buffer%d"%i)
-            else:
-                os.system("mv Buffer%d %s"%(i,project_dir))
-
-
-        return data
-
     def store_to_pickle(self,filename):
         """Save the whole network in a pickle object named filename
 

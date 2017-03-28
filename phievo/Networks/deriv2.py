@@ -115,11 +115,14 @@ def degrad_deriv_inC(net):
     Return:
         str: a single string for all degradations in the network
     """
-    func = "\n/**************degradation rates*****************/\n"
-    for species in net.list_types['Degradable']:
-        rate = '{0}*{1}'.format(species.degradation,species.id)
-        func += compute_leap([species.id], [], rate)
-    return func
+    if 'Degradable' in net.list_types:
+        func = "\n/**************degradation rates*****************/\n"
+        for species in net.list_types['Degradable']:
+            rate = '{0}*{1}'.format(species.degradation,species.id)
+            func += compute_leap([species.id], [], rate)
+        return func
+    else:
+        return "\n"
 
 def write_deriv_inC(net,programm_file):
     """Write the integration equations in the C-file
