@@ -23,11 +23,13 @@ class Notebook(object):
             "project" : [],
             "seed" : [],
             "generation" : []
-        } ## List of cell objects to update when a key change changes
+        } ## List of cell objects to update when a key change changes. New dependencies
+        ## may be added with new functions.
         self.seed = None
         self.generation = None
         self.net = None
-
+        self.extra_variables = {} ## Allows to add new variables with a new cell
+        ## object
         self.select_project = Select_Project(self)
         self.select_seed = Select_Seed(self)
         self.plot_evolution_observable = Plot_Evolution_Observable(self)
@@ -200,10 +202,10 @@ class Run_Dynamics:
         self.button_launchRun = widgets.Button(description="Run dynamics",disabled=True)
         self.notebook.dependencies_dict["generation"].append(self)
         self.notebook.dependencies_dict["dynamics"] = []
-
+        self.notebook.extra_variables{"ntrials":None}
     def launch_dynamics(self,button):
         self.notebook.sim.run_dynamics(net=self.notebook.net,erase_buffer=False,trial=self.widget_nputs.value)
-
+        self.notebook.extra_variables{"ntrials":self.widget_nputs.value}
     def update(self):
         if self.notebook.generation is None:
             self.button_launchRun.disabled = True
@@ -224,8 +226,9 @@ class Plot_Dynamics:
         self.widget_selectCell = widgets.IntSlider(value = 0,min=0,max=0,description = 'Cell:',disabled=True)
 
     def update(self):
-        if self.notebook.sim.buffer_data is None:
+        if self.notebook.extra_variables.get("ntrials",None) is None:
             self.widget_Input.value=self.widget_Input.min=self.widget_Input.max = 0
             self.widget_selectCell.value=self.widget_selectCell.min=self.widget_selectCell.max = 0
         else:
-            NotImplemented
+            self.widget_Input.min=self.widget_Input.max = self.notebook.extra_variables["ntrials"]
+            

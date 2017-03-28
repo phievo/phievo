@@ -942,7 +942,7 @@ class Network(object):
             if erase_buffer:
                 os.remove("Buffer%d"%i)
             else:
-                os.rename("Buffer{0}".format(i),"{to},Buffer{index}".format(to=project_dir,index=i))
+                os.rename("Buffer{0}".format(i),os.path.join(project_dir,"Buffer{0}".format(i)))
 
         return data
 
