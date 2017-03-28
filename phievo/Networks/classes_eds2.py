@@ -940,10 +940,9 @@ class Network(object):
             temp = np.genfromtxt('Buffer%d'%i, delimiter='\t')[::,1:]
             data[i] = {cell:temp[::,cell:cell+N_species] for cell in range(N_cell)}
             if erase_buffer:
-                os.system("rm Buffer%d"%i)
+                os.remove("Buffer%d"%i)
             else:
-                os.system("mv Buffer%d %s"%(i,project_dir))
-
+                os.rename("Buffer{0}".format(i),"{to},Buffer{index}".format(to=project_dir,index=i))
 
         return data
 

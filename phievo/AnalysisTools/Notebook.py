@@ -19,18 +19,21 @@ class Notebook(object):
         self.sim = None
 
         self.project = None
-        self.depends_on_project = [] ## List of cell objects to update when project changes
+        self.dependencies_dict = {
+            "project" : [],
+            "seed" : [],
+            "generation" : []
+        } ## List of cell objects to update when a key change changes
         self.seed = None
-        self.depends_on_seed = [] ## List of cell objects to update when seed changes
         self.generation = None
-        self.depends_on_generation = [] ## List of cell objects to update when generation changes
+        self.net = None
 
         self.select_project = Select_Project(self)
         self.select_seed = Select_Seed(self)
         self.plot_evolution_observable = Plot_Evolution_Observable(self)
         self.select_generation = Select_Generation(self)
         self.plot_layout = Plot_Layout(self)
-
+        self.run_dynamics = Run_Dynamics(self)
 
 class Select_Project(object):
         def __init__(self,Notebook):
@@ -64,7 +67,7 @@ class Select_Project(object):
             self.notebook.project = self.widget_select_project.value
             self.widget_loadDir.button_style = "success"
             self.widget_loadDir.disabled=True
-            for cell in self.notebook.depends_on_project:
+            for cell in self.notebook.dependencies_dict["project"]:
                 cell.update()
 
         def display(self):
@@ -85,11 +88,11 @@ class Select_Seed:
     def __init__(self,Notebook):
         self.notebook = Notebook
         self.widget_select_seed = widgets.Dropdown(options={"None":None},value=None,description='Seed:',disabled=True)
-        self.notebook.depends_on_project.append(self)
+        self.notebook.dependencies_dict["project"].append(self)
 
     def read_seed(self,seed_name):
         self.notebook.seed =  seed_name
-        for cell in self.notebook.depends_on_seed:
+        for cell in self.notebook.dependencies_dict["seed"]:
             cell.update()
 
     def display(self):
@@ -115,7 +118,7 @@ class Plot_Evolution_Observable:
         self.widget_Xobs = widgets.Dropdown(options=[None],value=None,description='x-axis:',disabled=True)
         self.widget_Yobs = widgets.Dropdown(options=[None],value=None,description='y-axis:',disabled=True)
         self.widget_replot_observable = widgets.Button(description="Plot",disabled=True)
-        self.notebook.depends_on_seed.append(self)
+        self.notebook.dependencies_dict["seed"].append(self)
     def replot_observable(self,b):
         plt.close()
         clear_output()
@@ -142,12 +145,13 @@ class Plot_Evolution_Observable:
 class Select_Generation:
     def __init__(self,Notebook):
         self.notebook = Notebook
-        self.notebook.depends_on_seed.append(self)
+        self.notebook.dependencies_dict["seed"].append(self)
         self.widget_gen = widgets.IntSlider(value = 0,min=0,max=0,description = 'Gen:',disabled=True)
 
     def read_generation(self,gen_index):
         self.notebook.generation = gen_index
-        for cell in self.notebook.depends_on_generation:
+        self.notebook.net = self.notebook.sim.get_best_net(self.notebook.seed,self.notebook.generation)
+        for cell in self.notebook.dependencies_dict["generation"]:
             cell.update()
 
     def display(self):
@@ -159,7 +163,11 @@ class Select_Generation:
             self.widget_gen.value = 0
             self.widget_gen.min = self.widget_gen.max = 0
             self.widget_gen.min.disabled = True
+            self.notebook.generation = None
+            self.notebook.net = None
         else:
+            self.notebook.generation = None
+            self.notebook.net = None
             self.widget_gen.value = 0
             self.widget_gen.disabled = False
             self.widget_gen.max = len(self.notebook.sim.seeds[self.notebook.seed].generations)-1
@@ -167,14 +175,13 @@ class Select_Generation:
 class Plot_Layout:
     def __init__(self,Notebook):
         self.notebook = Notebook
-        self.notebook.depends_on_generation.append(self)
+        self.notebook.dependencies_dict["generation"].append(self)
         self.button_plotLayout = widgets.Button(description="Plot network layout",disabled=True)
 
     def plot_layout(self,button):
-        net = self.notebook.sim.get_best_net(self.notebook.seed,self.notebook.generation)
         plt.close()
         clear_output()
-        net.draw()
+        self.notebook.net.draw()
 
     def update(self):
         if self.notebook.generation is None:
@@ -185,3 +192,40 @@ class Plot_Layout:
     def display(self):
         self.button_plotLayout.on_click(self.plot_layout)
         display(self.button_plotLayout)
+
+class Run_Dynamics:
+    def __init__(self,Notebook):
+        self.notebook = Notebook
+        self.widget_nputs = widgets.IntText(value=1,description='N :',disabled=False)
+        self.button_launchRun = widgets.Button(description="Run dynamics",disabled=True)
+        self.notebook.dependencies_dict["generation"].append(self)
+        self.notebook.dependencies_dict["dynamics"] = []
+
+    def launch_dynamics(self,button):
+        self.notebook.sim.run_dynamics(net=self.notebook.net,erase_buffer=False,trial=self.widget_nputs.value)
+
+    def update(self):
+        if self.notebook.generation is None:
+            self.button_launchRun.disabled = True
+            self.notebook.sim.buffer_data = None
+        else:
+            self.notebook.sim.buffer_data = None
+            self.button_launchRun.disabled = False
+
+    def display(self):
+        self.button_launchRun.on_click(self.launch_dynamics)
+        display(widgets.HBox([self.widget_nputs,self.button_launchRun]))
+
+class Plot_Dynamics:
+    def __init__(self,Notebook):
+        self.notebook = Notebook
+        self.notebook.dependencies_dict["dynamics"].append(self)
+        self.widget_selectInput = widgets.IntSlider(value = 0,min=0,max=0,description = 'Input:',disabled=True)
+        self.widget_selectCell = widgets.IntSlider(value = 0,min=0,max=0,description = 'Cell:',disabled=True)
+
+    def update(self):
+        if self.notebook.sim.buffer_data is None:
+            self.widget_Input.value=self.widget_Input.min=self.widget_Input.max = 0
+            self.widget_selectCell.value=self.widget_selectCell.min=self.widget_selectCell.max = 0
+        else:
+            NotImplemented
