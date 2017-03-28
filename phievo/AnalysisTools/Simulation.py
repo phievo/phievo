@@ -250,7 +250,6 @@ class Seed_Pareto(Seed):
         with shelve.open(restart_path) as data:
             self.restart_generations = sorted([int(xx) for xx in data.dict.keys()])
 
-
     def show_fitness(self,smoothen=0,index=None):
         """Plot the fitness as a function of time
 
@@ -295,10 +294,18 @@ class Seed_Pareto(Seed):
            dict: rank -> [[fitness1],[fitness2],…]
         """
         restart_path = self.root + "Restart_file"
+        if generation not in self.restart_generations:
+            limit_print = 30
+            print("Generation {0} is not saved in the  restart file.".format(generation))
+            print("Please choose among the following generations:")
+            if len(self.restart_generations)<limit_print:
+                print(", ".join([str(x) for x in self.restart_generations[:limit_print]]))
+            else:
+                print(", ".join([str(x) for x in self.restart_generations[:limit_print]])+", ...")
+            return None
         with shelve.open(restart_path) as data:
             dummy,pop_list = data[str(generation)]
         fitness_dico = {}
-
         fitnesses = self.get_observable("fitness")
         for ind in pop_list:
             try:
