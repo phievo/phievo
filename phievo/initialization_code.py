@@ -118,13 +118,14 @@ def init_classes_eds2(inits):
 def init_deriv2(inits, workplace_dir, prmt):
     """import module deriv2 and setup C files dictionary as per initialization & set workplace_dir
     """
-    deriv2 = import_module(inits.pfile["deriv2"])
+    deriv2 = import_module('phievo.Networks.deriv2')
     # Define default directory for cfile then overwrite with information from inits
     deriv2.cfile['header'] = os.path.join(ccode_dir,'integrator_header.h')
     deriv2.cfile['utilities'] = os.path.join(ccode_dir,'utilities.c')
     deriv2.cfile['geometry'] = os.path.join(ccode_dir,'linear_geometry.c')
     deriv2.cfile['integrator'] = os.path.join(ccode_dir,'euler_integrator.c')
     deriv2.cfile['main'] = os.path.join(ccode_dir,'main_general.c')
+
     for k, v in inits.cfile.items():
         path = os.path.join(python_path,v)
 
@@ -132,12 +133,15 @@ def init_deriv2(inits, workplace_dir, prmt):
             deriv2.cfile[k] = path
         else:
             raise FileNotFoundError("ERROR to find the C code:\n{} doesn't match a file.".format(path))
-
-
     deriv2.workplace_dir = workplace_dir
     if ('langevin_noise' in prmt):
         if (prmt['langevin_noise'] > 0):
             deriv2.noise_flag = 1
+
+    if inits.pfile["deriv2"] and inits.pfile["deriv2"] != "phievo.Networks.deriv2":
+        mod_deriv2 = import_module(inits.pfile["deriv2"])
+        deriv2 = mod_deriv2.modifier(deriv2)
+    
     return deriv2
 
 def get_network_from_test(test_py, classes_eds2):

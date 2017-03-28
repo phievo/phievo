@@ -21,7 +21,6 @@ import collections
 from math import log,exp
 from . import classes_eds2
 from .deriv2 import compile_and_integrate
-from phievo.initialization_code import multiple_phospho
 """
     The dictionary_mutation[] has ; mutation will exec the key.
 
@@ -106,7 +105,7 @@ def sample_dictionary_ranges(key,random_generator):
     else:
         return dice
 
-def random_parameters(Type,random_generator):
+def random_parameters(Type,random_generator,multiple_phospho=True):
     """Create a set of new random parameters for a Species instance of type Type
 
     This used only for initialization and adds attributes to various types.

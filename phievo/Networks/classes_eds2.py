@@ -890,6 +890,7 @@ class Network(object):
         graph = pretty_graph(self,extended=extended)
         graph.draw(file,edgeLegend=edgeLegend)
 
+<<<<<<< HEAD
     def run_dynamics(self,project_dir,inits,trial=1,erase_buffer=True):
         """ This function will call the C functions written for the evolution in order to generate a new dynamics.
 
@@ -946,6 +947,8 @@ class Network(object):
 
         return data
 
+=======
+>>>>>>> deriv2_clean
     def store_to_pickle(self,filename):
         """Save the whole network in a pickle object named filename
 

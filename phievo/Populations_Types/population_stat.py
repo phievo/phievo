@@ -101,14 +101,13 @@ def isdifferent(a, b, abs_err, rel_err):
     try: #handle the case where a and b are lists
         if type(a) is list: a = sum(a)
         if type(b) is list: b = sum(b)
+        if(abs(a - b) > abs_err + rel_err*(abs(a) + abs(b))/2 ):
+            return True
+        else:
+            return False
     except TypeError:
         return False
     
-    if(abs(a - b) > abs_err + rel_err*(abs(a) + abs(b))/2 ):
-        return True
-    else:
-        return False
-
 class GenusStat(object):
     """Compute statistic about a population of evolving networks
     

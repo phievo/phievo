@@ -49,6 +49,7 @@ cfile['fitness'] = 'lac_operon/fitness.c'
 cfile['init_history'] = 'lac_operon/init_history.c'
 cfile['input'] =  'lac_operon/input.c'
 
+pfile = {}
 ####################################
 ### Mutation rates for evolution ###
 ####################################
@@ -171,7 +172,7 @@ from phievo.Networks import mutation
 # Two optional functions to add input species or output genes, with IO index starting from 0.
 # Will overwrite default variants in evol_gillespie if supplied below
 
-def init_network(mutation):
+def init_network():
    seed=int(random.random()*100000)
    g=random.Random(seed)
    L=mutation.Mutable_Network(g)

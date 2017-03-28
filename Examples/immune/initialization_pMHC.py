@@ -58,7 +58,14 @@ cfile['geometry'] = 'immune/linear_geometry.c'
 cfile['init_history'] = 'immune/init_history_pMHC.c'
 cfile['integrator'] = 'immune/integrator_pMHC_improved.c'
 cfile['main'] = 'immune/main_pMHC.c'
-cfile['input'] =  'immune/input.c' #this one was commented : 'immune/input_adaptation1.c'
+cfile['input'] =  'immune/input.c'
+# this one was commented : 'immune/input_adaptation1.c'
+
+pfile = {}
+pfile["deriv2"] = "immune.Immune.deriv2_pMHC_modifier"
+pfile["interaction"] = "immune.Immune.interaction_pMHC"
+pfile["pretty_graph"] = "immune.Immune.pretty_graph_2_pMHC"
+pfile["plotdata"] = "immune.Immune.plotdata_pMHC"
 
 #################################################################################
 
