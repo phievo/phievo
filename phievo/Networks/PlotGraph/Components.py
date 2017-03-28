@@ -23,27 +23,27 @@ class Interaction:
         Returns:
             :class:`Networks.PlotGraph.Components.Interaction`:Reference to the interaction
         """
-        
+
         self.node1 = min(node1,node2)
         self.node2 = max(node1,node2)
         self.isAuto = (node1==node2)
         self.edges = {}
         self.numberEdges = 0
         self.receiveEdge = 0
-        
+
     def add_edge(self,edge):
         """Add an edge to an the existing interaction
-        
+
         Args:
             edge (Edge): edge to be added to the list of edge references
         Returns:
             None
         """
-        
+
         self.edges[self.numberEdges] = edge
         edge.interaction = self
         self.numberEdges += 1
-        
+
     def get_patches(self,offsets=(0,0)):
         """Run through the interactions edges to create a Matplotlib patch for each of them
 
@@ -51,27 +51,27 @@ class Interaction:
             offsets (float,float): Size 2 tuple containing the offset to leave between the edges an the node1 and node2.
 
         Returns:
-            [Matplotlib.Patches]: list of Matplotlib patches       
+            [Matplotlib.Patches]: list of Matplotlib patches
         """
-        
+
         patches = []
         new_iter = sorted(self.edges.items(), key=lambda a: 1-a[1].receiveEdge)
-        
-        for i,edge in new_iter:            
+
+        for i,edge in new_iter:
             if self.isAuto:
                 ## Distribute the arrows symmetrically about the node1-node2 axis
                 if self.node1==2:
                     patches.append(edge.get_autoPatch(offsets=offsets,num=i))
                 else:
                     patches.append(edge.get_autoPatch(offsets=offsets,num=i))
-            else:            
+            else:
                 ## Distribute the arrows symmetrically about the node1-node2 axis
                 angle = ((1-self.numberEdges)*0.5 + i)*0.4
                 if edge.nodeFrom.index==self.node2:
                     angle*=-1
-                patches.append(edge.get_patch(offsets=offsets,angle=angle))        
+                patches.append(edge.get_patch(offsets=offsets,angle=angle))
         return patches
-        
+
 class Edge:
     """ Directed graph edge between two nodes.
     """
@@ -82,7 +82,7 @@ class Edge:
             nodeFrom (:class:`Networks.PlotGraph.Components.Node`): Node at which the edge starts
             nodeTo (:class:`Networks.PlotGraph.Components.Node`): Node at which the edge ends
             label (string): Edge label
-        """        
+        """
         self.nodeFrom = nodeFrom
         self.nodeTo = nodeTo
         self.label = label
@@ -93,12 +93,12 @@ class Edge:
         self.angles = []
         self.receiveEdge = 0
         self.interaction = None
-        
+
     def radius(self,theta):
         return 0
     def record_angle(self,angle):
         self.angles.append(angle)
-  
+
     def get_vector(self,offsets=(0,0),angle=0):
         """ Generate a starting and ending point of the edge's arrow that accomodates the desired space and between the arrow and the nodes given the node shapes.
 
@@ -109,7 +109,7 @@ class Edge:
             (tuple): tuple containing:
                 - start (numpy.array): Start of the arrow
                 - end (numpy.array): End of the arrow
-        """      
+        """
 
         direction =   np.array(self.nodeTo.center) - np.array(self.nodeFrom.center)
         L = np.linalg.norm(direction)
@@ -121,9 +121,9 @@ class Edge:
             directionTo = direction - dvec
         else:
             directionTo = directionFrom = direction
-        
+
         thetaFrom = np.angle(directionFrom[0] + directionFrom[1]*1j,deg=False)
-        thetaTo = np.angle(-directionTo[0] - directionTo[1]*1j, deg=False)        
+        thetaTo = np.angle(-directionTo[0] - directionTo[1]*1j, deg=False)
         start = np.array(self.nodeFrom.center) + (offsets[0]+self.nodeFrom.radius(thetaFrom))*directionFrom
         end = np.array(self.nodeTo.center) - (offsets[1]+self.nodeTo.radius(thetaTo))*directionTo
         self.nodeFrom.record_angle(thetaFrom)
@@ -134,7 +134,7 @@ class Edge:
             self.angle = -np.angle(direction[0] + direction[1]*1j,deg=False)
         self.set_center(self.compute_center(start,end,-angle))
         return start,end
-    
+
     def get_vector_auto(self,offsets=(0,0),num=0):
         """ Generate a starting and ending point of the edge's arrow that accomodates the desired space and between the arrow and the node given the node shapes. This is an implementation of get_vector for a edge that start and ends at the same edge.
 
@@ -151,10 +151,10 @@ class Edge:
         freeAngle = node.find_freeAngle()
         thetaFrom = freeAngle-angle
         thetaTo = freeAngle+angle
-        
+
         start = node.center + node.radius(thetaFrom)*np.array([cos(thetaFrom),sin(thetaFrom)])
         end = node.center + node.radius(thetaTo)*np.array([cos(thetaTo),sin(thetaTo)])
-        
+
         direct = end-start
         ortho = np.array([direct[1],-direct[0]])
 
@@ -164,10 +164,10 @@ class Edge:
         scalling = 1+1
 
         P1 = start + L*ortho - l*direct
-        P2 = end + L*ortho + l*direct                
+        P2 = end + L*ortho + l*direct
         return start,P1,P2,end
-    
-    def set_center(self,center):        
+
+    def set_center(self,center):
         self.center = center
     def compute_center(self,A,B,angle):
         M = (A+B)/2
@@ -181,7 +181,7 @@ class Edge:
         self.receiveEdge = 1
         if self.interaction:
             self.interaction.receiveEdge = 1
-        
+
 class Arrow(Edge):
     """ The class arrow is inherited from :class:`Networks.PlotGraph.Components.Edge`. It adds extra fonctionalities to generate Matplolib patches.
     """
@@ -197,7 +197,7 @@ class Arrow(Edge):
 
     def get_patch(self,offsets=(0,0),angle=0.2):
         """ Generates a matplotlib patch for the arrow between two nodes. It takes into account the offset to keep between the ends of the arrow and the nodes given the node shapes.
-        
+
         Args:
             offsets (float,float): offset between node1 and the start of the arrow and offset between node2 and the end of the arrow
         Returns:
@@ -205,33 +205,32 @@ class Arrow(Edge):
         """
         start,end = self.get_vector(offsets,angle)
         return {"pos":self.center,"text":self.label},patches.FancyArrowPatch(start,end,mutation_scale=20,shrinkA=0,shrinkB=0,connectionstyle='arc3, rad=%f'%-angle,**self.plot_parameters)
-        
+
     def get_autoPatch(self,offsets=(0,0),num=0):
         """ Generates a matplotlib patch for the arrow between two nodes. It takes into account the offset to keep between the ends of the arrow and the node given the node shape. This is an implementation of get_vector for a edge that start and ends at the same node.
-        
+
         Args:
             offsets (float,float): offset between node and the start of the arrow and offset between node and the end of the arrow
         Returns:
             Matplotlib.Patches
-        """        
+        """
         start,P1,P2,end = self.get_vector_auto(offsets,num)
-        
+
         verts = [start,P1,P2,end]
         codes = [Path.MOVETO,Path.CURVE4,Path.CURVE4,Path.CURVE4,]
         path = Path(verts, codes)
-        
+
         param = dict(**self.plot_parameters)
-        arrowstyle = param.pop('arrowstyle')
+        #arrowstyle = param.pop('arrowstyle')
+        return {"pos":self.center,"text":self.label} , patches.FancyArrowPatch(path=path,mutation_scale=20,**param)
 
-        return {"pos":self.center,"text":self.label} , patches.FancyArrowPatch(path=path,mutation_scale=20,arrowstyle="-|>",**param)
 
-    
 class Line(Edge):
     def __init__(self,**kwargs):
         super(Arrow, self).__init__( **kwargs)
-    
-        
-## Register "-|" as a new arrow style.        
+
+
+## Register "-|" as a new arrow style.
 class BarB(patches.ArrowStyle._Bracket):
     """
     An arrow with a bar(|) at the B end. The class is added to matplotlib to allow "-\|" style of arrow.
@@ -247,7 +246,7 @@ class BarB(patches.ArrowStyle._Bracket):
         """
 
         super(BarB, self).__init__(None, True,widthB=widthB, lengthB=0, angleB=angleB)
-        
+
 patch = patches.ArrowStyle.register("-|",BarB)
 
 
@@ -260,7 +259,7 @@ class Node:
     def __init__(self,label,size,*args, **kwargs):
         """
         Initialisation of the node.
-        
+
         Args:
             label (str): Label of the node. It identifies the node in the graph. It also severs as the node label when the graph is plotted.
             size (float): Relative node area as compare to the default area.
@@ -269,15 +268,15 @@ class Node:
             :class:`Networks.PlotGraph.Components.Node`: Reference the the newly created node
         """
         self.label = label
-        self.size = size        
+        self.size = size
         self.plot_parameters = dict(kwargs)
         self.center = (0,0)
         self.index = None
         self.angles = [] ## To store the angle of the edges in order to optipistion auto-interaction positioning.
-        
+
     def set_center(self,pos):
         """ Set the coordinates of the node's center.
-        
+
         Args:
             pos ( list(float) ): Coordinates of the node's center
 
@@ -285,7 +284,7 @@ class Node:
             None
         """
         self.center = tuple(pos)
-        
+
     def record_angle(self,angle):
         """
         Every point on boundary of the Node is refered to by an angle. This function records the postition each time a new edge is drawn. The list of angle is used to choose the optimal position where to add looping edges.
@@ -296,7 +295,7 @@ class Node:
             None
         """
         self.angles.append(angle)
-        
+
     def find_freeAngle(self):
         """
         Searches for the best position where to add a new edge to the node. It is used only for looping edges. It tries to increase the angle between the new angle and the already plotted edges.
@@ -306,7 +305,7 @@ class Node:
         Returns:
             float: the function returns the optimal angle
         """
-        
+
         angles = np.sort(self.angles)
         if len(angles) == 0:
             return pi/2
@@ -320,11 +319,11 @@ class Node:
             return freeAngle
     def plot_label(self):
         """
-        Write the node label on the plot a the node's center.        
+        Write the node label on the plot a the node's center.
         """
         plt.text(x=self.center[0],y=self.center[1],s=self.label,verticalalignment='center', horizontalalignment='center',size="large")
-    
-        
+
+
 class Circle(Node):
     """
     Circle is inherited from :class:`Networks.PlotGraph.Components.Node` and represents a node with a circular shape (⬤).
@@ -335,12 +334,12 @@ class Circle(Node):
         """
         super(Circle, self).__init__(*args, **kwargs)
         self.R = sqrt(self.size/pi)
-        
+
     def radius(self,theta):
-        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.     
-        
+        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.
+
         .. math::
-            \\theta \\rightarrow R 
+            \\theta \\rightarrow R
 
         Args:
             theta (float): Angle a which to compute the distance between the center and the boundary.
@@ -352,27 +351,27 @@ class Circle(Node):
     def get_patch(self):
         """
         Draw of a matplotlib patch to be added to the graph plot.
-        
+
         Returns:
             Matplotlib.Patch
         """
         circle = patches.Circle(self.center,self.R,**self.plot_parameters)
-        return circle    
+        return circle
 
-                  
+
 class HouseUp(Node):
     """
     :class:`Networks.PlotGraph.Components.Node` with a pentagon shape (⬟)
     """
 
     def __init__(self, *args, **kwargs):
-        """ See Node. 
+        """ See Node.
         """
         super(HouseUp, self).__init__(*args, **kwargs)
         self.R = sqrt(self.size/(0.5*5*sin(2*pi/5))) ## Default area of 1
     def radius(self,theta):
-        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.     
-        
+        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.
+
         .. math::
             \\theta \\rightarrow R \\times \\frac{\\cos \\pi/5}{\\cos((5\\theta + 3\\pi/2)\\%(2pi)/5  - \\pi/5)}
 
@@ -386,7 +385,7 @@ class HouseUp(Node):
     def get_patch(self):
         """
         Draw of a matplotlib patch to be added to the graph plot.
-        
+
         Returns:
             Matplotlib.Patch
         """
@@ -396,20 +395,20 @@ class HouseUp(Node):
         polygon = patches.Polygon(points,closed=True,**self.plot_parameters)
         return(polygon)
 
-        
+
 
 class HouseDown(Node):
     """
     :class:`Networks.PlotGraph.Components.Node` with a pentagon shape (⯂).
     """
     def __init__(self, *args, **kwargs):
-        """ See Node. 
+        """ See Node.
         """
         super(HouseDown, self).__init__(*args, **kwargs)
         self.R = sqrt(self.size/(0.5*5*sin(2*pi/5))) ## Default area of 1
     def radius(self,theta):
-        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.     
-        
+        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.
+
         .. math::
             \\theta \\rightarrow R \\times \\frac{\\cos \\pi/5}{\\cos((5\\theta - 3\\pi/2)\\%(2pi)/5  - \\pi/5)}
 
@@ -423,7 +422,7 @@ class HouseDown(Node):
     def get_patch(self):
         """
         Draw of a matplotlib patch to be added to the graph plot.
-        
+
         Returns:
             Matplotlib.Patch
         """
@@ -442,8 +441,8 @@ class TriangleUp(Node):
         super(TriangleUp, self).__init__(*args, **kwargs)
         self.R = sqrt(self.size/(0.5*3*sin(2*pi/3))) ## Default area of 1
     def radius(self,theta):
-        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.     
-        
+        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.
+
         .. math::
             \\theta \\rightarrow R \\times \\frac{\\cos \\pi/3}{\\cos((3\\theta - 3\\pi/2)\\%(2pi)/3  - \\pi/3)}
 
@@ -457,7 +456,7 @@ class TriangleUp(Node):
     def get_patch(self):
         """
         Draw of a matplotlib patch to be added to the graph plot.
-        
+
         Returns:
             Matplotlib.Patch
         """
@@ -476,10 +475,10 @@ class TriangleDown(Node):
         """
         super(TriangleDown, self).__init__(*args, **kwargs)
         self.R = sqrt(self.size/(0.5*3*sin(2*pi/3))) ## Default area of 1
-        
+
     def radius(self,theta):
-        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.     
-        
+        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.
+
         .. math::
             \\theta \\rightarrow R \\times \\frac{\\cos \\pi/3}{\\cos((3\\theta + 3\\pi/2)\\%(2pi)/3  - \\pi/3)}
 
@@ -493,7 +492,7 @@ class TriangleDown(Node):
     def get_patch(self):
         """
         Draw of a matplotlib patch to be added to the graph plot.
-        
+
         Returns:
             Matplotlib.Patch
         """
@@ -512,10 +511,10 @@ class Square(Node):
         """
         super(Square, self).__init__(*args, **kwargs)
         self.R = sqrt(self.size/(0.5*4*sin(2*pi/4))) ## Default area of 1
-        
+
     def radius(self,theta):
-        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.     
-        
+        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.
+
         .. math::
             \\theta \\rightarrow R \\times \\frac{\\cos \\pi/4}{\\cos((4\\theta + 2\\pi/2)\\%(2pi)/4  - \\pi/4)}
 
@@ -529,7 +528,7 @@ class Square(Node):
     def get_patch(self):
         """
         Draw of a matplotlib patch to be added to the graph plot.
-        
+
         Returns:
             Matplotlib.Patch
         """
@@ -538,7 +537,7 @@ class Square(Node):
         points = [[xx[i],yy[i]] for i in range(4)]
         polygon = patches.Polygon(points,closed=True,**self.plot_parameters)
         return(polygon)
-    
+
 class RoundedRectangle(Node):
     """
     :class:`Networks.PlotGraph.Components.Node` with a RoundedRectangle shape (▢).
@@ -561,41 +560,40 @@ class RoundedRectangle(Node):
         self.theta_bound = [theta1,theta2,pi- theta2,pi-theta1,pi+theta1,pi+theta2,2*pi-theta2, 2*pi-theta1]
         self.angle_radius = lambda alpha: np.linalg.norm(vecToAngle + rad*np.array([cos(alpha),sin(alpha)]))
     def radius(self,theta):
-        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.     
+        """ Every point on the node's boundary is refered to by an angle in rad. Given the shape of the node, compute the radius  of the boundary for a angle.
 
         Args:
             theta (float): Angle a which to compute the distance between the center and the boundary.
         Returns:
             float: corresponding to the radius.
         """
-        theta = theta%(2*pi)       
+        theta = theta%(2*pi)
         if self.theta_bound[0] <= theta <= self.theta_bound[1]:
             alpha = pi/2*(theta-self.theta_bound[0])/(self.theta_bound[1] - self.theta_bound[0])
             r = self.angle_radius(alpha)
         elif self.theta_bound[2] <= theta <= self.theta_bound[3]:
             alpha = pi/2 - pi/2*(theta-self.theta_bound[2])/(self.theta_bound[3] - self.theta_bound[2])
-            
+
             r = self.angle_radius(alpha)
         elif self.theta_bound[4] <= theta <= self.theta_bound[5]:
             alpha = pi/2*(theta-self.theta_bound[4])/(self.theta_bound[5] - self.theta_bound[4])
             r = self.angle_radius(alpha)
-        elif self.theta_bound[6] <= theta <= self.theta_bound[7]: 
+        elif self.theta_bound[6] <= theta <= self.theta_bound[7]:
             alpha = pi/2 - pi/2*(theta-self.theta_bound[6])/(self.theta_bound[7] - self.theta_bound[6])
             r = self.angle_radius(alpha)
         elif 0<=theta<self.theta_bound[0] or self.theta_bound[3]<theta<self.theta_bound[4] or self.theta_bound[7]<theta<2*pi:
-            
+
             r = (self.a+self.rad)/abs(cos(theta))
         else:
             r = (self.b+self.rad)/abs(sin(theta))
-            
+
         return r
     def get_patch(self):
         """
         Draw of a matplotlib patch to be added to the graph plot.
-        
+
         Returns:
             Matplotlib.Patch
-        """               
+        """
         rect = patches.FancyBboxPatch(self.center-np.array([self.a,self.b]),2*self.a,2*self.b,boxstyle='round, pad=%f'%self.rad,**self.plot_parameters)
         return(rect)
-

@@ -36,6 +36,8 @@ class Notebook(object):
         self.select_generation = Select_Generation(self)
         self.plot_layout = Plot_Layout(self)
         self.run_dynamics = Run_Dynamics(self)
+        self.plot_dynamics = Plot_Dynamics(self)
+        self.plot_cell_profile = Plot_Cell_Profile(self)
 
 class Select_Project(object):
         def __init__(self,Notebook):
@@ -202,15 +204,19 @@ class Run_Dynamics:
         self.button_launchRun = widgets.Button(description="Run dynamics",disabled=True)
         self.notebook.dependencies_dict["generation"].append(self)
         self.notebook.dependencies_dict["dynamics"] = []
-        self.notebook.extra_variables{"ntrials":None}
+        self.notebook.extra_variables = {"ntries":None}
     def launch_dynamics(self,button):
         self.notebook.sim.run_dynamics(net=self.notebook.net,erase_buffer=False,trial=self.widget_nputs.value)
-        self.notebook.extra_variables{"ntrials":self.widget_nputs.value}
+        self.notebook.extra_variables["ntries"] = self.widget_nputs.value
+        for cell in self.notebook.dependencies_dict["dynamics"]:
+            cell.update()
     def update(self):
         if self.notebook.generation is None:
             self.button_launchRun.disabled = True
             self.notebook.sim.buffer_data = None
+            self.notebook.extra_variables["ntries"] = None
         else:
+            self.notebook.extra_variables["ntries"] = None
             self.notebook.sim.buffer_data = None
             self.button_launchRun.disabled = False
 
@@ -222,13 +228,56 @@ class Plot_Dynamics:
     def __init__(self,Notebook):
         self.notebook = Notebook
         self.notebook.dependencies_dict["dynamics"].append(self)
+        self.notebook.dependencies_dict["generation"].append(self)
         self.widget_selectInput = widgets.IntSlider(value = 0,min=0,max=0,description = 'Input:',disabled=True)
         self.widget_selectCell = widgets.IntSlider(value = 0,min=0,max=0,description = 'Cell:',disabled=True)
+        self.button_plotdynamics = widgets.Button(description="Plot dynamics",disabled=True)
+
+    def plot_dynamics(self,button):
+        plt.close()
+        clear_output()
+        self.notebook.sim.Plot_Data(self.widget_selectInput.value,cell=self.widget_selectCell.value)
 
     def update(self):
-        if self.notebook.extra_variables.get("ntrials",None) is None:
-            self.widget_Input.value=self.widget_Input.min=self.widget_Input.max = 0
+        if self.notebook.extra_variables.get("ntries",None) is None or self.notebook.generation is None:
+            self.widget_selectInput.value=self.widget_selectInput.min=self.widget_selectInput.max = 0
             self.widget_selectCell.value=self.widget_selectCell.min=self.widget_selectCell.max = 0
+            self.button_plotdynamics.disabled = True
         else:
-            self.widget_Input.min=self.widget_Input.max = self.notebook.extra_variables["ntrials"]
-            
+            self.widget_selectInput.max = self.notebook.extra_variables["ntries"]-1
+            self.widget_selectCell.max = self.notebook.sim.inits.prmt["ncelltot"]-1
+            self.widget_selectInput.disabled = self.widget_selectCell.disabled = False
+            self.button_plotdynamics.disabled = False
+
+    def display(self):
+        self.button_plotdynamics.on_click(self.plot_dynamics)
+        display(widgets.HBox([self.widget_selectInput,self.widget_selectCell,self.button_plotdynamics]))
+
+class Plot_Cell_Profile:
+    def __init__(self,Notebook):
+        self.notebook = Notebook
+        self.notebook.dependencies_dict["dynamics"].append(self)
+        self.notebook.dependencies_dict["generation"].append(self)
+        self.widget_selectInput = widgets.IntSlider(value = 0,min=0,max=0,description = 'Input:',disabled=True)
+        self.widget_selectTime = widgets.IntSlider(value = 0,min=0,max=0,description = 'Time:',disabled=True)
+        self.button_plotdynamics = widgets.Button(description="Plot dynamics",disabled=True)
+
+    def plot_dynamics(self,button):
+        plt.close()
+        clear_output()
+        self.notebook.sim.Plot_Profile(trial_index=self.widget_selectInput.value,time=self.widget_selectTime.value)
+
+    def update(self):
+        if self.notebook.extra_variables.get("ntries",None) is None or self.notebook.generation is None:
+            self.widget_selectInput.value=self.widget_selectInput.min=self.widget_selectInput.max = 0
+            self.widget_selectTime.value=self.widget_selectTime.min=self.widget_selectTime.max = 0
+            self.button_plotdynamics.disabled = True
+        else:
+            self.widget_selectInput.max = self.notebook.extra_variables["ntries"]-1
+            self.widget_selectTime.max = self.notebook.sim.inits.prmt["nstep"]-1
+            self.widget_selectInput.disabled = self.widget_selectTime.disabled = False
+            self.button_plotdynamics.disabled = False
+
+    def display(self):
+        self.button_plotdynamics.on_click(self.plot_dynamics)
+        display(widgets.HBox([self.widget_selectInput,self.widget_selectTime,self.button_plotdynamics]))

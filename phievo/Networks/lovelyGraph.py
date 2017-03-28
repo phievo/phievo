@@ -22,7 +22,7 @@ global_node_attribute['Binding']= {'marker':"RoundedRectangle","facecolor":"#E5E
 global_node_attribute['Default'] = {'marker':"Circle","color":"#808080"}
 
 for tt in global_node_attribute.keys():
-        global_node_attribute[tt].setdefault("size",1)        
+        global_node_attribute[tt].setdefault("size",1)
         global_node_attribute[tt].setdefault("lw",0)
 
 
@@ -36,7 +36,7 @@ global_edge_attribute['PPI']={"linewidth":2,"color":'#666666',"arrowstyle":"->"}
 global_edge_attribute['Binding']={"linewidth":3,"color":'#000000',"arrowstyle":"->"}
 global_edge_attribute['Phospho']={"linewidth":2,"color":'#000000',"arrowstyle":"->"}
 
-def short_label(species):   
+def short_label(species):
         label = ' '
         for k in species.types:
             if k == 'Output':
@@ -48,9 +48,9 @@ def short_label(species):
             else:
                 pass
         return label
-    
+
 def gettype(node,type_list):
-        
+
     for tt in type_list:
         if tt in node.types:
             return tt
@@ -77,8 +77,8 @@ def produce_Phospho_name(node_reac,cat=False):
 
 
 def pretty_graph(net,extended=True):
-        """ 
-        
+        """
+
         """
         net.__build_list_types__()
         size=len(net.list_types['Species'])
@@ -87,7 +87,7 @@ def pretty_graph(net,extended=True):
         # create pydot nodes for all species nodes in net and store in dictionary
         map_species = {}
 
-        ## Add the nodes to the graph            
+        ## Add the nodes to the graph
         for nn in net.list_types['Node']:
                 if not nn.isinstance('Species'):
                         continue
@@ -103,7 +103,7 @@ def pretty_graph(net,extended=True):
                         succ = net.graph.successors(net.graph.successors(nn)[0])[0]
                         succ_name = produce_species_name(succ)
                         if extended:
-                                ## include TModule to the graph                                
+                                ## include TModule to the graph
                                 post_species = nn
                                 post_name = produce_TModule_name(nn)
                                 graph.add_node(post_name,**global_node_attribute['TModule'])
@@ -129,12 +129,12 @@ def pretty_graph(net,extended=True):
                                         param = dict(**global_edge_attribute['Default'])
                                         param["label"] = produce_TFHill_name(pre)
                                         ee = graph.add_edge(pre_name,post_name,**param)
-                                
+
 
                 elif isinstance(nn,Interaction):
                         if isinstance(nn, TFHill) or isinstance(nn, CorePromoter):
                                 continue
-                        
+
                         elif isinstance(nn,Phosphorylation):
                                 namePhospho = nn.label
                                 [catalyst,listIn,listOut]=net.catal_data(nn)
@@ -145,7 +145,7 @@ def pretty_graph(net,extended=True):
 
                                 param["label"] = produce_Phospho_name(nn,cat=True)
                                 graph.add_edge(produce_species_name(catalyst),produce_Phospho_name(nn),**param)
-                        
+
                         elif isinstance(nn,PPI):
                                 namePPI = produce_PPI_name(nn)
                                 PPI_components = net.graph.predecessors(nn)
@@ -154,17 +154,17 @@ def pretty_graph(net,extended=True):
                                 param = dict(**global_edge_attribute['PPI'])
                                 param["label"] = produce_PPI_name(nn)
                                 graph.add_edge(namePPI,produce_species_name(PPI_complex),**param)
-                                for compo in PPI_components:                                        
+                                for compo in PPI_components:
                                         param["label"] = ""
                                         param["arrowstyle"]="-"
                                         graph.add_edge(produce_species_name(compo),namePPI,**param)
-                        
+
                         elif isinstance(nn,Degradation):
                                 nameDegrad = produce_Degradation_name(nn)
                                 shreder = net.graph.predecessors(nn)[0]
                                 degraded = net.graph.successors(nn)[0]
                                 graph.add_edge(produce_species_name(shreder),produce_species_name(degraded), label=nameDegrad,**global_edge_attribute["Degradation"])
-                        
+
                         elif nn.label == "Simple_Phosphorylation":
                                 namePhospho = nn.label
                                 [catalyst,listIn,listOut]=net.catal_data(nn)
@@ -175,7 +175,7 @@ def pretty_graph(net,extended=True):
                                 param["arrowstyle"] = "-|>"
                                 param["label"] = produce_Phospho_name(nn,cat=True)
                                 graph.add_edge(produce_species_name(catalyst),produce_Phospho_name(nn),**param)
-                        
+
                         elif nn.label == "Simple_Dephosphorylation":
                                 namePhospho = nn.label
                                 [catalyst,listIn,listOut]=net.catal_data(nn)
@@ -186,7 +186,7 @@ def pretty_graph(net,extended=True):
                                 param["arrowstyle"] = "-|>"
                                 param["label"] = produce_Phospho_name(nn,cat=True)
                                 graph.add_edge(produce_species_name(catalyst),produce_Phospho_name(nn),**param)
-                        
+
                         elif nn.label == "KPR_Binding":
                                 binding_name = 'LR'
                                 binding_components = net.graph.predecessors(nn)
@@ -195,11 +195,11 @@ def pretty_graph(net,extended=True):
                                 param = dict(**global_edge_attribute['Binding'])
                                 param["label"] = binding_name
                                 graph.add_edge(binding_name,produce_species_name(binding_complex),**param)
-                                for compo in binding_components:                                        
+                                for compo in binding_components:
                                         param["label"] = ""
                                         param["arrowstyle"]="-"
                                         graph.add_edge(produce_species_name(compo),binding_name,**param)
-                        
+
                         elif nn.label == "Initial_Concentration":
                                 name_conc = nn.id
                                 spec = net.graph.successors(nn)[0]
@@ -208,15 +208,15 @@ def pretty_graph(net,extended=True):
                                 param["label"] = ""
                                 param["arrowstyle"]="-"
                                 graph.add_edge(produce_species_name(spec),name_conc,**param)
-                            
+
                         elif nn.label == "KPR_Unbinding":
                                 continue
-                        
+
                         else:
                                 inputs = net.graph.predecessors(nn)
                                 outputs = net.graph.successors(nn)
                                 for inp in inputs:
                                         for out in outputs:
                                                 graph.add_edge(produce_species_name(inp),produce_species_name(out), label=nn.id,**global_edge_attribute["Default"])
-                     
+
         return graph

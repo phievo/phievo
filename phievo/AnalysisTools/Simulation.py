@@ -22,10 +22,13 @@ class Simulation:
         ## Upload Run parameters
         model_files = os.listdir(self.root)
         (model_dir , self.inits , init_file) =tuple(initialization_code.check_model_dir(self.root))
-        plotdata = initialization_code.import_module(self.inits.pfile['plotdata'])
+        self.deriv2 = initialization_code.init_deriv2(self.inits,self.root,self.inits.prmt)
+        self.plotdata = initialization_code.import_module(self.inits.pfile['plotdata'])
+
         searchSeed  = re.compile("\d+$") ## integer ## at the end of the string "project_root/Seed##"
-        seeds = [int(searchSeed.search(seed).group(0)) for seed in glob.glob(self.root+"Seed*")]
+        seeds = [int(searchSeed.search(seed).group(0)) for seed in glob.glob(os.path.join(self.root,"Seed*"))]
         seeds.sort()
+
         if self.inits.prmt["pareto"]:
             self.type = "pareto"
             nbFunctions = self.inits.prmt["npareto_functions"]
@@ -85,11 +88,23 @@ class Simulation:
         Returns: data (dict) : dictionnary conatining the time steps
             at the "time" key and the corresponding time series for
             the indexes 0...nb_trials.
-
         """
         if net is None:
             net = self.seeds[seed].get_best_net(generation)
-        self.buffer_data = net.run_dynamics(self.root,self.inits,trial=trial,erase_buffer=erase_buffer)
+        self.inits.prmt["ntries"] = trial
+        prmt = dict(self.inits.prmt)
+        N_cell = prmt["ncelltot"]
+        N_species = len(net.list_types['Species'])
+        self.buffer_data = {"time":np.arange(0,prmt["dt"]*(prmt["nstep"]),prmt["dt"])}
+        prmt["ntries"] = trial
+        self.deriv2.compile_and_integrate(net,prmt,1000,True)
+        for i in range(trial):
+            temp = np.genfromtxt('Buffer%d'%i, delimiter='\t')[::,1:]
+            self.buffer_data[i] = {cell:temp[::,cell:cell+N_species] for cell in range(N_cell)}
+            if erase_buffer:
+                os.remove("Buffer%d"%i)
+            else:
+                os.rename("Buffer{0}".format(i),os.path.join(self.root,"Buffer{0}".format(i)))
         self.buffer_data["net"] = net
         return self.buffer_data
 
@@ -106,8 +121,9 @@ class Simulation:
         net = self.buffer_data["net"]
         nstep = self.inits.prmt['nstep']
         size = len(net.list_types['Species'])
+
         try:
-            plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep)
+            self.plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep)
         except FileNotFoundError:
             print("Make sure you have run the function run_dynamics with the correct number of trials.")
             raise
@@ -119,7 +135,7 @@ class Simulation:
         ncelltot = self.inits.prmt['ncelltot']
 
         try:
-            plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time)
+            self.plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time)
         except FileNotFoundError:
             print("Make sure you have run the function run_dynamics with the correct number of trials.")
             raise
