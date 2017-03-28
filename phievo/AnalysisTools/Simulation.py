@@ -4,7 +4,8 @@ import glob,os,sys
 import re
 from phievo.AnalysisTools import main_functions as MF
 import matplotlib.pyplot as plt
-
+from matplotlib import pylab
+import matplotlib.patches as mpatches
 import numpy as np
 import importlib.util
 from phievo.Networks import mutation,classes_eds2
@@ -283,6 +284,23 @@ class Seed_Pareto(Seed):
         return fig
 
 
+
+    # def plot_pareto_fronts(self,generations):
+    #     restart_path = self.root + "Restart_file"
+    #     for gen in generations:
+    #         if gen not in self.restart_generations:
+    #             limit_print = 30
+    #             print("Generation {0} is not saved in the  restart file.".format(generation))
+    #             print("Please choose among the following generations:")
+    #             if len(self.restart_generations)<limit_print:
+    #                 print(", ".join([str(x) for x in self.restart_generations[:limit_print]]))
+    #             else:
+    #                 print(", ".join([str(x) for x in self.restart_generations[:limit_print]])+", ...")
+    #         return None
+    #
+
+
+
     def pareto_scatter(self,generation):
         """Display one generation as pareto fronts
 
@@ -303,6 +321,7 @@ class Seed_Pareto(Seed):
             else:
                 print(", ".join([str(x) for x in self.restart_generations[:limit_print]])+", ...")
             return None
+
         with shelve.open(restart_path) as data:
             dummy,pop_list = data[str(generation)]
         fitness_dico = {}
@@ -321,12 +340,69 @@ class Seed_Pareto(Seed):
             print('Error, too many fitnesses to plot them all')
         return fitness_dico
 
+    def test(self,generations):
+        data = load_generation_data(generations,self.root+"Restart_file")
+        generation_fitness = {}
+        for gen in generations:
+            fitness_dico = {}
+            for ind in data[gen]:
+                try:
+                    fitness_dico[ind.prank].append([ind.fitness[i] for i in range(self.nbFunctions)])
+                except KeyError:
+                    fitness_dico[ind.prank] = [[ind.fitness[i] for i in range(self.nbFunctions)]]
+            generation_fitness[gen] = fitness_dico
+        plot_multiGen_front(generation_fitness)
+
 ## Functions
+def load_generation_data(generations,restart_file):
+    """
+        Searches in the restart file the the informations that has been backed up
+        up about the individuals at  a given generations.
+
+        Args:
+            generations (list): index of the generations to load_generation_data
+            restart_file: path of the restart_file
+        Returns:
+            dictionary where each key contains the informations about one generation.
+    """
+    gen_data = {}
+    for gen in generations:
+            with shelve.open(restart_file) as data:
+                ## dummy is not used after this
+                dummy,gen_data[gen] = data[str(gen)]
+    return gen_data
+
+def plot_multiGen_front(generation_fitness):
+    NUM_COLORS = len(generation_fitness)
+    shapes = ["o","s","^","h"]
+    cm = pylab.get_cmap('gist_rainbow')
+    colors= [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
+    legend_patches = []
+    #plt.legend(handles=[red_patch])
+    i = 0
+    for gen in sorted(generation_fitness.keys()):
+        gen_dico = generation_fitness[gen]
+        legend_patches.append(mpatches.Patch(color=colors[i], label='Generation {0}'.format(gen)))
+        color = colors[i]
+        i +=1
+        for rank,points in gen_dico.items():
+            F1,F2 = list(zip(*points))
+            shape = shapes[rank-1] if rank<4 else shapes[-1]
+            plt.scatter(F1,F2,c=color,edgecolor=color,s=50,marker=shape)
+    legend_patches.append(mpatches.Patch(hatch="o", label='Rank 1'.format(gen)))
+    plt.legend(handles=legend_patches)
+    plt.show()
+
+
+
 def pareto_plane(fitness_dico,fitnesses):
     """2d plotting subroutine of pareto_scatter"""
+    ax = plt.subplot(111, projection='polar')
     for rank,points in fitness_dico.items():
         F1,F2 = list(zip(*points))
         #plt.plot(F1,F2,'k')
+
+
         plt.plot(F1,F2,'d',label='rank {}'.format(rank))
     for func,index in zip([plt.xlabel,plt.ylabel],fitnesses):
         func("fitness_{}".format(index))
