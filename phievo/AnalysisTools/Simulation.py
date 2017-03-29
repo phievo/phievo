@@ -6,6 +6,7 @@ from phievo.AnalysisTools import main_functions as MF
 import matplotlib.pyplot as plt
 from matplotlib import pylab
 import matplotlib.patches as mpatches
+from  matplotlib.lines import Line2D
 import numpy as np
 import importlib.util
 from phievo.Networks import mutation,classes_eds2
@@ -340,7 +341,16 @@ class Seed_Pareto(Seed):
             print('Error, too many fitnesses to plot them all')
         return fitness_dico
 
-    def test(self,generations):
+    def plot_pareto_fronts(self,generations):
+        """
+            Plots the pareto fronts for a selected list of generations.
+
+            Args:
+                generations: list of generations indexes
+        """
+
+        ## Load fitness data for the selected generations and format them to be
+        ## understandable by plot_multiGen_front2D
         data = load_generation_data(generations,self.root+"Restart_file")
         generation_fitness = {}
         for gen in generations:
@@ -351,7 +361,8 @@ class Seed_Pareto(Seed):
                 except KeyError:
                     fitness_dico[ind.prank] = [[ind.fitness[i] for i in range(self.nbFunctions)]]
             generation_fitness[gen] = fitness_dico
-        plot_multiGen_front(generation_fitness)
+        ## Obvious: plot
+        plot_multiGen_front2D(generation_fitness)
 
 ## Functions
 def load_generation_data(generations,restart_file):
@@ -372,14 +383,27 @@ def load_generation_data(generations,restart_file):
                 dummy,gen_data[gen] = data[str(gen)]
     return gen_data
 
-def plot_multiGen_front(generation_fitness):
+def plot_multiGen_front2D(generation_fitness):
+    """
+        Uses the fitness data for multiple generations to represent the pareto fronts
+        of those multiple generations.
+
+        Args:
+            generation_fitness: nested dictionnaries:
+                                level0 keys: generation
+                                level1 keys: rank of the fitness (1,2,...)
+                                index : index of the fitness doublet (they might be
+                                        multiple fitnesses with identical rank).
+
+    """
     NUM_COLORS = len(generation_fitness)
-    shapes = ["o","s","^","h"]
+    shapes = ["o","s","^"]
     cm = pylab.get_cmap('gist_rainbow')
     colors= [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
     legend_patches = []
     #plt.legend(handles=[red_patch])
     i = 0
+    ax = plt.subplot(111)
     for gen in sorted(generation_fitness.keys()):
         gen_dico = generation_fitness[gen]
         legend_patches.append(mpatches.Patch(color=colors[i], label='Generation {0}'.format(gen)))
@@ -387,10 +411,15 @@ def plot_multiGen_front(generation_fitness):
         i +=1
         for rank,points in gen_dico.items():
             F1,F2 = list(zip(*points))
-            shape = shapes[rank-1] if rank<4 else shapes[-1]
-            plt.scatter(F1,F2,c=color,edgecolor=color,s=50,marker=shape)
-    legend_patches.append(mpatches.Patch(hatch="o", label='Rank 1'.format(gen)))
-    plt.legend(handles=legend_patches)
+            shape = shapes[rank-1] if rank<3 else shapes[-1]
+            ax.scatter(F1,F2,c=color,edgecolor=color,s=50,marker=shape)
+    ax.set_xlabel('Fitness 1')
+    ax.set_ylabel('Fitness 2')
+    ax.legend(handles=legend_patches)
+    legend_patches.append(Line2D([0], [0], linestyle="none", marker=shapes[0], markersize=10,markerfacecolor="black",label="Rank 1"))
+    legend_patches.append(Line2D([0], [0], linestyle="none", marker=shapes[1], markersize=10,markerfacecolor="black",label="Rank 2"))
+    legend_patches.append(Line2D([0], [0], linestyle="none", marker=shapes[2], markersize=10,markerfacecolor="black",label="Rank≥3"))
+    ax.legend(handles=legend_patches)
     plt.show()
 
 
@@ -417,7 +446,6 @@ def pareto_space(fitness_dico,fitnesses):
     for rank,points in fitness_dico.items():
         F1,F2,F3 = list(zip(*points))
         ax.plot(F1,F2,F3,label='rank {}'.format(rank))
-
     for func,index in zip([plt.xlabel,plt.ylabel,plt.zlabel],fitnesses):
         func("fitness_{}".format(index))
     plt.legend(loc=0)
