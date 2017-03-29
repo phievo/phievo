@@ -4,7 +4,7 @@ import glob,os,sys
 import re
 from phievo.AnalysisTools import main_functions as MF
 import matplotlib.pyplot as plt
-from matplotlib import pylab
+from matplotlib import pylab,colors
 import matplotlib.patches as mpatches
 from  matplotlib.lines import Line2D
 import numpy as np
@@ -33,6 +33,7 @@ class Simulation:
 
         if self.inits.prmt["pareto"]:
             self.type = "pareto"
+
             nbFunctions = self.inits.prmt["npareto_functions"]
             self.seeds = {seed:Seed_Pareto(self.root+"Seed%d"%seed,nbFunctions=nbFunctions) for seed in seeds}
         else:
@@ -399,15 +400,15 @@ def plot_multiGen_front2D(generation_fitness):
     NUM_COLORS = len(generation_fitness)
     shapes = ["o","s","^"]
     cm = pylab.get_cmap('gist_rainbow')
-    colors= [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)]
+    color_l= [colors.rgb2hex(cm(1.*i/NUM_COLORS)) for i in range(NUM_COLORS)]
     legend_patches = []
     #plt.legend(handles=[red_patch])
     i = 0
     ax = plt.subplot(111)
     for gen in sorted(generation_fitness.keys()):
         gen_dico = generation_fitness[gen]
-        legend_patches.append(mpatches.Patch(color=colors[i], label='Generation {0}'.format(gen)))
-        color = colors[i]
+        legend_patches.append(mpatches.Patch(color=color_l[i], label='Generation {0}'.format(gen)))
+        color = color_l[i]
         i +=1
         for rank,points in gen_dico.items():
             F1,F2 = list(zip(*points))
@@ -426,12 +427,9 @@ def plot_multiGen_front2D(generation_fitness):
 
 def pareto_plane(fitness_dico,fitnesses):
     """2d plotting subroutine of pareto_scatter"""
-    ax = plt.subplot(111, projection='polar')
+    ax = plt.gca()#(111, projection='polar')
     for rank,points in fitness_dico.items():
         F1,F2 = list(zip(*points))
-        #plt.plot(F1,F2,'k')
-
-
         plt.plot(F1,F2,'d',label='rank {}'.format(rank))
     for func,index in zip([plt.xlabel,plt.ylabel],fitnesses):
         func("fitness_{}".format(index))

@@ -28,10 +28,12 @@ class Notebook(object):
         self.seed = None
         self.generation = None
         self.net = None
+        self.type = None ## Ex of type: "pareto"
         self.extra_variables = {} ## Allows to add new variables with a new cell
         ## object
         self.select_project = Select_Project(self)
         self.select_seed = Select_Seed(self)
+        self.plot_pareto_fronts = Plot_Pareto_Fronts(self)
         self.plot_evolution_observable = Plot_Evolution_Observable(self)
         self.select_generation = Select_Generation(self)
         self.plot_layout = Plot_Layout(self)
@@ -53,7 +55,7 @@ class Select_Project(object):
                 path (str): path of the directory
             """
             self.update()
-            if os.path.isdir(path):
+            if os.path.isdir(path) and not self.notebook.project:
                 self.foundFile_widget.value = found_str
                 self.widget_loadDir.disabled=False
             else:
@@ -71,8 +73,12 @@ class Select_Project(object):
             self.notebook.project = self.widget_select_project.value
             self.widget_loadDir.button_style = "success"
             self.widget_loadDir.disabled=True
+            self.notebook.type = self.notebook.sim.type
+            print("To load a new project, please restart the kernel")
+            print("Kernel > Restart & Run All")
             for cell in self.notebook.dependencies_dict["project"]:
                 cell.update()
+
 
         def display(self):
             self.widget_loadDir.on_click(self.load_project)
@@ -179,6 +185,7 @@ class Select_Generation:
 class Plot_Layout:
     def __init__(self,Notebook):
         self.notebook = Notebook
+        self.notebook.dependencies_dict["seed"].append(self)
         self.notebook.dependencies_dict["generation"].append(self)
         self.button_plotLayout = widgets.Button(description="Plot network layout",disabled=True)
 
@@ -281,3 +288,56 @@ class Plot_Cell_Profile:
     def display(self):
         self.button_plotdynamics.on_click(self.plot_dynamics)
         display(widgets.HBox([self.widget_selectInput,self.widget_selectTime,self.button_plotdynamics]))
+
+class Plot_Pareto_Fronts1:
+    def __init__(self,Notebook):
+        self.notebook = Notebook
+        self.notebook.dependencies_dict["seed"].append(self)
+        #self.widget_selectGenerations = widgets.SelectMultiple(options=[None],value=[None],description='Generation',disabled=True)
+        #self.widget_plot = widgets.Button(description="Plot Pareto Fronts",disabled=True)
+        #self.widget_selected = widgets.HTML(value="",disabled=True)
+    def update(self):
+        NotImplemented
+    def display(self):
+        widget1 = widgets.IntSlider(value=0,min=0,max=5,description="Power")
+        widget2 = widgets.Button(description="Plot")
+        def plot_power(button):
+            power = widget1.value
+            x_vec = np.arange(-10,10,0.1)
+            y_vec = np.arange(-10,10,0.1)**power
+            plt.plot(x_vec,y_vec)
+            plt.show()
+        widget2.on_click(plot_power)
+        box = widgets.VBox([widget1,widget2])
+        display(box)
+
+class Plot_Pareto_Fronts:
+    def __init__(self,Notebook):
+        self.notebook = Notebook
+        self.notebook.dependencies_dict["seed"].append(self)
+        self.widget_selectGenerations = widgets.SelectMultiple(options=[None],value=[None],description='Generation',disabled=True)
+        self.widget_plot = widgets.Button(description="Plot Pareto Fronts",disabled=True)
+
+    def plot_function(self,button):
+        plt.close()
+        clear_output()
+        self.notebook.sim.seeds[self.notebook.seed].plot_pareto_fronts(self.widget_selectGenerations.value)
+    def update(self):
+        if self.notebook.seed is None or self.notebook.type!="pareto":
+            self.widget_selectGenerations.options = [None]
+            self.widget_selectGenerations.value = [None]
+            self.widget_selectGenerations.disabled = True
+            self.widget_plot.disabled = True
+        else:
+            self.widget_selectGenerations.disabled = False
+            self.widget_plot.disabled = False
+            self.widget_selectGenerations.options = self.notebook.sim.seeds[self.notebook.seed].restart_generations
+            self.widget_selectGenerations.value = []
+
+    def display(self):
+        #interactive(self.read_selected,generations=self.widget_selectGenerations)
+        self.widget_plot.on_click(self.plot_function)
+        instructions  = widgets.HTML("<p>Press <i>ctrl</i>, <i>cmd</i>, or <i>shift</i>  for multi-select</p>")
+        to_display = widgets.VBox([instructions,self.widget_selectGenerations,self.widget_plot])
+        #to_display = widgets.VBox([self.widget_plot])
+        display(to_display)
