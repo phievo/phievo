@@ -171,63 +171,45 @@ class Seed:
             for i in indexes}
         self.indexes = indexes
 
-        self.observables = ["generation"] + list(self.generations[list(self.generations)[0]])
-
+        self.observables = {
+            "generation":lambda:list(self.indexes),
+            "n_interactions":lambda:[gen["n_interactions"] for i,gen in self.generations.items()],
+            "n_species":lambda:[gen["n_species"] for i,gen in self.generations.items()],
+            "fitness":lambda:[gen["fitness"] for i,gen in self.generations.items()],
+        }
+        self.default_observable = "fitness"
 
     def show_fitness(self,smoothen=0,**kwargs):
         """Plot the fitness as a function of time
-
-        Args:
-            seed (int): the seed-number of the run
-
-        Returns:
-            list: fitness as a function of time
         """
-        gen = self.get_observable("generation")
-        fit = self.get_observable("fitness")
-        if smoothen:
-            fit = MF.smoothing(fit,smoothen)
-        fig = plt.figure()
-        ax = fig.gca()
-        ax.plot(gen,fit,lw=2,color='#B41111',label='fitness')
-        ax.set_xlabel('Generation')
-        ax.set_ylabel('Fitness')
-        fig.show()
-        return fig
+        self.custom_plot("generation","fitness")
+
+
 
     def custom_plot(self,X,Y):
-        """Plot the Y as a function of X. X and Y can be chosen in the list ["fitness","generation","n_interactions","n_species"]
+        """Plot the Y as a function of X. X and Y can be chosen in the keys of
+            self.observables.
 
         Args:
             seed (int): number of the seed to look at
             X (str): x-axis observable
-            Y (str): y-axis observable
+            Y (list): list of y-axis observable
         """
-        x_val = self.get_observable(X)
-        y_val = self.get_observable(Y)
+        x_val = self.observables[X]()
+        Y_val = {y:self.observables[y]() for y in Y}
+        NUM_COLORS = len(Y)
+        cm = pylab.get_cmap('gist_rainbow')
+        color_l= {Y[i]:colors.rgb2hex(cm(1.*i/NUM_COLORS)) for i in range(NUM_COLORS)}
         fig = plt.figure()
         ax = fig.gca()
-        ax.plot(x_val,y_val,lw=2,color='#B41111',label='fitness')
+        for label,y_val in Y_val.items():
+            if y_val is not None:
+                ax.plot(x_val,y_val,lw=2,color=color_l[label],label=label)
         ax.set_xlabel(X)
-        ax.set_ylabel(Y)
+        ax.set_ylabel(Y[0])
+        ax.legend()
         fig.show()
-        return fig
 
-    def get_observable(self,observable):
-        """
-        Generates the list of all the values taken by the observable during the run. The observable is chosen in ["fitness","generation","n_interactions","n_species"].
-
-        Args:
-            str : name of the observable
-
-        Returns:
-            list : list of the fitnesses for the best run for every generation
-        """
-
-        if observable == "generation":
-            return list(self.indexes)
-        else:
-            return [gen[observable] for i,gen in self.generations.items()]
 
     def get_best_net(self,generation):
         """ The functions returns the best network of the selected generation
@@ -253,6 +235,12 @@ class Seed_Pareto(Seed):
         with shelve.open(restart_path) as data:
             self.restart_generations = sorted([int(xx) for xx in data.dict.keys()])
 
+        self.observables.pop("fitness")
+
+        for ff in range(self.nbFunctions):
+            self.observables["fitness{0}".format(ff)] = lambda ff=ff:[gen["fitness"][ff] for i,gen in self.generations.items()]
+        self.default_observable = "fitness1"
+
     def show_fitness(self,smoothen=0,index=None):
         """Plot the fitness as a function of time
 
@@ -268,8 +256,6 @@ class Seed_Pareto(Seed):
 
         if not index :
             index = range(fit.shape[1])
-
-
 
         fig = plt.figure()
         ax = fig.gca()
@@ -287,22 +273,6 @@ class Seed_Pareto(Seed):
 
 
 
-    # def plot_pareto_fronts(self,generations):
-    #     restart_path = self.root + "Restart_file"
-    #     for gen in generations:
-    #         if gen not in self.restart_generations:
-    #             limit_print = 30
-    #             print("Generation {0} is not saved in the  restart file.".format(generation))
-    #             print("Please choose among the following generations:")
-    #             if len(self.restart_generations)<limit_print:
-    #                 print(", ".join([str(x) for x in self.restart_generations[:limit_print]]))
-    #             else:
-    #                 print(", ".join([str(x) for x in self.restart_generations[:limit_print]])+", ...")
-    #         return None
-    #
-
-
-
     def pareto_scatter(self,generation):
         """Display one generation as pareto fronts
 
@@ -314,15 +284,6 @@ class Seed_Pareto(Seed):
            dict: rank -> [[fitness1],[fitness2],…]
         """
         restart_path = self.root + "Restart_file"
-        if generation not in self.restart_generations:
-            limit_print = 30
-            print("Generation {0} is not saved in the  restart file.".format(generation))
-            print("Please choose among the following generations:")
-            if len(self.restart_generations)<limit_print:
-                print(", ".join([str(x) for x in self.restart_generations[:limit_print]]))
-            else:
-                print(", ".join([str(x) for x in self.restart_generations[:limit_print]])+", ...")
-            return None
 
         with shelve.open(restart_path) as data:
             dummy,pop_list = data[str(generation)]
@@ -378,10 +339,21 @@ def load_generation_data(generations,restart_file):
             dictionary where each key contains the informations about one generation.
     """
     gen_data = {}
-    for gen in generations:
-            with shelve.open(restart_file) as data:
-                ## dummy is not used after this
-                dummy,gen_data[gen] = data[str(gen)]
+
+    with shelve.open(restart_file) as data:
+        restart_generations = sorted([int(xx) for xx in data.dict.keys()])
+        for gen in generations:
+            if gen not in restart_generations:
+                limit_print = 20
+                err_str = ""
+                err_str += "Generation {0} is not saved in the  restart file.\n".format(gen)
+                err_str += "Please choose among the following generations:\n"
+                if len(restart_generations)<limit_print:
+                    err_str+=", ".join([str(x) for x in restart_generations[:limit_print]])+"\n"
+                else:
+                    err_str+=", ".join([str(x) for x in restart_generations[:limit_print]])+", ...\n"
+                raise AssertionError(err_str)
+            dummy,gen_data[gen] = data[str(gen)]
     return gen_data
 
 def plot_multiGen_front2D(generation_fitness):

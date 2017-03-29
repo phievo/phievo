@@ -132,7 +132,7 @@ class Plot_Evolution_Observable:
     def replot_observable(self,b):
         plt.close()
         clear_output()
-        self.notebook.sim.custom_plot(self.notebook.seed,self.widget_Xobs.value,self.widget_Yobs.value)
+        self.notebook.sim.custom_plot(self.notebook.seed,self.widget_Xobs.value,[self.widget_Yobs.value])
 
 
     def display(self):
@@ -146,10 +146,10 @@ class Plot_Evolution_Observable:
             self.widget_Xobs.value = self.widget_Yobs.value = None
         else:
             self.widget_Xobs.disabled = self.widget_Yobs.disabled = self.widget_replot_observable.disabled = False
-            self.widget_Xobs.options = list(self.notebook.sim.seeds[self.notebook.seed].observables)
+            self.widget_Xobs.options = list(self.notebook.sim.seeds[self.notebook.seed].observables.keys())
             self.widget_Yobs.options = list(self.widget_Xobs.options)
             self.widget_Xobs.value = "generation"
-            self.widget_Yobs.value = "fitness"
+            self.widget_Yobs.value = self.notebook.sim.seeds[self.notebook.seed].default_observable 
 
 
 class Select_Generation:
