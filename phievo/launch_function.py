@@ -1,6 +1,7 @@
 from phievo.initialization_code import *
 from phievo import create_STOP_file
 from importlib import import_module
+import time,random
 import os,shutil,glob
 
 ### Functions ###
@@ -59,7 +60,7 @@ def launch_evolution(options):
         ## The following line allows running multiple runs in parallel on the same project
         ## without interfering.
         seeds = list(range(firstseed, firstseed + inits.prmt['nseed']))
-
+        time.sleep(random.random()*10)
         while seeds:
 
             done_seeds = map(lambda path:os.path.split(path)[-1],glob.glob(os.path.join(model_dir,"Seed*")))
@@ -76,9 +77,10 @@ def launch_evolution(options):
             print('initializing random() with seed=', seed, 'prior to beginning the evolution')
             random.seed(seed)
             namefolder = os.path.join(model_dir,"Seed%i" % seed)
-        
+
             # Create a directory if needed and check if data already present
             if os.access(namefolder, os.F_OK):
+                continue
                 if (len(os.listdir(namefolder)) > 2):  #ok to overwrite paramter file, and Bests but not simulation data
                     message = 'dir= {0} has data in it, exiting'
                     sys.exit(message.format(namefolder))
@@ -134,6 +136,8 @@ def launch_evolution(options):
             pypar.barrier()  #wait here until job completion of all other processors, do not know why, should try to remove it at some point for performance
             pypar.send(result, 0)
 
+def launch_seed(seed_number):
+    NotImplemented
 def test_network(options):
     """ Test the behavior of a particular network (indicated by the -t
     option) with respect to a given model (the -m or -i option)
