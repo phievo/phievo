@@ -59,28 +59,27 @@ def launch_evolution(options):
 
         ## The following line allows running multiple runs in parallel on the same project
         ## without interfering.
-        seeds = list(range(firstseed, firstseed + inits.prmt['nseed']))
-        time.sleep(random.random()*10)
-        while seeds:
+        # seeds = list(range(firstseed, firstseed + inits.prmt['nseed']))
+        # time.sleep(random.random()*10)
+        # while seeds:
+        #
+        #     done_seeds = map(lambda path:os.path.split(path)[-1],glob.glob(os.path.join(model_dir,"Seed*")))
+        #     seed = seeds[0]
+        #     try:
+        #         seeds.remove(seed)
+        #     except ValueError:
+        #         pass
+        #     if seed in done_seeds:
+        #         continue
 
-            done_seeds = map(lambda path:os.path.split(path)[-1],glob.glob(os.path.join(model_dir,"Seed*")))
-            seed = seeds[0]
-            try:
-                seeds.remove(seed)
-            except ValueError:
-                pass
-            if seed in done_seeds:
-                continue
 
-
-        #for seed in range(firstseed, firstseed + inits.prmt['nseed']):
+        for seed in range(firstseed, firstseed + inits.prmt['nseed']):
             print('initializing random() with seed=', seed, 'prior to beginning the evolution')
             random.seed(seed)
             namefolder = os.path.join(model_dir,"Seed%i" % seed)
 
             # Create a directory if needed and check if data already present
             if os.access(namefolder, os.F_OK):
-                continue
                 if (len(os.listdir(namefolder)) > 2):  #ok to overwrite paramter file, and Bests but not simulation data
                     message = 'dir= {0} has data in it, exiting'
                     sys.exit(message.format(namefolder))
