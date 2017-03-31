@@ -34,6 +34,7 @@ def launch_evolution(options):
 
     # to distinguish master and slave nodes when running on cluster with pypar
     main_loop = False
+
     if (inits.prmt['multipro_level'] == 2):
         raise NotImplementedError("pypar belongs to the past. We will release a version working with Multiprocess soon.")
         import pypar #parallel programming module
@@ -55,11 +56,27 @@ def launch_evolution(options):
         else:
             firstseed = 0
 
-        for seed in range(firstseed, firstseed + inits.prmt['nseed']):
+        ## The following line allows running multiple runs in parallel on the same project
+        ## without interfering.
+        seeds = list(range(firstseed, firstseed + inits.prmt['nseed']))
+
+        while seeds:
+
+            done_seeds = map(lambda path:os.path.split(path)[-1],glob.glob(os.path.join(model_dir,"Seed*")))
+            seed = seeds[0]
+            try:
+                seeds.remove(seed)
+            except ValueError:
+                pass
+            if seed in done_seeds:
+                continue
+
+
+        #for seed in range(firstseed, firstseed + inits.prmt['nseed']):
             print('initializing random() with seed=', seed, 'prior to beginning the evolution')
             random.seed(seed)
-            namefolder = model_dir + "Seed%i" % seed
-
+            namefolder = os.path.join(model_dir,"Seed%i" % seed)
+        
             # Create a directory if needed and check if data already present
             if os.access(namefolder, os.F_OK):
                 if (len(os.listdir(namefolder)) > 2):  #ok to overwrite paramter file, and Bests but not simulation data
@@ -73,7 +90,7 @@ def launch_evolution(options):
                 shutil.copyfile(inits.cfile['init_history'],namefolder+os.sep+'log_init_histo.c')
                 shutil.copyfile(init_dir,namefolder+os.sep+'log_init_file.py')
 
-            parameters2file(inits, namefolder + '/parameters')
+            parameters2file(inits, os.path.join(namefolder,'parameters'))
 
             # Population construction for run on several machine with pypar
             if (inits.prmt['multipro_level'] == 2):

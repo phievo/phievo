@@ -74,7 +74,7 @@ def check_model_dir(model):
             - init_module(dictionary): dictionary with the model's options
 
     """
-    model_dir =  model + os.sep  # works as well as full path
+    model_dir =  model # works as well as full path
     model_files = os.listdir(model_dir)
     init_candidate = [ff for ff in model_files if ff.startswith('init') & ff.endswith('.py')]
 
@@ -102,7 +102,7 @@ def check_model_dir(model):
     except AttributeError:
         print('Remark: No pfile object in init* file, use default one (see check_model_dir)!')
     init_module.pfile = pfile
-    
+
     return [model_dir, init_module, model_dir+os.sep+init_name]
 
 def init_classes_eds2(inits):
@@ -141,7 +141,7 @@ def init_deriv2(inits, workplace_dir, prmt):
     if inits.pfile["deriv2"] and inits.pfile["deriv2"] != "phievo.Networks.deriv2":
         mod_deriv2 = import_module(inits.pfile["deriv2"])
         deriv2 = mod_deriv2.modifier(deriv2)
-    
+
     return deriv2
 
 def get_network_from_test(test_py, classes_eds2):

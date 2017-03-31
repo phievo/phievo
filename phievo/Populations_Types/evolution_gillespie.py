@@ -128,11 +128,11 @@ class Population(object):
         self.n_mutations = 0 #number of mutations per generation
 
         #file to hold best network each generation
-        self.data_file = namefolder + os.sep + 'data'
-        self.bests_file = namefolder + os.sep + 'Bests_{}.net'
+        self.data_file = os.path.join(namefolder,'data')
+        self.bests_file = os.path.join(namefolder,'Bests_{}.net')
 
         # unique file name to save restart data,
-        self.restart_file = namefolder + os.sep + 'Restart_file'
+        self.restart_file = os.path.join(namefolder,'Restart_file')
 
         # reset crucial parameters for loop over generations in evolution.
         # Set self.same_seed = True if want to exactly
