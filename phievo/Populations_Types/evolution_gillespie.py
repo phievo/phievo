@@ -86,7 +86,7 @@ def restart(directory, generation, verbose = True):
             genus (list): the list of individuals of the population
         """
     restart_file = os.path.join(directory,"Restart_file")
-    with shelve.open(restart_file) as restart_data:
+    with shelve.open(restart_file,flag="r") as restart_data:
         rprmt, genus = restart_data[str(generation)]
         if verbose:
             print('successfully restarted from file= ', dir, 'generation= ', generation)
@@ -203,7 +203,7 @@ class Population(object):
         rprmt = dict(header = header,
                      state = random.getstate(),
                      tgeneration = tgeneration)
-        with shelve.open(self.restart_file) as restart_data:
+        with shelve.open(self.restart_file, writeback=True) as restart_data:
             restart_data[str(kgeneration)] = (rprmt, self.genus)
 
         print('restart file saved after generation=', kgeneration, 'next tgeneration=', tgeneration)

@@ -149,7 +149,7 @@ class Plot_Evolution_Observable:
             self.widget_Xobs.options = list(self.notebook.sim.seeds[self.notebook.seed].observables.keys())
             self.widget_Yobs.options = list(self.widget_Xobs.options)
             self.widget_Xobs.value = "generation"
-            self.widget_Yobs.value = self.notebook.sim.seeds[self.notebook.seed].default_observable 
+            self.widget_Yobs.value = self.notebook.sim.seeds[self.notebook.seed].default_observable
 
 
 class Select_Generation:
@@ -289,55 +289,45 @@ class Plot_Cell_Profile:
         self.button_plotdynamics.on_click(self.plot_dynamics)
         display(widgets.HBox([self.widget_selectInput,self.widget_selectTime,self.button_plotdynamics]))
 
-class Plot_Pareto_Fronts1:
-    def __init__(self,Notebook):
-        self.notebook = Notebook
-        self.notebook.dependencies_dict["seed"].append(self)
-        #self.widget_selectGenerations = widgets.SelectMultiple(options=[None],value=[None],description='Generation',disabled=True)
-        #self.widget_plot = widgets.Button(description="Plot Pareto Fronts",disabled=True)
-        #self.widget_selected = widgets.HTML(value="",disabled=True)
-    def update(self):
-        NotImplemented
-    def display(self):
-        widget1 = widgets.IntSlider(value=0,min=0,max=5,description="Power")
-        widget2 = widgets.Button(description="Plot")
-        def plot_power(button):
-            power = widget1.value
-            x_vec = np.arange(-10,10,0.1)
-            y_vec = np.arange(-10,10,0.1)**power
-            plt.plot(x_vec,y_vec)
-            plt.show()
-        widget2.on_click(plot_power)
-        box = widgets.VBox([widget1,widget2])
-        display(box)
 
 class Plot_Pareto_Fronts:
     def __init__(self,Notebook):
         self.notebook = Notebook
         self.notebook.dependencies_dict["seed"].append(self)
         self.widget_selectGenerations = widgets.SelectMultiple(options=[None],value=[None],description='Generation',disabled=True)
+        self.widget_selectText = widgets.Text(value="",placeholder="List of generations separated with commas.",disabled=True)
         self.widget_plot = widgets.Button(description="Plot Pareto Fronts",disabled=True)
 
     def plot_function(self,button):
         plt.close()
         clear_output()
-        self.notebook.sim.seeds[self.notebook.seed].plot_pareto_fronts(self.widget_selectGenerations.value)
+        gen = self.widget_selectGenerations.value
+        if self.widget_selectText.value:
+            gen = [int(xx) for xx in self.widget_selectText.value.split(",")]
+            #gen = [int(xx) for xx in self.widget_selectText.value.split(",")]
+
+        self.notebook.sim.seeds[self.notebook.seed].plot_pareto_fronts(gen)
     def update(self):
         if self.notebook.seed is None or self.notebook.type!="pareto":
             self.widget_selectGenerations.options = [None]
             self.widget_selectGenerations.value = [None]
             self.widget_selectGenerations.disabled = True
+            self.widget_selectText.value = ""
+            self.widget_selectText = True
             self.widget_plot.disabled = True
         else:
             self.widget_selectGenerations.disabled = False
             self.widget_plot.disabled = False
             self.widget_selectGenerations.options = self.notebook.sim.seeds[self.notebook.seed].restart_generations
             self.widget_selectGenerations.value = []
+            self.widget_selectText.value = ""
+            self.widget_selectText.disabled = False
 
     def display(self):
+
         #interactive(self.read_selected,generations=self.widget_selectGenerations)
         self.widget_plot.on_click(self.plot_function)
         instructions  = widgets.HTML("<p>Press <i>ctrl</i>, <i>cmd</i>, or <i>shift</i>  for multi-select</p>")
-        to_display = widgets.VBox([instructions,self.widget_selectGenerations,self.widget_plot])
+        to_display = widgets.VBox([instructions,widgets.HBox([self.widget_selectGenerations,self.widget_selectText]),self.widget_plot])
         #to_display = widgets.VBox([self.widget_plot])
         display(to_display)
