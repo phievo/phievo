@@ -193,10 +193,13 @@ class Seed:
         Args:
             seed (int): number of the seed to look at
             X (str): x-axis observable
-            Y (list): list of y-axis observable
+            Y (list): list (or string) of y-axis observable
         """
         x_val = self.observables[X]()
+        if isinstance(Y,str):
+            Y = [Y]
         Y_val = {y:self.observables[y]() for y in Y}
+
         NUM_COLORS = len(Y)
         cm = pylab.get_cmap('gist_rainbow')
         color_l= {Y[i]:colors.rgb2hex(cm(1.*i/NUM_COLORS)) for i in range(NUM_COLORS)}
