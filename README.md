@@ -73,6 +73,11 @@ sudo pip install pygraphviz
 ```
 On other distribution, you may want to find the equivalent of _graphviz_, _graphviz-dev_, and _pkg-config_.
 
+We found that sometimes on ubuntu the C linking to the graphviz library does not work properly, to fix this, be more explicit on the linking:
+
+```bash
+sudo pip install pygraphviz --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
+```
 ## Example: Static Hox
 
 Copy the project directory `StaticHox` from `Examples` where you want to run it. Then copy `run_evolution` at the same place as `StaticHox`.

@@ -2,7 +2,7 @@
 """
 
 # ranges over which parmeters in classes_eds2 classes can vary. Defined in mutation.py
-# NB use 1.0 etc to keep params real not int.  
+# NB use 1.0 etc to keep params real not int.
 
 T=1.0 #typical time scale
 C=1.0 #typical concentration
@@ -13,7 +13,7 @@ L=1.0 #typical size for diffusion
 
 dictionary_ranges={}
 dictionary_ranges['Species.degradation']=[0.1,1.0/T]
-dictionary_ranges['Species.diffusion']=0.0   # for ligands diffusion 
+dictionary_ranges['Species.diffusion']=0.0   # for ligands diffusion
 dictionary_ranges['TModule.rate']=[0.1,C/T]
 dictionary_ranges['TModule.basal']=0.0 #basal rate
 dictionary_ranges['CorePromoter.delay']=0   # convert to int(T/dt) in run_evolution.py
@@ -38,14 +38,14 @@ dictionary_ranges['LR.concentration']=C
 # normally need 'header', 'utilities' (loaded before python derived routines and
 # ['fitness', 'geometry', 'init_history', 'input', 'integrator', 'main' ] placed afterwards
 # skip by setting cfile[] = ' ' or ''
- 
+
 cfile = {}
 #cfile['header'] = 'integrator_header.h'
 #cfile['utilities'] = 'utilities.c'
-cfile['fitness'] = 'StaticHox/fitness_static_hox.c'
+cfile['fitness'] = 'fitness_static_hox.c'
 #cfile['geometry'] = 'linear_geometry.c'
-cfile['init_history'] = 'StaticHox/init_history_0.c'
-cfile['input'] =  'StaticHox/input_Hox_static.c'
+cfile['init_history'] = 'init_history_0.c'
+cfile['input'] =  'input_Hox_static.c'
 #cfile['integrator'] = 'euler_integrator.c'
 #cfile['main'] = 'main_general.c'
 
@@ -82,7 +82,7 @@ dictionary_mutation['mutate_Node(\'PPI\')']=0.0
 dictionary_mutation['mutate_Node(\'LR\')']=0.0
 dictionary_mutation['mutate_Node(\'Phosphorylation\')']=0.0
 
-#rates to change output tags.  See list_types_output array below  
+#rates to change output tags.  See list_types_output array below
 dictionary_mutation['random_add_output()']=0.0
 dictionary_mutation['random_remove_output()']=0.0
 dictionary_mutation['random_change_output()']=0.1
@@ -106,7 +106,7 @@ prmt['dt'] = 0.05     # time step
 # The dict is more readable, but no way to test in C if given key supplied.  So
 # always include in C: #define NFREE_PRMT int. if(NFREE_PRMT) then use free_prmt[n]
 # prmt['free_prmt'] = { 'step_egf_off':20 }  # beware of int vs double type
-# prmt['free_prmt'] = [1,2] 
+# prmt['free_prmt'] = [1,2]
 
 # Needed in evolution_gill to define evol algorithm and create initial network
 prmt['npopulation'] =10
@@ -119,8 +119,8 @@ prmt['freq_stat'] = 5     # print stats every freq_stat generations
 prmt['frac_mutate'] = 0.5 #fraction of networks to mutate
 prmt['redo'] = 1   # rerun the networks that do not change to compute fitness for different IC
 
-# used in run_evolution, 
-prmt['nseed'] = 70   # number of times entire evol procedure repeated, see main program.  
+# used in run_evolution,
+prmt['nseed'] = 70   # number of times entire evol procedure repeated, see main program.
 prmt['firstseed'] = 1  #first seed
 
 # multipro_level used in evolution_gillespie.  =2 if using parallel processing(pypar) =1 for threading =0 for serial processing
@@ -155,12 +155,12 @@ list_unremovable=['Input']
 # effects of dictionary_mutation[random*output] events to certain types, when we let output tags
 # move around
 
-list_types_output=['TF'] 
+list_types_output=['TF']
 
 
 
 # necessary imports to define following functions
-import random                                              
+import random
 from phievo.Networks import mutation
 
 # Two optional functions to add input species or output genes, with IO index starting from 0.
@@ -184,8 +184,8 @@ def init_network():
    L.write_id()
    return L
 
-def fitness_treatment(population): 
-    # Function to slightly change the fitness of the networks      
+def fitness_treatment(population):
+    # Function to slightly change the fitness of the networks
     #for nnetwork in range(population.npopulation):
      #  population.genus[nnetwork].fitness-=0.001*random.random()
    for ind in population:
@@ -193,4 +193,3 @@ def fitness_treatment(population):
             ind.fitness += 0.001*random.random()
         except Exception:
             ind.fitness = None
-       

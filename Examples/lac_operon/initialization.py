@@ -45,9 +45,9 @@ dictionary_ranges['Degradation.rate']=1.0/T
 # skip by setting cfile[] = ' ' or ''
 
 cfile = {}
-cfile['fitness'] = 'lac_operon/fitness.c'
-cfile['init_history'] = 'lac_operon/init_history.c'
-cfile['input'] =  'lac_operon/input.c'
+cfile['fitness'] = 'fitness.c'
+cfile['init_history'] = 'init_history.c'
+cfile['input'] =  'input.c'
 
 pfile = {}
 ####################################
@@ -133,8 +133,8 @@ prmt['langevin_noise']=0
 #####################
 ### PARETO PARAM. ###
 #####################
-prmt['pareto']=0 # a flag, set to 1 to run pareto  
-prmt['npareto_functions']= 2 # number of functions to use for pareto optimization.  
+prmt['pareto']=0 # a flag, set to 1 to run pareto
+prmt['npareto_functions']= 2 # number of functions to use for pareto optimization.
 prmt['rshare']= 0.0
 
 
@@ -177,21 +177,21 @@ def init_network():
    g=random.Random(seed)
    L=mutation.Mutable_Network(g)
    L.fixed_activity_for_TF = 0
-   
+
    parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random) ]]
    parameters.append(['TF',1])
    parameters.append(['Input',0])
    parameters.append(['Complexable'])
    parameters.append(['Kinase'])
    TF1=L.new_Species(parameters)
-   
+
    parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random) ]]
    parameters.append(['TF',1])
    parameters.append(['Input',1])
    parameters.append(['Complexable'])
    parameters.append(['Kinase'])
    TF2=L.new_Species(parameters)
-   
+
    for k in range(1):
        [tm, prom, o1] = L.random_gene('TF')
        o1.add_type(['Output',k])
@@ -205,4 +205,3 @@ def fitness_treatment(population):
             ind.fitness += 0.001*random.random()
         except Exception:
             ind.fitness = None
-

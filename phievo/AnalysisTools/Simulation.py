@@ -90,7 +90,7 @@ class Simulation:
             net (Networks): network to simulate
         Returns: data (dict) : dictionnary conatining the time steps
             at the "time" key and the corresponding time series for
-            the indexes 0...nb_trials.
+            the indexes 0 to nb_trials.
         """
         if net is None:
             net = self.seeds[seed].get_best_net(generation)
@@ -355,7 +355,7 @@ def load_generation_data(generations,restart_file):
                 if len(restart_generations)<limit_print:
                     err_str+=", ".join([str(x) for x in restart_generations[:limit_print]])+"\n"
                 else:
-                    err_str+=", ".join([str(x) for x in restart_generations[:limit_print]])+", ...\n"
+                    err_str+=", ".join([str(x) for x in restart_generations[:limit_print]])+", etc.\n"
                 raise AssertionError(err_str)
             dummy,gen_data[gen] = data[str(gen)]
     return gen_data
@@ -368,7 +368,7 @@ def plot_multiGen_front2D(generation_fitness):
         Args:
             generation_fitness: nested dictionnaries:
                                 level0 keys: generation
-                                level1 keys: rank of the fitness (1,2,...)
+                                level1 keys: rank of the fitness (1,2,etc.)
                                 index : index of the fitness doublet (they might be
                                         multiple fitnesses with identical rank).
 

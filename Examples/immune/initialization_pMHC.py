@@ -51,14 +51,14 @@ dictionary_ranges['LR.threshold']=C
 # skip by setting cfile[] = ' ' or ''
 
 cfile = {}
-cfile['header'] = 'immune/integrator_header_improved.h'
-cfile['utilities'] = 'immune/utilities_pMHC.c'
-cfile['fitness'] = 'immune/fitness_pMHC_mutinfo2_ago.c'
-cfile['geometry'] = 'immune/linear_geometry.c'
-cfile['init_history'] = 'immune/init_history_pMHC.c'
-cfile['integrator'] = 'immune/integrator_pMHC_improved.c'
-cfile['main'] = 'immune/main_pMHC.c'
-cfile['input'] =  'immune/input.c'
+cfile['header'] = 'integrator_header_improved.h'
+cfile['utilities'] = 'utilities_pMHC.c'
+cfile['fitness'] = 'fitness_pMHC_mutinfo2_ago.c'
+cfile['geometry'] = 'linear_geometry.c'
+cfile['init_history'] = 'init_history_pMHC.c'
+cfile['integrator'] = 'integrator_pMHC_improved.c'
+cfile['main'] = 'main_pMHC.c'
+cfile['input'] =  'input.c'
 # this one was commented : 'immune/input_adaptation1.c'
 
 pfile = {}

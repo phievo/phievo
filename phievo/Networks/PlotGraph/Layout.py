@@ -4,7 +4,7 @@ import numpy as np
 import warnings
 #dist = lambda A,B,pos: ((pos[A][0]-pos[B][0])**2+(pos[A][1]-pos[B][1])**2)**.5
 #reg = lambda x: max(x,-1) if x < 0 else min(x,1)
-    
+
 def layout(node_list,interaction_list,radius=1,layout="graphviz"):
     """
     Use networkx layout function to compute the node centers
@@ -23,8 +23,6 @@ def layout(node_list,interaction_list,radius=1,layout="graphviz"):
                        - fruchterman_reingold
                        - pygraphviz
 
-
-    
     Return:
         dict: indexed by nodes names and containing their (x,y) position (for use with draw_networkx pos argument typically)
     """
@@ -35,7 +33,7 @@ def layout(node_list,interaction_list,radius=1,layout="graphviz"):
         G.add_node(node)
     for edge in interaction_list:
         G.add_edge(edge[0],edge[1])
-    
+
     if layout=="graphviz":
         try:
             ## Graphviz does not return the positions as numpy arrays
@@ -45,7 +43,7 @@ def layout(node_list,interaction_list,radius=1,layout="graphviz"):
             pos = nx.spring_layout(G)
     else:
         pos = getattr(nx,layout+"_layout")
-        
+
         # except AttributeError:
         #     print("%s is not a compatible layout. Please try with one of the following layouts:
         #     \t - circular
@@ -55,7 +53,7 @@ def layout(node_list,interaction_list,radius=1,layout="graphviz"):
         #     \t - spectral
         #     \t - fruchterman_reingold")
             ## Scaling according to the minimal distance between two nodes
-    minDist = 100000    
+    minDist = 100000
     keys = list(pos.keys())
     ## Need to run over the indexes in order not to count twice the same distance
     for iA in range(len(node_list)):
@@ -65,7 +63,3 @@ def layout(node_list,interaction_list,radius=1,layout="graphviz"):
         pos[iA][0]*=(7*radius/minDist)
         pos[iA][1]*=(7*radius/minDist)
     return pos
-        
-        
-        
-    

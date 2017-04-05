@@ -126,9 +126,9 @@ def init_deriv2(inits, workplace_dir, prmt):
     deriv2.cfile['integrator'] = os.path.join(ccode_dir,'euler_integrator.c')
     deriv2.cfile['main'] = os.path.join(ccode_dir,'main_general.c')
 
+    model_path = prmt["stop_file"].replace("STOP.txt","")
     for k, v in inits.cfile.items():
-        path = os.path.join(python_path,v)
-
+        path = os.path.join(model_path,v)
         if os.path.isfile(path):
             deriv2.cfile[k] = path
         else:

@@ -2,7 +2,7 @@
 """
 
 # ranges over which parmeters in classes_eds2 classes can vary. Defined in mutation.py
-# NB use 1.0 etc to keep params real not int.  
+# NB use 1.0 etc to keep params real not int.
 
 T=1.0 #typical time scale
 C=1.0 #typical concentration
@@ -14,7 +14,7 @@ L=1.0 #typical size for diffusion
 dictionary_ranges={}
 dictionary_ranges['Species.degradation']=1.0/T
 #dictionary_ranges['Species.concentration']=C   # for certain species, eg kinases that are not trans
-dictionary_ranges['Species.diffusion']=L   # for ligands diffusion 
+dictionary_ranges['Species.diffusion']=L   # for ligands diffusion
 dictionary_ranges['TModule.rate']=C/T
 dictionary_ranges['TModule.basal']=0.0
 dictionary_ranges['CorePromoter.delay']=0   # convert to int(T/dt) in run_evolution.py
@@ -37,9 +37,9 @@ dictionary_ranges['LR.concentration']=C
 # skip by setting cfile[] = ' ' or ''
 
 cfile = {}
-cfile['fitness'] = 'adaptation/fitness_adaptation.c'
-cfile['init_history'] = 'adaptation/init_history_adaptation.c'
-cfile['input'] =  'adaptation/input_adaptation.c'
+cfile['fitness'] = 'fitness_adaptation.c'
+cfile['init_history'] = 'init_history_adaptation.c'
+cfile['input'] =  'input_adaptation.c'
 
 #################################################################################
 # mutation rates
@@ -74,7 +74,7 @@ dictionary_mutation['mutate_Node(\'PPI\')']=0.1
 dictionary_mutation['mutate_Node(\'LR\')']=0.0
 dictionary_mutation['mutate_Node(\'Phosphorylation\')']=0.1
 
-#rates to change output tags.  See list_types_output array below  
+#rates to change output tags.  See list_types_output array below
 dictionary_mutation['random_add_output()']=0.0
 dictionary_mutation['random_remove_output()']=0.0
 dictionary_mutation['random_change_output()']=0.1
@@ -98,7 +98,7 @@ prmt['dt'] = 0.05     # time step
 # The dict is more readable, but no way to test in C if given key supplied.  So
 # always include in C: #define NFREE_PRMT int. if(NFREE_PRMT) then use free_prmt[n]
 # prmt['free_prmt'] = { 'step_egf_off':20 }  # beware of int vs double type
-# prmt['free_prmt'] = [1,2] 
+# prmt['free_prmt'] = [1,2]
 
 
 
@@ -113,8 +113,8 @@ prmt['freq_stat'] = 5     # print stats every freq_stat generations
 prmt['frac_mutate'] = 0.5 #fraction of networks to mutate
 prmt['redo'] = 1   # rerun the networks that do not change to compute fitness for different IC
 
-# used in run_evolution, 
-prmt['nseed'] = 5  # number of times entire evol procedure repeated, see main program.  
+# used in run_evolution,
+prmt['nseed'] = 5  # number of times entire evol procedure repeated, see main program.
 prmt['firstseed'] = 0  #first seed
 
 
@@ -138,7 +138,7 @@ prmt['langevin_noise']=0
 prmt['restart'] = {}
 prmt['restart']['activated'] = False #indicate if you want to restart or not
 prmt['restart']['file'] =  None  # None skips restart, otherwise name of file in model directory (-m option run_evolution.py)
-prmt['restart']['kgeneration'] = 2  # restart from After this generation number (see loop in Population.evolution) 
+prmt['restart']['kgeneration'] = 2  # restart from After this generation number (see loop in Population.evolution)
 prmt['restart']['freq'] = 50  # save population every freq generations
 prmt['restart']['same_seed'] = True  # get seed of random() from restart file to reproduce prior data.
 
@@ -176,9 +176,8 @@ def init_network():
    L.write_id()
    return L
 
-def fitness_treatment(population): 
+def fitness_treatment(population):
     """Function to change the fitness of the networks"""
     pass
     #for nnetwork in range(population.npopulation):
     #    population.genus[nnetwork].fitness=eval(population.genus[nnetwork].data_evolution[0])
-  

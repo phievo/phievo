@@ -85,10 +85,11 @@ def launch_evolution(options):
                     sys.exit(message.format(namefolder))
             else:
                 os.mkdir(namefolder)
+                
                 # Copy some inits file in the Seed directory
-                shutil.copyfile(inits.cfile['fitness'],namefolder+os.sep+'log_fitness.c')
-                shutil.copyfile(inits.cfile['input'],namefolder+os.sep+'log_input.c')
-                shutil.copyfile(inits.cfile['init_history'],namefolder+os.sep+'log_init_histo.c')
+                shutil.copyfile(model_dir+os.sep+inits.cfile['fitness'],namefolder+os.sep+'log_fitness.c')
+                shutil.copyfile(model_dir+os.sep+inits.cfile['input'],namefolder+os.sep+'log_input.c')
+                shutil.copyfile(model_dir+os.sep+inits.cfile['init_history'],namefolder+os.sep+'log_init_histo.c')
                 shutil.copyfile(init_dir,namefolder+os.sep+'log_init_file.py')
 
             parameters2file(inits, os.path.join(namefolder,'parameters'))
