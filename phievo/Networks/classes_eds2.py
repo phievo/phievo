@@ -888,7 +888,8 @@ class Network(object):
         from phievo.Networks.lovelyGraph import pretty_graph
         self.write_id()
         graph = pretty_graph(self,extended=extended)
-        graph.draw(file,edgeLegend=edgeLegend)
+        fig = graph.draw(file,edgeLegend=edgeLegend)
+        return fig
 
     def store_to_pickle(self,filename):
         """Save the whole network in a pickle object named filename

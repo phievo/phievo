@@ -38,9 +38,9 @@ def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_outpu
         list_toplot=list_species
     result = numpy.zeros((size, npoints),
                          dtype=float)  # creates a table result to store data, results[i,j] will contain the concentration of protein i at time j in the cell ncell given as an argument
-    plt.clf()
     linecache.clearcache()
-    ax = plt.gca()
+    fig = plt.figure()
+    ax = fig.gca()
     for indexstep in range(npoints):
         line = linecache.getline(Name, int(indexstep * nstep / npoints))  # reads a line
         s = line.split()  # splits each line and puts it in an array
@@ -62,28 +62,26 @@ def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_outpu
         # plt.ylim(ymax=1.2)
         if (len(list_time) > 0) and (list_time[i] >= 0):
             position = float(list_time[i])
-            plt.text(position - 15, result[i][list_time[i]] + 0.1, str(i), fontsize=20, fontweight='bold',
+            ax.text(position - 15, result[i][list_time[i]] + 0.1, str(i), fontsize=20, fontweight='bold',
                        color=colors[i])
         legendkey.append("Species %i" % i)
     fontsize = 20
-    for tick in ax.xaxis.get_major_ticks():
-        tick.label1.set_fontsize(fontsize)
-        tick.label1.set_fontweight('bold')
-    for tick in ax.yaxis.get_major_ticks():
-        tick.label1.set_fontsize(fontsize)
-        tick.label1.set_fontweight('bold')
-
-    plt.xlabel('Time, Cell=' + str(ncell), fontsize=20, fontweight='bold')
-    plt.ylabel('Concentration', fontsize=20, fontweight='bold')
-    plt.legend(legendkey, loc='best')
+    # for tick in ax.xaxis.get_major_ticks():
+    #     tick.label1.set_fontsize(fontsize)
+    #     tick.label1.set_fontweight('bold')
+    # for tick in ax.yaxis.get_major_ticks():
+    #     tick.label1.set_fontsize(fontsize)
+    #     tick.label1.set_fontweight('bold')
+    ax.set_xlabel('Time, Cell=' + str(ncell), fontsize=20, fontweight='bold')
+    ax.set_ylabel('Concentration', fontsize=20, fontweight='bold')
+    ax.legend(legendkey, loc='best')
     plt.show()
+    return fig
 
 def Plot_Profile(Name, ncelltot, size, nline, position='best', list_species=[],list_AP=[], list_output=[]):
     """ Plot profile of all proteins at time nline, size is the number of variables (proteins) in the cell, ncelltot the total number of cells in the embryo"""
 
-
-    result = numpy.zeros((size, ncelltot),
-                         dtype=float)  # creates a table result to store data, results[i,j] will contain the concentration of protein i in cell j at time defined by nline
+    result = numpy.zeros((size, ncelltot),dtype=float)  # creates a table result to store data, results[i,j] will contain the concentration of protein i in cell j at time defined by nline
     colors = color_generate(size)
     legendkey = []
     linestyle = ['-', '--', ':', '-.']
@@ -101,16 +99,11 @@ def Plot_Profile(Name, ncelltot, size, nline, position='best', list_species=[],l
     list_toplot=range(size)
     for index in s:  # takes each variable in the line
         if (cursor > 0):
-            ncell = int((
-                            cursor - 1) / size)  #computes the corresponding cell : column 1 to size corresponds to cell 0, size+1 to 2*size corresponds to cell 1, ...
+            ncell = int((cursor - 1) / size)  #computes the corresponding cell : column 1 to size corresponds to cell 0, size+1 to 2*size corresponds to cell 1, ...
             ngene = cursor - 1 - size * ncell  #computes the corresponding gene
             try:
                 result[ngene, ncell] = float(index)  #assigns it to the table result
-                #if (result[ngene,ncell]<0.1):
-                #result[ngene,ncell]=10*eval(index)#Be careful of this when plotting a profile (discontinuity from 1->0.1
 
-                #if (ngene==1) or (ngene==3):
-                #result[ngene,ncell]=0.4*eval(index)
             except Exception:
                 display_error(str(ngene)+str(ncell)+str(index)+"Error in Plot_Profile")
         cursor += 1
@@ -122,30 +115,22 @@ def Plot_Profile(Name, ncelltot, size, nline, position='best', list_species=[],l
         if i in list_output:
             style = '-'
         if i in list_toplot:
-            plt.plot(result[i], style, color=colors[i], lw=4.0)
-        #plt.ylim(ymax=ylimmax)
+            ax.plot(result[i], style, color=colors[i], lw=4.0)
         legendkey.append("Species %i" % i)
-        #if (len(list_AP)>0) and (list_AP[i]>=0):
-        #    position=float(list_AP[i])+n_position[list_AP[i]]
-        #    if (position==0):
-        #        position=0.5+n_position[0]
-
-        #    plt.text(position,result[i][list_AP[i]]+0.1,str(i),fontsize=20,fontweight='bold',color=colors[i])
-        #    n_position[list_AP[i]]=n_position[list_AP[i]]+0.7
     fontsize = 20
-    for tick in ax.xaxis.get_major_ticks():
-        tick.label1.set_fontsize(fontsize)
-        tick.label1.set_fontweight('bold')
-    for tick in ax.yaxis.get_major_ticks():
-        tick.label1.set_fontsize(fontsize)
-        tick.label1.set_fontweight('bold')
-
-    plt.xlabel('Position', fontsize=20, fontweight='bold')
-    plt.ylabel('Concentration', fontsize=20, fontweight='bold')
+    # for tick in ax.xaxis.get_major_ticks():
+    #     tick.label1.set_fontsize(fontsize)
+    #     tick.label1.set_fontweight('bold')
+    # for tick in ax.yaxis.get_major_ticks():
+    #     tick.label1.set_fontsize(fontsize)
+    #     tick.label1.set_fontweight('bold')
+    ax.set_xlabel('Position', fontsize=20, fontweight='bold')
+    ax.set_ylabel('Concentration', fontsize=20, fontweight='bold')
     #plt.legend(loc=0)
-    plt.legend(legendkey)
+    ax.legend(legendkey)
     #ax.set_yscale('log')
     plt.show()
+    return fig
 
 
 

@@ -212,7 +212,7 @@ class Seed:
         ax.set_ylabel(Y[0])
         ax.legend()
         fig.show()
-
+        return fig
 
     def get_best_net(self,generation):
         """ The functions returns the best network of the selected generation
@@ -327,7 +327,8 @@ class Seed_Pareto(Seed):
                     fitness_dico[ind.prank] = [[ind.fitness[i] for i in range(self.nbFunctions)]]
             generation_fitness[gen] = fitness_dico
         ## Obvious: plot
-        plot_multiGen_front2D(generation_fitness)
+        fig = plot_multiGen_front2D(generation_fitness)
+        return fig
 
 ## Functions
 def load_generation_data(generations,restart_file):
@@ -379,7 +380,8 @@ def plot_multiGen_front2D(generation_fitness):
     legend_patches = []
     #plt.legend(handles=[red_patch])
     i = 0
-    ax = plt.subplot(111)
+    fig = plt.figure()
+    ax = fig.gca()
     for gen in sorted(generation_fitness.keys()):
         gen_dico = generation_fitness[gen]
         legend_patches.append(mpatches.Patch(color=color_l[i], label='Generation {0}'.format(gen)))
@@ -397,6 +399,8 @@ def plot_multiGen_front2D(generation_fitness):
     legend_patches.append(Line2D([0], [0], linestyle="none", marker=shapes[2], markersize=10,markerfacecolor="black",label="Rank≥3"))
     ax.legend(handles=legend_patches)
     plt.show()
+    return fig
+
 
 
 
