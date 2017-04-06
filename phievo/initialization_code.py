@@ -102,7 +102,7 @@ def check_model_dir(model):
     except AttributeError:
         print('Remark: No pfile object in init* file, use default one (see check_model_dir)!')
     init_module.pfile = pfile
-
+    setattr(init_module,"model_dir",model_dir)
     return [model_dir, init_module, model_dir+os.sep+init_name]
 
 def init_classes_eds2(inits):
@@ -125,8 +125,7 @@ def init_deriv2(inits, workplace_dir, prmt):
     deriv2.cfile['geometry'] = os.path.join(ccode_dir,'linear_geometry.c')
     deriv2.cfile['integrator'] = os.path.join(ccode_dir,'euler_integrator.c')
     deriv2.cfile['main'] = os.path.join(ccode_dir,'main_general.c')
-
-    model_path = prmt["stop_file"].replace("STOP.txt","")
+    model_path = inits.model_dir
     for k, v in inits.cfile.items():
         path = os.path.join(model_path,v)
         if os.path.isfile(path):

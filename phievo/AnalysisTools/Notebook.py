@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import numpy as np
 from  ipywidgets import widgets
 from ipywidgets import interact, interactive, fixed
@@ -17,7 +18,7 @@ class Notebook(object):
     """
     def __init__(self):
         self.sim = None
-
+        rcParams['figure.figsize'] = (9.0, 8.0)
         self.project = None
         self.dependencies_dict = {
             "project" : [],

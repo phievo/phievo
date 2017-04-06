@@ -196,7 +196,8 @@ class Graph:
         height = (maxY-minY)
 
         plt.rc('font', family='sans-serif')
-        fig = plt.figure(figsize=(width,height))
+        #fig = plt.figure(figsize=(width,height))
+        fig = plt.figure()
         ax = fig.gca()
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
