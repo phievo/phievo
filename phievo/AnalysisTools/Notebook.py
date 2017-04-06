@@ -158,22 +158,36 @@ class Select_Generation:
         self.notebook = Notebook
         self.notebook.dependencies_dict["seed"].append(self)
         self.widget_gen = widgets.IntSlider(value = 0,min=0,max=0,description = 'Gen:',disabled=True)
-
-    def read_generation(self,gen_index):
-        self.notebook.generation = gen_index
-        self.notebook.net = self.notebook.sim.get_best_net(self.notebook.seed,self.notebook.generation)
-        for cell in self.notebook.dependencies_dict["generation"]:
-            cell.update()
-
+        self.widget_restart_gen = widgets.IntSlider(value = 0,min=0,max=0,description = 'Restart Gen:',disabled=True)
+        self.widget_restart_net = widgets.IntSlider(value = 0,min=0,max=0,description = 'Network:',disabled=True)
+    def read_best_generation(self,gen_index):
+        if not self.widget_gen.disabled:
+            self.notebook.generation = gen_index
+            self.notebook.net = self.notebook.sim.get_best_net(self.notebook.seed,self.notebook.generation)
+            for cell in self.notebook.dependencies_dict["generation"]:
+                cell.update()
+    def read_restart_generation(self,gen_index,net_index):
+        if not self.widget_restart_gen.disabled:
+            self.notebook.generation = gen_index
+            self.notebook.net = self.notebook.sim.get_backup_net(self.notebook.seed,gen_index,net_index)
+            for cell in self.notebook.dependencies_dict["generation"]:
+                cell.update()
     def display(self):
-        interactive(self.read_generation,gen_index=self.widget_gen)
-        display(self.widget_gen)
+
+        widget1 = widgets.VBox([widgets.HTML("Select Best Network"),interactive(self.read_best_generation,gen_index=self.widget_gen)])
+        widget2 = widgets.VBox([widgets.HTML("Select Backup Network"),interactive(self.read_restart_generation,gen_index=self.widget_restart_gen,net_index=self.widget_restart_net)])
+
+
+        to_display = widgets.HBox([widget1,widget2])
+        display(to_display)
 
     def update(self):
         if self.notebook.seed is None:
             self.widget_gen.value = 0
             self.widget_gen.min = self.widget_gen.max = 0
-            self.widget_gen.min.disabled = True
+            self.widget_gen.disabled = True
+            self.widget_restart_gen.disabled = True
+            self.widget_restart_net.disabled = True
             self.notebook.generation = None
             self.notebook.net = None
         else:
@@ -182,6 +196,13 @@ class Select_Generation:
             self.widget_gen.value = 0
             self.widget_gen.disabled = False
             self.widget_gen.max = len(self.notebook.sim.seeds[self.notebook.seed].generations)-1
+            self.widget_restart_gen.disabled = False
+            restart_generations = list(self.notebook.sim.seeds[self.notebook.seed].restart_generations)
+            step = restart_generations[1]
+            self.widget_restart_gen.max = restart_generations[-1]
+            self.widget_restart_gen.step = step
+            self.widget_restart_net.disabled = False
+            self.widget_restart_net.max = self.notebook.sim.seeds[self.notebook.seed].pop_size -1
 
 class Plot_Layout:
     def __init__(self,Notebook):
@@ -298,6 +319,8 @@ class Plot_Pareto_Fronts:
         self.widget_selectGenerations = widgets.SelectMultiple(options=[None],value=[None],description='Generation',disabled=True)
         self.widget_selectText = widgets.Text(value="",placeholder="List of generations separated with commas.",disabled=True)
         self.widget_plot = widgets.Button(description="Plot Pareto Fronts",disabled=True)
+        self._widget_with_indexes  = widgets.Checkbox(value=False,description='Display indexes',disabled=False)
+
 
     def plot_function(self,button):
         plt.close()
@@ -307,7 +330,7 @@ class Plot_Pareto_Fronts:
             gen = [int(xx) for xx in self.widget_selectText.value.split(",")]
             #gen = [int(xx) for xx in self.widget_selectText.value.split(",")]
 
-        self.notebook.sim.seeds[self.notebook.seed].plot_pareto_fronts(gen)
+        self.notebook.sim.seeds[self.notebook.seed].plot_pareto_fronts(gen,self._widget_with_indexes.value)
     def update(self):
         if self.notebook.seed is None or self.notebook.type!="pareto":
             self.widget_selectGenerations.options = [None]
@@ -316,7 +339,9 @@ class Plot_Pareto_Fronts:
             self.widget_selectText.value = ""
             self.widget_selectText = True
             self.widget_plot.disabled = True
+            self._widget_with_indexes.value = False
         else:
+            self._widget_with_indexes.value = False
             self.widget_selectGenerations.disabled = False
             self.widget_plot.disabled = False
             self.widget_selectGenerations.options = self.notebook.sim.seeds[self.notebook.seed].restart_generations
@@ -329,6 +354,6 @@ class Plot_Pareto_Fronts:
         #interactive(self.read_selected,generations=self.widget_selectGenerations)
         self.widget_plot.on_click(self.plot_function)
         instructions  = widgets.HTML("<p>Press <i>ctrl</i>, <i>cmd</i>, or <i>shift</i>  for multi-select</p>")
-        to_display = widgets.VBox([instructions,widgets.HBox([self.widget_selectGenerations,self.widget_selectText]),self.widget_plot])
+        to_display = widgets.VBox([instructions,widgets.HBox([self.widget_selectGenerations,self.widget_selectText,self._widget_with_indexes]),self.widget_plot])
         #to_display = widgets.VBox([self.widget_plot])
         display(to_display)

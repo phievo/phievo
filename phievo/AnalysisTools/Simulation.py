@@ -43,7 +43,6 @@ class Simulation:
         self.buffer_data = None
 
 
-
     def show_fitness(self,seed,smoothen=0,**kwargs):
         """Plot the fitness as a function of time
 
@@ -78,6 +77,22 @@ class Simulation:
         """
 
         return self.seeds[seed].get_best_net(generation)
+
+    def get_backup_net(self,seed,generation,index):
+        """
+            Get network from the backup file(or restart). In opposition to the best_net file
+            the restart file is note stored at every generation but it contains a full
+            population. This funciton allows to grab any individual of the population when
+            the generation is stored
+
+            Args:
+                seed : index of the seed
+                generation : index of the generation (must be a stored generation)
+                index : index of the network within its generation
+            Return:
+                the selected network object
+        """
+        return self.seeds[seed].get_backup_net(generation,index)
 
     def run_dynamics(self,seed=None,generation=None,trial=1,net=None,erase_buffer=False):
         """
@@ -154,6 +169,8 @@ class Seed:
         self.root = path
         if self.root[-1] != os.sep:
             self.root += os.sep
+
+        self.restart_path = self.root + "Restart_file"
         self.name = re.search("[^/.]*?(?=/?$)",path).group(0)
 
         data = shelve.open(self.root+"data")
@@ -161,6 +178,7 @@ class Seed:
         interac = data['n_interactions']
         species = data['n_species']
         fitness = data['fitness']
+
 
         self.generations = {
             i:{
@@ -170,7 +188,6 @@ class Seed:
                 }
             for i in indexes}
         self.indexes = indexes
-
         self.observables = {
             "generation":lambda:list(self.indexes),
             "n_interactions":lambda:[gen["n_interactions"] for i,gen in self.generations.items()],
@@ -178,6 +195,10 @@ class Seed:
             "fitness":lambda:[gen["fitness"] for i,gen in self.generations.items()],
         }
         self.default_observable = "fitness"
+
+        with shelve.open(self.restart_path) as data:
+            self.pop_size = len(data["0"][1])
+            self.restart_generations = sorted([int(xx) for xx in data.dict.keys()])
 
     def show_fitness(self,smoothen=0,**kwargs):
         """Plot the fitness as a function of time
@@ -226,6 +247,23 @@ class Seed:
 
         return classes_eds2.retrieve_from_pickle(self.root+"Bests_%d.net"%generation,verbose=False)
 
+    def get_backup_net(self,generation,index):
+        """
+        Get network from the backup file(or restart). In opposition to the best_net file
+        the restart file is note stored at every generation but it contains a full
+        population. This funciton allows to grab any individual of the population when
+        the generation is stored
+
+        Args:
+            generation : index of the generation (must be a stored generation)
+            index : index of the network within its generation
+        Return:
+            the selected network object
+        """
+        with shelve.open(self.restart_path) as data:
+            dummy,nets = data[str(generation)]
+        return(nets[index])
+
     def compute_best_fitness(self,generation):
         pass
 
@@ -233,10 +271,7 @@ class Seed:
 class Seed_Pareto(Seed):
     def __init__(self,path,nbFunctions):
         super(Seed_Pareto, self).__init__( path)
-        restart_path = self.root + "Restart_file"
         self.nbFunctions = nbFunctions
-        with shelve.open(restart_path) as data:
-            self.restart_generations = sorted([int(xx) for xx in data.dict.keys()])
 
         self.observables.pop("fitness")
 
@@ -286,9 +321,8 @@ class Seed_Pareto(Seed):
         Returns:
            dict: rank -> [[fitness1],[fitness2],…]
         """
-        restart_path = self.root + "Restart_file"
 
-        with shelve.open(restart_path) as data:
+        with shelve.open(self.restart_path) as data:
             dummy,pop_list = data[str(generation)]
         fitness_dico = {}
         fitnesses = self.get_observable("fitness")
@@ -306,10 +340,9 @@ class Seed_Pareto(Seed):
             print('Error, too many fitnesses to plot them all')
         return fitness_dico
 
-    def plot_pareto_fronts(self,generations):
+    def plot_pareto_fronts(self,generations,with_indexes = False):
         """
             Plots the pareto fronts for a selected list of generations.
-
             Args:
                 generations: list of generations indexes
         """
@@ -317,17 +350,24 @@ class Seed_Pareto(Seed):
         ## Load fitness data for the selected generations and format them to be
         ## understandable by plot_multiGen_front2D
         data = load_generation_data(generations,self.root+"Restart_file")
+
         generation_fitness = {}
+        generation_indexes = {}
         for gen in generations:
+
             fitness_dico = {}
-            for ind in data[gen]:
+            index_dico = {}
+            for i,ind in enumerate(data[gen]):
                 try:
-                    fitness_dico[ind.prank].append([ind.fitness[i] for i in range(self.nbFunctions)])
+                    index_dico[ind.prank].append(i)
+                    fitness_dico[ind.prank].append(list(ind.fitness))
                 except KeyError:
-                    fitness_dico[ind.prank] = [[ind.fitness[i] for i in range(self.nbFunctions)]]
+                    index_dico[ind.prank] = [i]
+                    fitness_dico[ind.prank] = [list(ind.fitness)]
             generation_fitness[gen] = fitness_dico
+            generation_indexes[gen] = index_dico
         ## Obvious: plot
-        fig = plot_multiGen_front2D(generation_fitness)
+        fig = plot_multiGen_front2D(generation_fitness,generation_indexes if with_indexes else None)
         return fig
 
 ## Functions
@@ -360,7 +400,7 @@ def load_generation_data(generations,restart_file):
             dummy,gen_data[gen] = data[str(gen)]
     return gen_data
 
-def plot_multiGen_front2D(generation_fitness):
+def plot_multiGen_front2D(generation_fitness,generation_indexes=None):
     """
         Uses the fitness data for multiple generations to represent the pareto fronts
         of those multiple generations.
@@ -371,6 +411,8 @@ def plot_multiGen_front2D(generation_fitness):
                                 level1 keys: rank of the fitness (1,2,etc.)
                                 index : index of the fitness doublet (they might be
                                         multiple fitnesses with identical rank).
+            generation_indexes: Same dictionnary structure as generation_fitness.
+                                Contains the index of each network in its population
 
     """
     NUM_COLORS = len(generation_fitness)
@@ -391,6 +433,10 @@ def plot_multiGen_front2D(generation_fitness):
             F1,F2 = list(zip(*points))
             shape = shapes[rank-1] if rank<3 else shapes[-1]
             ax.scatter(F1,F2,c=color,edgecolor=color,s=50,marker=shape)
+            if generation_indexes:
+                ind_list = generation_indexes[gen][rank]
+                for l in range(len(ind_list)):
+                    ax.text(F1[l],F2[l],'%d' % ind_list[l],ha='center', va='bottom')
     ax.set_xlabel('Fitness 1')
     ax.set_ylabel('Fitness 2')
     ax.legend(handles=legend_patches)
