@@ -14,8 +14,9 @@ Contents:
    Presentation
    example-lac-operon
    quickstart
-   modules
-   Networks
+   analyse
+   
+
 
 
 Indices and tables
@@ -24,4 +25,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

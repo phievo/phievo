@@ -161,14 +161,6 @@ class Population(object):
         """Overload the population size"""
         return self.npopulation
 
-    def save_bests_file(self, data_str):
-        """Write the data_str at the bottom of self.bests_file
-
-        Deprecated function, use storing instead
-        """
-        ff = open(self.bests_file, 'a')
-        ff.write(data_str)
-        ff.close()
 
     def storing(self,t_gen,net):
         """Store the work and various data for later analysis
