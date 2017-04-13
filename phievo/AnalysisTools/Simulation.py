@@ -94,6 +94,17 @@ class Simulation:
         """
         return self.seeds[seed].get_backup_net(generation,index)
 
+    def stored_generation_indexes(self,seed):
+        """
+        Return the list of the stored generation indexes
+
+        Args:
+            seed (int): Index of Seed, you want the stored generation for.
+        Return:
+            list of the stored generation indexes
+        """
+        return self.seeds[seed].stored_generation_indexes()
+
     def run_dynamics(self,seed=None,generation=None,trial=1,net=None,erase_buffer=False):
         """
         Run Dynamics for the selected network. The function either needs the network as an argument or the seed and generation information to select it. If a network is provided, seed and generation are ignored.
@@ -151,7 +162,6 @@ class Simulation:
         nstep = self.inits.prmt['nstep']
         size = len(net.list_types['Species'])
         ncelltot = self.inits.prmt['ncelltot']
-
         try:
             self.plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time)
         except FileNotFoundError:
@@ -263,6 +273,15 @@ class Seed:
         with shelve.open(self.restart_path) as data:
             dummy,nets = data[str(generation)]
         return(nets[index])
+
+    def stored_generation_indexes(self):
+        """
+        Return the list of the stored generation indexes
+
+        Return:
+            list of the stored generation indexes
+        """
+        return list(self.restart_generations)
 
     def compute_best_fitness(self,generation):
         pass

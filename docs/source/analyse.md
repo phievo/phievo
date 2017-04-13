@@ -22,7 +22,7 @@ best_net_2_326 = sim.get_best_net(2,326)
 
 If you want to understand why the *Simulation* object is organized the way it is and how to go beyond its possibilities, you will need to have an idea of how φ-evo stores the results of a simulation.
 
-By default, for every generation *g* only one *Network* is stored using pickle in a file labelled `Bests_*g*.net`. When the simulation has only one fitness objective, this network is the one with the best fitness in the population. However when the evolution is run using a multiobjective criterium (like pareto optimisation), the best net is chosen randomly amongst the network of rank 1.
+By default, for every generation *g* only one *Network* is stored using pickle in a file labelled `Bests_g.net`. When the simulation has only one fitness objective, this network is the one with the best fitness in the population. However when the evolution is run using a multiobjective criterium (like pareto optimisation), the best net is chosen randomly amongst the network of rank 1.
 
 The former storing method limits the disk space usage. However you might want to store the whole population either for restarting the algorithm from a given generation or to analyze every member of the generation. To add this feature, you can specify a storing period by setting the `prmt['restart']['freq']` parameter in the initialization file before launching the simulation. For example, if you set it to 50, the complete population will be stored every 50 generations in a python *shelve* named `restart_file`.
 
@@ -38,4 +38,56 @@ Other files created:
 
 ## Analysis Tools
 
-In this section we will explore the built in functions that are bound to a *Simulation* object. 
+In this section we will explore the built in functions that are bound to a *Simulation* object.
+
+
+### custom_plot
+
+Plots the seed two observables one against each other. The available observables are the ones present in the `data` file ("generation", "fitness", "n_species", "n_interactions").
+
+```python
+sim.seeds[1].custom_plot("generation","fitness")
+# Similarly can use the shortcut
+sim.custom_plot(1,"generation","fitness")
+```
+
+### plot_fitness
+There also exists a method to plot the fitness directly:
+
+```python
+sim.seeds[1].show_fitness()
+# Similarly can use the shortcut
+sim.show_fitness(1)
+```
+### get_best_net
+Get the best net found in a given generation (the function reads the `Bests_g.net` file and return the Network object)
+
+```python
+bestnet_g5_seed3 = sim.seeds[3].get_best_net(5)
+# or
+bestnet_g5_seed3 = sim.get_best_net(3,5)
+```
+
+### get_backup_net
+
+If you want to extract a network from a entirely stored generation, you can use *get_backup_net*. Be careful though, not every population is stored in the `restart_file`.
+```python
+net8_g50_seed3 = sim.seeds[3].get_backup_net(50,8)
+# Or
+net8_g50_seed3 = sim.get_backup_net(3,50,8)
+```
+
+### stored_generation_indexes
+ The *stored_generation_indexes* is a reminder of which generations are stored.
+
+```python
+lost_stored = sim.seeds[1].stored_generation_indexes()
+# Or
+lost_stored = sim.stored_generation_indexes(1)
+```
+
+### Running a network's dynamics
+
+By construction φ-evo does not allow yet allow to quickly run the dynamics of a network. Namely a Network object has no method that directly returns the derivative from at a given state. Instead φ-evo has a method to write a **c** file containing the derivative function and that runs the dynamics on pre-defined inputs. This may seem a bit bulky but the software was initially written to evaluate the fitness of a given network and that is better done in **c**.
+
+However the *Simulation* has methods to ease the access to the results the dynamics.
