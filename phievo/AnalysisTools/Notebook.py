@@ -265,7 +265,7 @@ class Plot_Dynamics:
     def plot_dynamics(self,button):
         plt.close()
         clear_output()
-        self.notebook.sim.Plot_Data(self.widget_selectInput.value,cell=self.widget_selectCell.value)
+        self.notebook.sim.Plot_TimeCourse(self.widget_selectInput.value,cell=self.widget_selectCell.value)
 
     def update(self):
         if self.notebook.extra_variables.get("ntries",None) is None or self.notebook.generation is None:

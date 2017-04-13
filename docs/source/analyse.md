@@ -90,4 +90,29 @@ lost_stored = sim.stored_generation_indexes(1)
 
 By construction φ-evo does not allow yet allow to quickly run the dynamics of a network. Namely a Network object has no method that directly returns the derivative from at a given state. Instead φ-evo has a method to write a **c** file containing the derivative function and that runs the dynamics on pre-defined inputs. This may seem a bit bulky but the software was initially written to evaluate the fitness of a given network and that is better done in **c**.
 
-However the *Simulation* has methods to ease the access to the results the dynamics.
+However the *Simulation* has the method *run_dynamics* to ease the access to the results the dynamics.
+
+```python
+net = sim.get_best_net(3,5)
+dyn_buffer = sim.run_dynamics(net=net,trial=1)
+```
+
+This runs the dynamics that would be run in the evolution algorithm with the history and input **c** files you provided in the project directory. You can specify the number of trial you want to run if the dynamics is stochastic. The buffer returned by the function is dictionary where the main the "time" and "net" keys give you access to respectively the time vector and the network used for the run. The other keys are the index of the trial for which you want to access the data. Note that the buffer  is also stored in the *Simulation* object as *buffer_data*.
+
+### Plotting the results of a dynamics
+
+The simulation object allows you  to plot the two most obvious result you would like to see after running a dynamics:
+
+1) The time course of the genes in a given cell with *Plot_TimeCourse*
+2) The evolution of the genes along the system at a given time point with *Plot_Profile*
+
+```python
+sim.Plot_TimeCourse(trial_index=1,cell=1)
+sim.Plot_Profile(trial_index=1,time=1)
+```
+
+## Notebook
+
+To facilitate the use of the former functions, φ-evo as a class *Notebook* that is used to run them in a [jupyter notebook](https://jupyter.org). The nice think
+
+The point of having a full class in the Notebook is for dependencies handling between widgets. For example when you load a new seed, you want that all the widget thats

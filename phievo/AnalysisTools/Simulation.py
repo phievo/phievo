@@ -105,19 +105,28 @@ class Simulation:
         """
         return self.seeds[seed].stored_generation_indexes()
 
-    def run_dynamics(self,seed=None,generation=None,trial=1,net=None,erase_buffer=False):
+    def run_dynamics(self,net=None,trial=1,erase_buffer=False):
         """
         Run Dynamics for the selected network. The function either needs the network as an argument or the seed and generation information to select it. If a network is provided, seed and generation are ignored.
 
         Args:
-            seed (int): seed number
-            generation (int): generation number
-            trial (int): Number of independent simulation to run
             net (Networks): network to simulate
-        Returns: data (dict) : dictionnary conatining the time steps
-            at the "time" key and the corresponding time series for
-            the indexes 0 to nb_trials.
+            trial (int): Number of independent simulation to run
+        Returns: data (dict) : dictionnary containing the time steps
+            at the "time" key, the network at "net" and the corresponding
+            time series for index of the trial.
+             - net : Network
+             - time : time list
+             - 0 : data for trial 0
+                - 0 : array for cell 0:
+                       g0 g1 g2 g3 ..
+                    t0  .
+                    t1     .
+                    t2        .
+                    .
+                    .
         """
+
         if net is None:
             net = self.seeds[seed].get_best_net(generation)
         self.inits.prmt["ntries"] = trial
@@ -146,7 +155,18 @@ class Simulation:
 
 
 
-    def Plot_Data(self,trial_index,cell=0):
+    def Plot_TimeCourse(self,trial_index,cell=0):
+        """
+        Searches in the data last stored in the Simulation buffer for the time course
+        corresponding to the trial_index and the cell and plot the gene time series
+
+        Args:
+            trial_index: index of the trial you. Refere to run_dynamics to know how
+            many trials there are.
+            cell: Index of the cell to plot
+        Return:
+            figure
+        """
         net = self.buffer_data["net"]
         nstep = self.inits.prmt['nstep']
         size = len(net.list_types['Species'])
@@ -158,6 +178,18 @@ class Simulation:
             raise
 
     def Plot_Profile(self,trial_index,time=0):
+        """
+        Searches in the data last stored in the Simulation buffer for the time course
+        corresponding to the trial_index and plot the gene profile along the cells at
+        the selected time point.
+
+        Args:
+            trial_index: index of the trial you. Refere to run_dynamics to know how
+            many trials there are.
+            time: Index of the time to select 
+        Return:
+            figure
+        """
         net = self.buffer_data["net"]
         nstep = self.inits.prmt['nstep']
         size = len(net.list_types['Species'])
