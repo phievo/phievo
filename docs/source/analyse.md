@@ -111,8 +111,41 @@ sim.Plot_TimeCourse(trial_index=1,cell=1)
 sim.Plot_Profile(trial_index=1,time=1)
 ```
 
+### Draw a network's layout
+The network object contains a function to draw the layout of its gene interactions:
+```python
+net = sim.get_best_net(3,5)
+net.draw()
+```
+
 ## Notebook
 
-To facilitate the use of the former functions, φ-evo as a class *Notebook* that is used to run them in a [jupyter notebook](https://jupyter.org). The nice think
+To facilitate the use of the former functions, φ-evo as a class *Notebook* that is used to run them in a [jupyter notebook](https://jupyter.org).
 
-The point of having a full class in the Notebook is for dependencies handling between widgets. For example when you load a new seed, you want that all the widget thats
+All the functions described previously can be used directly in a jupyter notebook but the *Notebook* class increases the usability by handling the dependencies between widgets. For instance you want the module in charge of plotting a network's layout to be disabled as long as a Seed and a Network have not been selected.
+
+A Notebook  object serves as a container for all the available modules you can use in the jupyter notebook. A module contains the material to handle a cell: its widgets, some update functions and a display function that displays the widgets in the jupyter notebook. In the end, the user  only needs to run `myNotebook.myModule.display()` to create a jupyter elementary app in a cell. Then the module should be able to handle the expected inputs from the user.
+
+### Creating a custom module
+
+Every module of contained int the *Notebook* object of the *CellModule*  class. The latter is only a minimal template used to constrain the minimal requirement a module must have.
+
+- `__init__(self,Notebook)` : The init function takes the *Notebook* it is contained in as an argument.
+- `display(self)`: The function must be redefined to display the widgets and to handle the relation between them.
+- `update(self)` : If the module has dependencies, this function must be defined. When dependency is updated, this function is called.
+
+#### \_\_init\_\_
+This the function where you define the different widgets of the module. It is also here that you define the dependencies of the module or create a new one. The dependencies system exists to allow communication between different *CellModules*.
+
+```python
+## Inform the notebook that MyModule depends on the Seed
+self.notebook.dependencies_dict["seed"].append(self)
+## Creates a dependencies
+self.notebook.dependencies_dict["dep_name"] = []
+```  
+Note that if you create a new dependency, you should make sure that you also handle the updates when the dependency changes:
+
+```python
+for cell in self.notebook.dependencies_dict["dep_name"]:
+    cell.update()
+```

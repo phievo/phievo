@@ -42,12 +42,24 @@ class Notebook(object):
         self.plot_dynamics = Plot_Dynamics(self)
         self.plot_cell_profile = Plot_Cell_Profile(self)
 
-class Select_Project(object):
+class CellModule():
+    """
+    Template class from which a module should inheritate.
+    """
+    def __init__(self,Notebook):
+        self.notebook = Notebook
+    def display(self):
+        raise NotImplemented("Please define a display function for your module.")
+    def update(self):
+        raise NotImplemented("Please define a update function for your module.")
+
+class Select_Project(CellModule):
         def __init__(self,Notebook):
+            super(Select_Project, self).__init__(Notebook)
             self.widget_select_project = widgets.Text(value='',placeholder='Name of project directory',description='Directory:',disabled=False)
             self.widget_loadDir = widgets.Button(description="Load Run",disabled=True)
             self.foundFile_widget = widgets.HTML("")
-            self.notebook = Notebook
+
         def inspect_run(self,path):
             """
             Test if the dir name exists
@@ -95,8 +107,9 @@ class Select_Project(object):
             self.widget_loadDir.disabled = True
             self.widget_loadDir.button_style = ""
 
-class Select_Seed:
+class Select_Seed(CellModule):
     def __init__(self,Notebook):
+        super(Select_Seed, self).__init__(Notebook)
         self.notebook = Notebook
         self.widget_select_seed = widgets.Dropdown(options={"None":None},value=None,description='Seed:',disabled=True)
         self.notebook.dependencies_dict["project"].append(self)
@@ -123,9 +136,9 @@ class Select_Seed:
             self.widget_select_seed.value = self.widget_select_seed.options[list(self.widget_select_seed.options.keys())[0]]
             self.notebook.seed = self.widget_select_seed.value
 
-class Plot_Evolution_Observable:
+class Plot_Evolution_Observable(CellModule):
     def __init__(self,Notebook):
-        self.notebook = Notebook
+        super(Plot_Evolution_Observable, self).__init__(Notebook)
         self.widget_Xobs = widgets.Dropdown(options=[None],value=None,description='x-axis:',disabled=True)
         self.widget_Yobs = widgets.Dropdown(options=[None],value=None,description='y-axis:',disabled=True)
         self.widget_replot_observable = widgets.Button(description="Plot",disabled=True)
@@ -153,9 +166,9 @@ class Plot_Evolution_Observable:
             self.widget_Yobs.value = self.notebook.sim.seeds[self.notebook.seed].default_observable
 
 
-class Select_Generation:
+class Select_Generation(CellModule):
     def __init__(self,Notebook):
-        self.notebook = Notebook
+        super(Select_Generation, self).__init__(Notebook)
         self.notebook.dependencies_dict["seed"].append(self)
         self.widget_gen = widgets.IntSlider(value = 0,min=0,max=0,description = 'Gen:',disabled=True)
         self.widget_restart_gen = widgets.IntSlider(value = 0,min=0,max=0,description = 'Restart Gen:',disabled=True)
@@ -204,9 +217,9 @@ class Select_Generation:
             self.widget_restart_net.disabled = False
             self.widget_restart_net.max = self.notebook.sim.seeds[self.notebook.seed].pop_size -1
 
-class Plot_Layout:
+class Plot_Layout(CellModule):
     def __init__(self,Notebook):
-        self.notebook = Notebook
+        super(Plot_Layout, self).__init__(Notebook)
         self.notebook.dependencies_dict["seed"].append(self)
         self.notebook.dependencies_dict["generation"].append(self)
         self.button_plotLayout = widgets.Button(description="Plot network layout",disabled=True)
@@ -226,9 +239,9 @@ class Plot_Layout:
         self.button_plotLayout.on_click(self.plot_layout)
         display(self.button_plotLayout)
 
-class Run_Dynamics:
+class Run_Dynamics(CellModule):
     def __init__(self,Notebook):
-        self.notebook = Notebook
+        super(Run_Dynamics, self).__init__(Notebook)
         self.widget_nputs = widgets.IntText(value=1,description='N :',disabled=False)
         self.button_launchRun = widgets.Button(description="Run dynamics",disabled=True)
         self.notebook.dependencies_dict["generation"].append(self)
@@ -248,14 +261,16 @@ class Run_Dynamics:
             self.notebook.extra_variables["ntries"] = None
             self.notebook.sim.buffer_data = None
             self.button_launchRun.disabled = False
+        for cell in self.notebook.dependencies_dict["dynamics"]:
+            cell.update()
 
     def display(self):
         self.button_launchRun.on_click(self.launch_dynamics)
         display(widgets.HBox([self.widget_nputs,self.button_launchRun]))
 
-class Plot_Dynamics:
+class Plot_Dynamics(CellModule):
     def __init__(self,Notebook):
-        self.notebook = Notebook
+        super(Plot_Dynamics, self).__init__(Notebook)
         self.notebook.dependencies_dict["dynamics"].append(self)
         self.notebook.dependencies_dict["generation"].append(self)
         self.widget_selectInput = widgets.IntSlider(value = 0,min=0,max=0,description = 'Input:',disabled=True)
@@ -282,9 +297,9 @@ class Plot_Dynamics:
         self.button_plotdynamics.on_click(self.plot_dynamics)
         display(widgets.HBox([self.widget_selectInput,self.widget_selectCell,self.button_plotdynamics]))
 
-class Plot_Cell_Profile:
+class Plot_Cell_Profile(CellModule):
     def __init__(self,Notebook):
-        self.notebook = Notebook
+        super(Plot_Cell_Profile, self).__init__(Notebook)
         self.notebook.dependencies_dict["dynamics"].append(self)
         self.notebook.dependencies_dict["generation"].append(self)
         self.widget_selectInput = widgets.IntSlider(value = 0,min=0,max=0,description = 'Input:',disabled=True)
@@ -312,9 +327,9 @@ class Plot_Cell_Profile:
         display(widgets.HBox([self.widget_selectInput,self.widget_selectTime,self.button_plotdynamics]))
 
 
-class Plot_Pareto_Fronts:
+class Plot_Pareto_Fronts(CellModule):
     def __init__(self,Notebook):
-        self.notebook = Notebook
+        super(Plot_Pareto_Fronts, self).__init__(Notebook)
         self.notebook.dependencies_dict["seed"].append(self)
         self.widget_selectGenerations = widgets.SelectMultiple(options=[None],value=[None],description='Generation',disabled=True)
         self.widget_selectText = widgets.Text(value="",placeholder="List of generations separated with commas.",disabled=True)

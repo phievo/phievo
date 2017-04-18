@@ -175,3 +175,52 @@ would like to see after running a dynamics:
 
     sim.Plot_TimeCourse(trial_index=1,cell=1)
     sim.Plot_Profile(trial_index=1,time=1)
+
+Draw a network's layout
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The network object contains a function to draw the layout of its gene
+interactions:
+
+.. code:: python
+
+    net = sim.get_best_net(3,5)
+    net.draw()
+
+Notebook
+--------
+
+To facilitate the use of the former functions, φ-evo as a class
+*Notebook* that is used to run them in a `jupyter
+notebook <https://jupyter.org>`__.
+
+All the functions described previously can be used directly in a jupyter
+notebook but the *Notebook* class increases the usability by handling
+the dependencies between widgets. For instance you want the module in
+charge of plotting a network's layout to be disabled as long as a Seed
+and a Network have not been selected.
+
+A Notebook object serves as a container for all the available modules
+you can use in the jupyter notebook. A module contains the material to
+handle a cell: its widgets, some update functions and a display function
+that displays the widgets in the jupyter notebook. In the end, the user
+only needs to run ``myNotebook.myModule.display()`` to create a jupyter
+elementary app in a cell. Then the module should be able to handle the
+expected inputs from the user.
+
+Creating a custom module
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Every module of contained int the *Notebook* object of the *CellModule*
+class. The latter is only a minimal template used to constrain the
+minimal requirement a module must have.
+
+-  ``__init__(self,Notebook)`` : The init function take the *Notebook*
+   it is contained in as an argument.
+-  ``display``: The function must be redefined to display the widgets
+   and to handle the relation between them.
+-  ``update`` : If the module has dependencies, this function must be
+   defined. When dependency is updated, this function is called.
+
+\_\_init\_\_
+^^^^^^^^^^^^
