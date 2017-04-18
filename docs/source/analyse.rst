@@ -75,14 +75,14 @@ a *Simulation* object.
 custom\_plot
 ~~~~~~~~~~~~
 
-Plots the seed two observables one against each other. The available
-observables are the ones present in the ``data`` file ("generation",
-"fitness", "n\_species", "n\_interactions").
+Plots two observables one against each other for a given seed. The
+available observables are the ones contained in the ``data`` file
+("generation", "fitness", "n\_species", "n\_interactions").
 
 .. code:: python
 
     sim.seeds[1].custom_plot("generation","fitness")
-    # Similarly can use the shortcut
+    # Similarly you can use the shortcut
     sim.custom_plot(1,"generation","fitness")
 
 plot\_fitness
@@ -93,7 +93,7 @@ There also exists a method to plot the fitness directly:
 .. code:: python
 
     sim.seeds[1].show_fitness()
-    # Similarly can use the shortcut
+    # or
     sim.show_fitness(1)
 
 get\_best\_net
@@ -124,8 +124,8 @@ stored in the ``restart_file``.
 stored\_generation\_indexes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The *stored\_generation\_indexes* is a reminder of which generations are
-stored.
+The *stored\_generation\_indexes* is method that returns the list of
+stored generations.
 
 .. code:: python
 
@@ -136,36 +136,39 @@ stored.
 Running a network's dynamics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By construction φ-evo does not allow yet allow to quickly run the
-dynamics of a network. Namely a Network object has no method that
-directly returns the derivative from at a given state. Instead φ-evo has
-a method to write a **c** file containing the derivative function and
-that runs the dynamics on pre-defined inputs. This may seem a bit bulky
-but the software was initially written to evaluate the fitness of a
-given network and that is better done in **c**.
+By construction φ-evo does not allow to quickly run the dynamics of a
+network. More precisely a Network object does not have method that
+directly returns the derivative from at a given state of gene
+quantities. Instead φ-evo has a method to write a **c** file containing
+the derivative function and that runs the dynamics on pre-defined
+inputs. This may seem a bit bulky but the software was initially written
+to evaluate the fitness of a given network as quickly as possible. This
+is better done in **c**.
 
-However the *Simulation* has the method *run\_dynamics* to ease the
-access to the results the dynamics.
+However *Simulation* has the method *run\_dynamics* to ease the access
+to the results the dynamics.
 
 .. code:: python
 
     net = sim.get_best_net(3,5)
     dyn_buffer = sim.run_dynamics(net=net,trial=1)
 
-This runs the dynamics that would be run in the evolution algorithm with
-the history and input **c** files you provided in the project directory.
-You can specify the number of trial you want to run if the dynamics is
-stochastic. The buffer returned by the function is dictionary where the
-main the "time" and "net" keys give you access to respectively the time
-vector and the network used for the run. The other keys are the index of
-the trial for which you want to access the data. Note that the buffer is
-also stored in the *Simulation* object as *buffer\_data*.
+This runs the dynamics as it would in the evolution algorithm with the
+history and input **c** files (provided in the project directory). You
+can specify the number of trial you want to run (if the dynamics is
+stochastic for example). The buffer returned by the function is a
+dictionary where the "time" and "net" keys give you access to the time
+vector and the network used for the run respectively. The other keys are
+the index of the trial for which you want to access the data. Note that
+the buffer is also stored in the *Simulation* object as *buffer\_data*,
+the latter is erased every time you run a new set of dynamics for
+*Simulations*.
 
 Plotting the results of a dynamics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation object allows you to plot the two most obvious result you
-would like to see after running a dynamics:
+The simulation object allows you to plot the two most obvious results
+you would like to see after running a dynamics:
 
 1) The time course of the genes in a given cell with *Plot\_TimeCourse*
 2) The evolution of the genes along the system at a given time point
@@ -211,16 +214,143 @@ expected inputs from the user.
 Creating a custom module
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Every module of contained int the *Notebook* object of the *CellModule*
-class. The latter is only a minimal template used to constrain the
-minimal requirement a module must have.
+Every module of contained in the *Notebook* object of the *CellModule*
+class. The latter is a minimal template used to constrain the minimal
+requirement a module must have:
 
--  ``__init__(self,Notebook)`` : The init function take the *Notebook*
+-  ``__init__(self,Notebook)`` : The init function takes the *Notebook*
    it is contained in as an argument.
--  ``display``: The function must be redefined to display the widgets
-   and to handle the relation between them.
--  ``update`` : If the module has dependencies, this function must be
-   defined. When dependency is updated, this function is called.
+-  ``update(self)`` : If the module has dependencies, this function must
+   be defined. When dependency is updated, this function is called.
+-  ``display(self)``: The function must be redefined to display the
+   widgets and to handle the relation between them.
 
 \_\_init\_\_
 ^^^^^^^^^^^^
+
+This is the function where you define the different widgets for the
+module. It is also here that you define the dependencies of the module
+or create a new ones. The dependencies system allows communication
+between different *CellModules*.
+
+.. code:: python
+
+    ## Inform the notebook that MyModule depends on the Seed
+    self.notebook.dependencies_dict["seed"].append(self)
+    ## Creates a dependencies
+    self.notebook.dependencies_dict["dep_name"] = []
+
+Note that if you create a new dependency, you should make sure that you
+also handle the updates when the dependency changes:
+
+.. code:: python
+
+    for cell in self.notebook.dependencies_dict["dep_name"]:
+        cell.update()
+
+update
+^^^^^^
+
+Every module, particularly those with dependencies, should have an
+update function. This is the function to call when the dependency is
+changed. The update function can do whatever you want but mostly its
+purpose is to unable/disabled the widgets when a dependency is changed
+or to reset their options.
+
+In Addition to the *self.notebook.dependencies\_dict*, a module can
+access the dictionnary *self.notebook.extra\_variables* to pass values
+between *CellWidgets*.
+
+display
+^^^^^^^
+
+The display function is here to contain the interaction and display code
+you would normally put in a jupyter notebook to handle the communication
+of the widgets with the functions.
+
+The philosophy of the *CellModule* is to create an elementary app in
+charge of one action (plotting a curve, setting the seed, etc.). Using a
+module's display method in a cell gives access to the app at this
+location.
+
+Other functions
+^^^^^^^^^^^^^^^
+
+The *update* and *dispay* functions are usually not enough to run the
+*CellModule*. You will need to define custom methods for your module to
+handle the widget interactions(for instance, what happens when a widget
+is clicked?).
+
+Example: DisplayFitness
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Here is a little practical example on how to include a custom
+*CellModule* that displays the best fitness of the selected generation
+when the button is clicked.
+
+Create a module file *NB\_Module.py* and import the Notebook module and
+some widget libraries:
+
+.. code:: python
+
+    from  phievo.AnalysisTools.Notebook import Notebook,CellModule
+    from ipywidgets import interact, interactive, widgets
+    from IPython.display import display
+
+Then create the *CellModule* object:
+
+.. code:: python
+
+    class DisplayFitness(CellModule):
+        def __init__(self,Notebook):
+            super(DisplayFitness, self).__init__(Notebook)
+            self.button = widgets.Button(description="Display fitness",disabled=True)
+            self.display_area = widgets.HTML(value=None, placeholder='<p></p>',description='Fitness:')
+            self.notebook.dependencies_dict["seed"].append(self)
+            self.notebook.dependencies_dict["generation"].append(self)
+            self.notebook.dependencies_dict["project"].append(self)
+        def update_display(self,button):
+            """
+            Custom function that handles the button click and wrtie the fitness in the HTML widget.
+            """
+            seed = self.notebook.seed
+            gen = self.notebook.generation
+            fit = str(self.notebook.sim.seeds[seed].generations[gen]["fitness"])
+            self.display_area.value = "<p>{0}</p>".format(fit)
+        def update(self):
+            """
+            Clear the HTML text and when the seed or the generation is updated.
+            """
+            if self.notebook.sim is None or self.notebook.seed is None or self.notebook.generation is None:
+                self.button.disabled=True
+            else:
+                self.button.disabled=False
+            self.display_area.value="<p></p>"
+        def display(self):
+            """
+            Display the button and the display area on one row.
+            """
+            self.button.on_click(self.update_display)
+            display(widgets.HBox([self.button,self.display_area]))
+
+Save the file and open the notebook to associate the newly created
+module to a notebook object.
+
+.. code:: python
+
+    ...
+    from  phievo.AnalysisTools.Notebook import Notebook
+    import NB_Module
+
+    notebook = Notebook()
+    setattr(notebook,"display_fitness",NB_Module.DisplayFitness(notebook))
+
+Now the display\_fitness module can be used as any other *CellModule* by
+creating a new cell and running:
+
+.. code:: python
+
+    notebook.display_fitness.display()
+
+A copy of the *NB\_Module.py* file is available in the *Examples/*
+directory.
