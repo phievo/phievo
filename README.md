@@ -18,8 +18,7 @@ When python2 and python3 are installed on the same computer, it is common to nee
 
 ### install the package
 
-
-Simply run the following command:
+From the root of the project, run the following command:
 ```bash
 	sudo pip install dist/phievo-1.0.tar.gz
 ```
@@ -59,13 +58,14 @@ If _gcc_ is not already installed on you system (via macports or Xcode), _homebr
 
 _pygraphviz_ is not istalled by default with _phievo_ because it does not exist natively on windows and we wanted to publish a version that that run on al the systems. _pygraphviz_ is used only to display network layouts. If it is not install _phievo_ will print a warning and use _networkx_ spring layout instead.
 
-On mac install pygraphviz is done as follows:
+On max OSX, you have to use homebrew to install graphvix first :
+
 ```bash
-brew install graphviz
+brew install graphviz pkg-config
 pip install pygraphviz
 ```
 
-On GNU/linux, installing the dependencies varies depanding on the distribution. We tested the following on debian
+On GNU/linux, installing the dependencies varies depanding on the distribution. We tested the following on debian and ubuntu
 
 ```bash
 sudo apt-get install graphviz graphviz-dev pkg-config
@@ -78,6 +78,7 @@ We found that sometimes on ubuntu the C linking to the graphviz library does not
 ```bash
 sudo pip install pygraphviz --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
 ```
+```
 ## Example: Static Hox
 
 Copy the project directory `StaticHox` from `Examples` where you want to run it. Then copy `run_evolution` at the same place as `StaticHox`.
@@ -85,13 +86,13 @@ Copy the project directory `StaticHox` from `Examples` where you want to run it.
 To launch the evolution, simply run
 
 ```bash
-	./run_evolution -m StaticHox
+	./run_evolution.py -m StaticHox
 ```
 
 On windows machine  we recommand that you explicitly tell the system that you are running python (make sure you use the good version).
 
 ```bash
-	python run_evolution -m StaticHox
+	python run_evolution.py -m StaticHox
 ```
 
 ## Build the documentation

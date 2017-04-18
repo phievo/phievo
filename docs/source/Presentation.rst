@@ -2,28 +2,7 @@
 Presentation
 ************
 
-.. _installation:
-
-Installation
-############
-Install `git`
-Download the program's directory
-
-.. code-block:: bash
-		
-    git clone https://bitbucket.org/onnetworkevolution/network_evolution
-
-
-The program depends on several external packages and libraries:
- * graphviz (optional to use graphviz layout for network visualization)
- * python >3.5
- * gcc C compiler
-   
-Python libraries:
- * matplotlib
- * numpy
- * networkx
- * pygraphviz 
+This section presents the basic 
 
 Network components
 ##################
@@ -33,53 +12,53 @@ Network components
 Species
 -------
 
-Species is one of the two major components of a network. A species is a protein that can have different functions. Adding a new type requires a list containing the type name as a first element. Some type may come with characteristic parameters that complete the list. A species is described by one or more of the following tags: 
+Species is one of the two major components of a network. A species is a protein that can have different functions. Adding a new type requires a list containing the type name as a first element. Some type may come with characteristic parameters that complete the list. A species is described by one or more of the following tags:
 
 .. glossary::
-    	
-    Degradable: 
+
+    Degradable:
         The protein is degraded.
 	*["Degradation",degradationRate]*
-      
+
     TF:
         Transcription factor (activity is 1 for activator 0 for inhibitor).
 	*["TF",activity]*
-   
+
     Kinase:
         The species can be used to phosphorilate another species.
         *["Kinase"]*
-   
+
     Phosphatase:
         *["Phosphatase"]*
-   
+
     Output:
         The species can be chosen as a network output by the algorithm. Possibility to order the different outputs using a rank *n_put*.
 	*["Output",n_put]*
-   
+
     Input:
         The species can be chosen as a network input by the algorithm. Possibility to order the different inputs using a rank *n_put*.
 	*["Input",n_put]*
-      
+
     Complexable:
-        Species can be complexed with another species. 
+        Species can be complexed with another species.
         *["Complexable"]*
-      
+
     Complex:
         Species is a complex.
         *["Complex"]*
-      
+
     Ligand:
         Species is a Ligand.
         *["Ligand"]*
-      
-    Receptor:      
+
+    Receptor:
         Species is a receptor.
 	*["Receptor"]*
-      
+
     Phospho:
         Phosphorylated species
 	*["Phospho"]*
-      
+
     Phosphorylable:
         Only species with phosphorylated tags can be phosphorylated.
         *["Phosphorylable"]*
@@ -87,7 +66,7 @@ Species is one of the two major components of a network. A species is a protein 
 Most of the former attributes are handled internally. If the user wants can to enter a type manually, it is done through:
 
 .. code-block:: python
-		
+
     mySpecies.add_type(["Degradation",0.5])
     print(mySpecies.list_types())
 
@@ -117,16 +96,16 @@ The Interactions serve as links between other species_ and TModules_. The differ
 
    CorePromoter:
      Joins a TModule to a Species
-     
+
    TFHill:
      Takes a TF and joins it to a Tmodule
-     
+
    LR:
      Ligand-Receptor, gives a new Species
-     
+
    PPI:
      Protein-Protein interaction, gives a new Species
-     
+
    Phosphorylation
 
 Network
@@ -152,7 +131,7 @@ There exists two types of TF actions: activition and inhibition. The regulation 
 
 Next the CorePromoter interaction adds a delay :math:`\tau_P` to account for the protein synthesis time. Practically, the algorithm considers the state of the system at time :math:`t-\tau_P` to estimate the production of :math:`P` at time :math:`t`.
 
-The following configuration 
+The following configuration
 
 .. _fig-TFHill_interaction:
 
@@ -171,11 +150,11 @@ leads to the equation
 
 
 In the above equation, the :math:`h` and :math:`n` parameters correspond respectively to the hill saturation and exponent. The :math:`PR` is the production rate of the protein in optimal conditions and :math:`B` is the basal rate(in case no activator is present). The overall production is modulated by the repression.
-   
+
 Degradation
 -----------
 
-Every protein :math:`P` labelled as *degradable* is degraded over time with a rate :math:`\delta_P`. This 
+Every protein :math:`P` labelled as *degradable* is degraded over time with a rate :math:`\delta_P`. This
 
 .. math::
 
@@ -202,7 +181,7 @@ The phosphorilasion is the addition of a phosphate group to a Species by a kinas
 
 Protein-Protein-Interaction (PPI)
 ---------------------------------
-The PPI interaction accounts for the complexation of two single proteins into one complex. 
+The PPI interaction accounts for the complexation of two single proteins into one complex.
 
 
 .. _fig-PPI_interaction:
@@ -223,7 +202,7 @@ with :math:`k^{+}` and :math:`k^{-}` being respectively the forward and backward
 
 Ligand-Receptor interaction (LR)
 --------------------------------
-This interaction corresponds to the complexation of two species - a ligand and a receptor - to trigger a response in the system. 
+This interaction corresponds to the complexation of two species - a ligand and a receptor - to trigger a response in the system.
 
 
 .. _fig-LR_interaction:
@@ -241,5 +220,3 @@ The ligand concentration are assumed to be add steady state which allows to desc
    \frac{d L}{dt} = \frac{d R}{dt} = - \frac{d C}{dt} = - \text{rate} = - \frac{V\,L\,R}{h + R}
 
 with :math:`V` and :math:`h` being respectively the association rate and the association threshold.
-
-

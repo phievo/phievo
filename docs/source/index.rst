@@ -11,11 +11,12 @@ Contents:
 .. toctree::
    :maxdepth: 4
 
+   installation
    Presentation
    example-lac-operon
    quickstart
    analyse
-   
+
 
 
 
