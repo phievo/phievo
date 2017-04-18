@@ -1,9 +1,7 @@
-# φ-evo
-
-## Install phievo
+# Install φ-evo
 
 
-Since _phievo_ is not pusblished on any offical repository yet, you need to install it manually.
+Since _phievo_ is not pusblished on any official repository yet, you need to install it manually.
 
 ### install Anaconda
 In case python is not already installed on your computer, we recommand to install it via the [anaconda distribution](https://www.continuum.io/downloads).
@@ -11,16 +9,16 @@ In case python is not already installed on your computer, we recommand to instal
 Among other things, anaconda provides the standard package manager of python _pip_. _pip_ can upgrade itself, it is generally recommanded to do so before starting the installation process.
 
 ```bash
-	pip install --upgrade pip
+	pip3 install --upgrade pip
 ```
 
-When python2 and python3 are installed on the same computer, it is common to need to specify the version of python or pip you are using: `python` (`pip`) for python2 and `python3` (`pip3`) for python3. Make sure you verify which command correspond to python3 on you computer.
+When python2 and python3 are installed on the same computer, it is common to need to specify the version of python or pip you are using: `python` (`pip`) for python2 and `python3` (`pip3`) for python3. Make sure you verify which command correspond to python3 on you computer. In the following instruction you may need replace "pip3" by "pip".
 
 ### install the package
 
 From the root of the project, run the following command:
 ```bash
-	sudo pip install dist/phievo-1.0.tar.gz
+	sudo pip3 install dist/phievo-1.0.tar.gz
 ```
 
 ## Instructions specific to windows
@@ -62,38 +60,23 @@ On max OSX, you have to use homebrew to install graphvix first :
 
 ```bash
 brew install graphviz pkg-config
-pip install pygraphviz
+pip3 install pygraphviz
 ```
 
 On GNU/linux, installing the dependencies varies depanding on the distribution. We tested the following on debian and ubuntu
 
 ```bash
 sudo apt-get install graphviz graphviz-dev pkg-config
-sudo pip install pygraphviz
+sudo pip3 install pygraphviz
 ```
 On other distribution, you may want to find the equivalent of _graphviz_, _graphviz-dev_, and _pkg-config_.
 
 We found that sometimes on ubuntu the C linking to the graphviz library does not work properly, to fix this, be more explicit on the linking:
 
 ```bash
-sudo pip install pygraphviz --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
-```
-```
-## Example: Static Hox
-
-Copy the project directory `StaticHox` from `Examples` where you want to run it. Then copy `run_evolution` at the same place as `StaticHox`.
-
-To launch the evolution, simply run
-
-```bash
-	./run_evolution.py -m StaticHox
+sudo pip3 install pygraphviz --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
 ```
 
-On windows machine  we recommand that you explicitly tell the system that you are running python (make sure you use the good version).
-
-```bash
-	python run_evolution.py -m StaticHox
-```
 
 ## Build the documentation
 
@@ -110,6 +93,22 @@ Note that you may need to run make html twice because the build process uses the
 
 We provide a jupyter notebook to help with the analysis of the runs. If you wand to run it, you will need to install several extra python libraries, to help with this, they are writen in [extra.txt](extra.txt).
 ```bash
-pip install -r extra.txt
+pip3 install -r extra.txt
 jupyter nbextension enable --py --sys-prefix widgetsnbextension
+```
+
+## Example: Static Hox
+
+Copy the project directory `StaticHox` from `Examples` where you want to run it. Then copy `run_evolution` at the same place as `StaticHox`.
+
+To launch the evolution, simply run
+
+```bash
+	./run_evolution.py -m StaticHox
+```
+
+On windows machine  we recommand that you explicitly tell the system that you are running python (make sure you use the good version).
+
+```bash
+	python run_evolution.py -m StaticHox
 ```
