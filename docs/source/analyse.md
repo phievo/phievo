@@ -148,4 +148,4 @@ Note that if you create a new dependency, you should make sure that you also han
 ```python
 for cell in self.notebook.dependencies_dict["dep_name"]:
     cell.update()
-```
+``` 
