@@ -1,9 +1,7 @@
-Quickstart
-==========
+HowTo
+=====
 
-This section serves as a quick *howto* tutorial. We will use the lactose
-operon example presented in the previous section to get familiar with
-the concepts of the software and learn how to setup a new simulation.
+This tutorial lists examples of how to perform common tasks with φ-evo.
 
 ## Build a network manually
 
@@ -11,8 +9,7 @@ the concepts of the software and learn how to setup a new simulation.
 Before even starting a simulation, let us build a network manually in
 order to get familiar with the way they are encoded in the program. Most
 of the code is written in python [^1], let us call our first file
-**Quickstart\_manualNetwork.py** (A jupyter noteboos -
-**Quickstart\_manualNetwork.py** - is provided in the example
+**HowTo\_manualNetwork.py** (A jupyter notebook) is provided in the example
 directory).
 
 ``` python
@@ -240,7 +237,7 @@ program explicitly to clear the Seeds with the "-c" or "--clear" option.
 ```
 ## Restart an evolution
 
-Every *k* generations, the algorithm saves a complete generation in file called *Restart_file* in the Seed's directory. If interrupted, it can use this *Restart_file* to restart from a backup generation. You can set the restart generation in the initialization file:
+Every *k* generations, the algorithm saves a complete generation in file called *Restart_file* in the Seed's directory. If interrupted, you can use this *Restart_file* to restart from a backup generation. You can set the restart generation in the initialization file:
 
 ```python
 prmt['restart'] = {
@@ -251,7 +248,17 @@ prmt['restart'] = {
   "freq": 50 # Keep the same saving frequency
 }
 ```
-When the seed and the generation are not set or `None`, φ-evo will search for the last backuped generation in the seed with highest index. 
+When the seed and the generation are not set or `None`, φ-evo will search for the last backuped generation in the seed with highest index.
+
+## Pareto evolution
+
+To start a pareto optimization with φ-evo, extra paremeters need to be defined in the initialization file:
+```python
+prmt['pareto']=True ## Activates pareto evolution
+prmt['npareto_functions']=2 ## Number of fitness components
+prmt['rshare']=0 ## Radius under which networks are penalysed for being too
+                 ## close on the pareto front
+```
 
 [^1]: The front interface is coded in **python** (version &gt;3.4). But
     for efficiency reason, the core integration is coded in **C**.

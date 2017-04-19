@@ -149,4 +149,16 @@ association threshold.
 
 ## Evolution
 
-The evolution algorithm mimics Darwinian selection. It generates an initial population (of constant size size defined by the user) where the individuals are in competition to pass their genome to the next generation. Only the fittest half of the individuals passes to next generation and is allowed do reproduce (by duplication) in order to maintain the population size. 
+The evolution algorithm mimics Darwinian selection. It generates an initial population (of constant size size defined by the user) where the individuals are in competition to pass their genome to the next generation. Only the fittest half of the individuals passes to next generation and is allowed do reproduce (by duplication) in order to maintain the population size.
+
+
+
+## Pareto evolution
+
+In the case where the fitness is composed of multiple components, it is not obvious how to balance the different modules in the global fitness. It may be interesting to have a multiple objective optimization where all the components have the same importance; only changes improving a component without decreasing the others are kept. The fitness $F = \{f_1,f_2,...,f_N\}$ is of higher rank than $G = \{g_1,g_2,...,g_N\}$ if
+$$\forall i\quad f_i\geq g_i$$
+$$\exists k,\quad f_k>g_k$$
+
+Clearly multiple objective optimisation does not result in one best network in the end but to a population of highest rank networks called the Pareto front. More information can be found on [Wikipedia](https://en.wikipedia.org/wiki/Multi-objective_optimization).
+
+From a practical standpoint, the algorithm works similarly to the genetic algorithm with a modified selection process. As in the genetic algorithm, half of the population is passed to the next generation and duplicated. Because the only classification criterion is the network's rank, the cutoff may occur in the middle of a set of equivalent network since they have the same rank. In such a case the algorithm selects randomly the networks with the cutoff rank to complete the set of individuals passed to the next generation.

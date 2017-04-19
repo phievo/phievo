@@ -14,7 +14,7 @@ Contents:
    installation
    Presentation
    example-lac-operon
-   quickstart
+   howto
    analyse
 
 
