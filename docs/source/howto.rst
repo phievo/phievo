@@ -1,8 +1,7 @@
 HowTo
 =====
 
-This *HowTo* tutorial gives examples of how to perform common tasks with
-φ-evo.
+This tutorial lists examples of how to perform common tasks with φ-evo.
 
 Build a network manually
 ------------------------
@@ -262,47 +261,21 @@ set the restart generation in the initialization file:
     }
 
 When the seed and the generation are not set or ``None``, φ-evo will
-search for the last backuped generation in the seed with highest index.
+search for the last backup-ed generation in the seed with highest index.
 
 Pareto evolution
 ----------------
-
-In the case where the fitness is composed of multiple components, it is
-not obvious how to balance the different modules in the global fitness.
-It may be interesting to have a multiple objective optimization where
-all the components have the same importance; only changes improving a
-component without decreasing the others are kept. The fitness
-:math:`F = \{f_1,f_2,...,f_N\}` is of higher rank than
-:math:`G = \{g_1,g_2,...,g_N\}` if
-
-.. math:: \forall i\quad f_i\geq g_i
-
-.. math:: \exists k,\quad f_k>g_k
-
-Clearly multiple objective optimisation does not result in one best
-network in the end but to a population of highest rank networks called
-the Pareto front. More information can be found on
-`Wikipedia <https://en.wikipedia.org/wiki/Multi-objective_optimization>`__.
-
-From a practical standpoint, the algorithm works similarly to the
-genetic algorithm with a modified selection process. As in the genetic
-algorithm, half of the population is passed to the next generation and
-duplicated. Because the only classification criterion is the network's
-rank, the cutoff may occur in the middle of a set of equivalent network
-since they have the same rank. In such a case the algorithm selects
-randomly the networks with the cutoff rank to complete the set of
-individuals passed to the next generation.
 
 To start a pareto optimization with φ-evo, extra paremeters need to be
 defined in the initialization file:
 
 .. code:: python
 
-    prmt['pareto']=True
+    prmt['pareto']=True ## Activates pareto evolution
     prmt['npareto_functions']=2 ## Number of fitness components
     prmt['rshare']=0 ## Radius under which networks are penalysed for being too
                      ## close on the pareto front
 
 .. [1]
-   The front interface is coded in **python** (version >3.4). But for
+   The front interface is coded in **python** (version >3.5). But for
    efficiency reason, the core integration is coded in **C**.

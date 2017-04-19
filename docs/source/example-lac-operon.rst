@@ -2,7 +2,6 @@
 A simple example: the lactose operon
 ====================================
 
-:Author: P. François, M. Hemery, A. Henry
 
 Description of the biological problem
 =====================================
@@ -50,7 +49,7 @@ close from the logical gate corresponding to the lac operon, that is:
 nonetheless ask more work than will be presented here.
 
 
-   
+
 Implementation in the algorithm
 ===============================
 
@@ -195,11 +194,8 @@ Now that your computer has run several simulations it is time to analyse
 them to decipher the output of the evolutionary algorithm. The first
 thing to look at is the time course of the fitness for several runs, to
 show the fitness of the first run, you can either use the
-``Analyse run`` notebook or type in your terminal.
+``Analyse Run`` notebook or use the `Simulation class <analyse.html>`__.
 
-::
-
-        python analyse_run.py lac_operon 0
 
 Make sure to check several runs to know the typical fitness of a
 successful or failed run, this will discard the cases where the
@@ -211,17 +207,11 @@ want to display the state of the best network in the population at
 generation :math:`500` (the end of the simulation given our ``init*.py``
 files). It may be small and concise but usually it’s not, evolutionary
 procedure tends to accumulate a lot of uninteresting interactions and
-species – the famous DNA junk? –that mey be ignored. Anyway, this is the
-raw result of the evolution. To save a particular network, just type
-``save(500)``. It will print out the file directory where the network
+species – the famous DNA junk? –that may be ignored. Anyway, this is the
+raw result of the evolution.
+It will print out the file directory where the network
 has been saved for later analysis.
 
-You can now turn to the ``analyse_network`` module by invoking it from
-the terminal and providing the model you are studying.
-
-::
-
-        python analyse_network.py -m lac_operon
 
 You can from there read and write network (with the read and write
 function), compute the fitness (with the ``fitness`` function) and even
@@ -234,45 +224,10 @@ Finally, you can also add homebrew function to analyse your evolutionary
 result by adding a ``analyse.py`` file in the project folder. It will be
 imported with ``analyse_network`` through the name ``spec``.
 
---------------
-
-To make your final network more insightful, you may want to prune your
-network by removing the less usefull interactions. Several functions of
-the ``analyse_network.py`` module are useful for this task:
-
--  ``clone(net)``: Return a deepcopy of the network, use it to save your
-   network before making a critical move.
-
--  ``net.draw(edgeLegend=True)``: plot the network in a pyplot frame.
-   The ``edgeLegend`` option add more information about interactions to
-   simplify the reading and pruning procedure but is off by default for
-   aesthetics.
-
--  ``fitness(net,plot=False)``: Compute the fitness as it is done by the
-   algorithm, if plot is set to *True*, it also display the time course
-   of the different species in the network as a function of time for a
-   particular try (the first one by default). It can be use to manually
-   check that your modification doesn’t alter the fitness in a harmfull
-   way.
-
--  ``pruning(net)``: An automatic function which try to set all the
-   parameters of the network to zero or ten one after the other and then
-   remove the interactions which obviously seems useless. This can
-   however missed several parts of the network, so a manual pruning is
-   usually needed after this first round.
-
--  ``read(filename)``/``write(net,filename)``: allow you to fetch and
-   store networks (try to keep the ``.net`` extension). The project
-   folder path is automatically added.
-
--  ``remove_interaction(net,id)``: Delete the interaction of the network
-   whom label is ``n[id]``. You shouldn’t remove species directly,
-   instead, call ``remove_interaction`` on the one which create the
-   species (CorePromoter for a free Species for example).
 
 .. _fig-network-lo:
 .. figure:: figures_lac/networks.png
-   :width: 900px	      
+   :width: 900px
    :align: center
    :alt: p2_response
    :figclass: align-center
@@ -289,35 +244,6 @@ obvious feature is the uniformity of the solution. Nearly all the
 successfull runs show very similar patern indicating that the biological
 grammar available actually imposes strong constraints on the possibles
 solution to a particular problem.
-
-and Beyond
-==========
-
-To take advantage of the other options of the algorithm, we will give
-here a brief presentation of its additional features:
-
-Pareto Evolution
-----------------
-
-The notion of Pareto optimality came from the economy and intend to
-evaluate a list of objects along several criteria when no obvious
-trade-of or hierarchy can be made among the different criteria. Pareto
-optimality class objects which are better along every criterion as
-better but consider equal objects which are better only along some of
-them [5]_.
-
-Our evolution implement a Pareto ranking algorithm that can be activated
-in the ``init*.py`` file. It ask you the number of criteria you wan’t to
-take into account. This criteria should be printed by the ``fitness.c``
-file one number per line.
-
-However, you may notice that several concepts break when pareto
-evolution is used. Particularly, the notion of best individual is quite
-fuzzy and the mean fitness of the population doesn’t have much sense.
-The function ``analyse_run.pareto_scatter`` allow you to investigate the
-repartition of the population in the fitness space (when there is 2 or 3
-fitness criteria).
-
 
 
 Geometry
@@ -350,4 +276,3 @@ New interactions
    decreasing robustness nor increasin price… that’s better, but between
    the cheap one and the costly but better, it is ultimately a matter of
    taste.
-

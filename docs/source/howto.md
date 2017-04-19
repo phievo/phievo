@@ -248,7 +248,7 @@ prmt['restart'] = {
   "freq": 50 # Keep the same saving frequency
 }
 ```
-When the seed and the generation are not set or `None`, φ-evo will search for the last backuped generation in the seed with highest index.
+When the seed and the generation are not set or `None`, φ-evo will search for the last backup-ed generation in the seed with highest index.
 
 ## Pareto evolution
 
@@ -260,5 +260,6 @@ prmt['rshare']=0 ## Radius under which networks are penalysed for being too
                  ## close on the pareto front
 ```
 
-[^1]: The front interface is coded in **python** (version &gt;3.4). But
+
+[^1]: The front interface is coded in **python** (version &gt;3.5). But
     for efficiency reason, the core integration is coded in **C**.

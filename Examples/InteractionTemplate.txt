@@ -1,8 +1,8 @@
-""" 
+"""
 This file provide the basic template to define new interactions.
 You may want first to search/replace Dummy_Interaction by a more adapted name.
 
-For reminder, the algorithm will use this file as follow:
+For reminder, the algorithm will use this file as follows:
 When affecting new mutations, it use the number_Dummy_Interaction() method to know the number of possible interactions.
 If this interaction is chosen, mutation.random_Interaction() will call the random_Dummy_Interaction() method defined below.
 If this kind of interaction is deleted, mutation.remove_Interaction(), through classes_eds2.clean_Nodes() needs the outputs_to_delete() method defined below.
@@ -27,9 +27,10 @@ import deriv2
 mutation.dictionary_ranges['Dummy_Interaction.parameter1']= Some function of mutation.C, mutation.T, mutation.L
 mutation.dictionary_ranges['Dummy_Interaction.parameter2']= Some function of mutation.C, mutation.T, mutation.L
 
+
 class Dummy_Interaction(classes_eds2.Interaction):
     """ A Dummy_Interaction """
-    
+
     def __init__(self,a=0,d=0):
         """Initialize all the parameters and the allowed structure of the interaction (input and output)"""
         classes_eds2.Node.__init__(self)
@@ -40,7 +41,7 @@ class Dummy_Interaction(classes_eds2.Interaction):
         # Typical values are 'Species', 'Degradable' or 'TModule'
         self.input=[#<'One Tag or TModule per input '>#]
         self.output=[#<'One Tag or TModule per input '>#]
-    
+
     def outputs_to_delete(self,net):
         """ Returns the objects to delete when removing the Dummy_Interaction, typically some of the outputs of the interaction or nothing"""
         return [] #by default
@@ -125,17 +126,16 @@ def Dummy_Interaction_deriv_inC(net):
         for index in net.list_types['Dummy_Interaction']:
             Output = net.graph.successors(index) #finds the Outputs
             [Input1,Input2] = net.graph.predecessors(index) #find the Inputs
-            
+
             # defines interaction rate, input_id_list will decreases and output_id_list increases at rate rate1
             rate1 = String combining Input1.id, Input2.id, parameter1, parameter2
-            func += deriv2.compute_leap([input_id_list],[output_id_list],rate1) 
-            
+            func += deriv2.compute_leap([input_id_list],[output_id_list],rate1)
+
             rate2 = String combining Input1.id, Input2.id, parameter1, parameter2
             func += deriv2.compute_leap([input_id_list],[output_id_list],rate2)
     else:
         func += "No Dummy_Interaction in this network\n"
     return func
-    
+
 ##### Update of the deriv2 method #####
 deriv2.Dummy_Interaction_deriv_inC = Dummy_Interaction_deriv_inC
-
