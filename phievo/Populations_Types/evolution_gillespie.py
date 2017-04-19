@@ -84,14 +84,25 @@ def restart(directory, generation, verbose = True):
         Returns:
             rprmt (dict): the parameters of the run
             genus (list): the list of individuals of the population
-        """
+    """
+
     restart_file = os.path.join(directory,"Restart_file")
-    with shelve.open(restart_file,flag="r") as restart_data:
+    try:
+        restart_data = shelve.open(restart_file,flag="r")
+    except dbm.error:
+        raise FileNotFoundError("The directory {0} does not have a restart file.".format(directory))
+    if generation is None:
+        generation = max([int(ss) for ss in restart_data.dict.keys()])
+
+    try:
         rprmt, genus = restart_data[str(generation)]
-        if verbose:
-            print('successfully restarted from file= ', dir, 'generation= ', generation)
-            print('header=', rprmt['header'])
-        return rprmt, genus
+    except KeyError:
+        raise KeyError("Generation {0} is not stored in the restart file  for Seed{1}.".format(generation,prmt["restart"]["seed"]))
+    restart_data.close()
+    if verbose:
+        print('successfully restarted from file= ', dir, 'generation= ', generation)
+        print('header=', rprmt['header'])
+    return rprmt,genus,generation
 
 ###################################
 ### Class Population Definition ###
@@ -138,9 +149,9 @@ class Population(object):
         # Set self.same_seed = True if want to exactly
         # recreate evolution that lead to restart data
         if prmt['restart']['activated']:
-            rprmt, self.genus = restart(prmt['restart']['dir'], prmt['restart']['kgeneration'] )
+            rprmt, self.genus,prmt['restart']['kgeneration'] = restart(namefolder, prmt['restart'].get('kgeneration',None) )
             self.tgeneration = rprmt['tgeneration']
-            if prmt['restart']['same_seed']:
+            if prmt['restart'].get('same_seed',True):
                 random.setstate( rprmt['state'] )
                 self.same_seed = True
                 self.generation0 = 1 + prmt['restart']['kgeneration']

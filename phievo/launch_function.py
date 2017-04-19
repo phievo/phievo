@@ -44,14 +44,19 @@ def launch_evolution(options):
         main_loop = True
     if main_loop: # this part describe only the master processor 0
         # Recovery from restart file
-        if (inits.prmt['restart']['activated']
-            and inits.prmt['restart']['same_seed']
-            and inits.prmt['nseed'] > 1):
-            print('WARNING initializing from dir=', inits.prmt['restart']['dir'], 'and exactly continuing prior data')
-            print('Therefore no need to for nseed=', inits.prmt['nseed'], 'to be >1, resetting to 1')
-            inits.prmt['nseed'] = 1
-            # 11/2010 EDS noticed bug here, identical restart not working?? problem with rand seed??
+        if (inits.prmt['restart']['activated'] and inits.prmt['nseed'] > 1):
 
+            if inits.prmt['restart'].get('seed',None) is None:
+                ## If no seed is provided, searches the one with the largest index
+                seeds = glob.glob(os.path.join(model_dir,"Seed*"))
+                if len(seeds) == 0:
+                    raise FileExistsError("No seed to start from in {0}.".format(model_dir))
+                inits.prmt['restart']['seed'] = max([int(seed.replace(os.path.join("Somites","Seed"),"")) for seed in seeds])
+            print('WARNING initializing from Seed{0}'.format(inits.prmt['restart']['seed']), 'and exactly continuing prior data')
+            #print('Therefore no need to for nseed=', inits.prmt['nseed'], 'to be >1, resetting to 1')
+            #inits.prmt['nseed'] = inits.prmt['restart']['seed']
+            # 11/2010 EDS noticed bug here, identical restart not working?? problem with rand seed??
+            inits.prmt['firstseed'] = inits.prmt['restart']['seed']
         if 'firstseed' in inits.prmt:
             firstseed = inits.prmt['firstseed']
         else:
@@ -80,12 +85,11 @@ def launch_evolution(options):
 
             # Create a directory if needed and check if data already present
             if os.access(namefolder, os.F_OK):
-                if (len(os.listdir(namefolder)) > 2):  #ok to overwrite paramter file, and Bests but not simulation data
+                if (len(os.listdir(namefolder)) > 2) and not inits.prmt["restart"]["activated"]:  #ok to overwrite paramter file, and Bests but not simulation data
                     message = 'dir= {0} has data in it, exiting'
                     sys.exit(message.format(namefolder))
             else:
                 os.mkdir(namefolder)
-                
                 # Copy some inits file in the Seed directory
                 shutil.copyfile(model_dir+os.sep+inits.cfile['fitness'],namefolder+os.sep+'log_fitness.c')
                 shutil.copyfile(model_dir+os.sep+inits.cfile['input'],namefolder+os.sep+'log_input.c')

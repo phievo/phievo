@@ -114,24 +114,17 @@ prmt['multipro_level']=1
 prmt['pareto']=0
 prmt['plot']=0
 
-# To restart from a Restart_* file created in Seed* directories:
-#    Move the Restart file into a new model directory (see run_evolution -m option)
-#    Adjust the entries below as desired and run_evolution module.
-#    Note option to either exactly reproduce prior evolution simulation or just initialize with some
-# prior population and then do indepedent evolution
-
-# The parameters for restart related functions, grouped into subdictionary, used in evolution_gillespie.py
-# The flag to restart from file is file name, None skips restart file and uses new instances of init functions
-# If restart the numbering of generations continuous with that of restart file.
-# To redo a saved population with different random number, use ['same_seed'] = False
-# Note the 'freq' parameter below, if ~= npopulation then Restart file size ~1/2 Bests file
+## prmt['restart']['kgeneration'] tells phievo to save a complete generation
+## at a given frequency in a restart_file. The algorithm can relaunched at
+## backuped generation by turning  prmt['restart']['activated'] = True and
+## setting the generation and the seed. If the two latters are not set, the
+## algorithm restart from the highest generation  in the highest seed.
 prmt['restart'] = {}
 prmt['restart']['activated'] = False #indicate if you want to restart or not
-prmt['restart']['dir'] =  "Somites/Seed1" # the directory of the population you want to restart from
-prmt['restart']['kgeneration'] = 50  # restart from After this generation number (see loop in Population.evolution)
 prmt['restart']['freq'] = 50  # save population every freq generations
-prmt['restart']['same_seed'] = True  # get seed of random() from restart file to reproduce prior data.
-
+#prmt['restart']['seed'] =  0 # the directory of the population you want to restart from
+#prmt['restart']['kgeneration'] = 50  # restart from After this generation number
+#prmt['restart']['same_seed'] = True # Backup the random generator to the same seed
 
 # reset the range for delay to integer units of dt, and optionally freeze the output variables
 
