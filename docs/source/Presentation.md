@@ -1,7 +1,7 @@
 Presentation
 ============
 
-This section presents the basic
+This section presents the basics
 
 ## Network components
 

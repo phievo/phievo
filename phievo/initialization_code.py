@@ -195,8 +195,7 @@ def make_workplace_dir(parent_dir):
     if not already present
     """
 
-    workplace_dir = parent_dir + os.sep + 'Workplace'
-    #workplace_dir = '/ltmp/paulf/Workplace'
+    workplace_dir = os.path.join(parent_dir,'Workplace')
     workplace_dir = os.path.normpath(workplace_dir)
     if ( not os.access(workplace_dir, os.F_OK) ):
         os.mkdir(workplace_dir)

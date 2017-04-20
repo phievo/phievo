@@ -49,7 +49,7 @@ def number_Dummy_Interaction(self):
     # By default but you may want to optimize
     return len(self.list_possible_Dummy_Interaction())
 ```
-This creates the  dummy interaction but does not tell the network how to use itself.
+This creates the  dummy interaction but does not tell the network how to use it.
 (how to add it, how to delete it, etc.)
 
 The following functions tell a network how to add the newly created interaction

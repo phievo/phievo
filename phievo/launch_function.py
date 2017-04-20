@@ -45,7 +45,6 @@ def launch_evolution(options):
     if main_loop: # this part describe only the master processor 0
         # Recovery from restart file
         if (inits.prmt['restart']['activated'] and inits.prmt['nseed'] > 1):
-
             if inits.prmt['restart'].get('seed',None) is None:
                 ## If no seed is provided, searches the one with the largest index
                 seeds = glob.glob(os.path.join(model_dir,"Seed*"))
@@ -82,7 +81,6 @@ def launch_evolution(options):
             print('initializing random() with seed=', seed, 'prior to beginning the evolution')
             random.seed(seed)
             namefolder = os.path.join(model_dir,"Seed%i" % seed)
-
             # Create a directory if needed and check if data already present
             if os.access(namefolder, os.F_OK):
                 if (len(os.listdir(namefolder)) > 2) and not inits.prmt["restart"]["activated"]:  #ok to overwrite paramter file, and Bests but not simulation data
@@ -100,7 +98,7 @@ def launch_evolution(options):
 
             # Population construction for run on several machine with pypar
             if (inits.prmt['multipro_level'] == 2):
-                if (inits.prmt['pareto'] == 1):
+                if (inits.prmt['pareto']):
                     from phievo.Populations_Types.pareto_population import pareto_parallel_Population
                     population = pareto_parallel_Population(namefolder, inits.prmt['npareto_functions'],
                                                             inits.prmt['rshare'])
@@ -110,7 +108,7 @@ def launch_evolution(options):
 
             # Population construction for multiprocessor run on one machine
             elif (inits.prmt['multipro_level'] == 1):
-                if (inits.prmt['pareto'] == 1):
+                if (inits.prmt['pareto']):
                     from phievo.Populations_Types.pareto_population import pareto_thread_Population
                     population = pareto_thread_Population(namefolder, inits.prmt['npareto_functions'],
                                                           inits.prmt['rshare'])
@@ -120,7 +118,7 @@ def launch_evolution(options):
 
             # Population construction for single processor run
             else:
-                if (inits.prmt['pareto'] == 1):
+                if (inits.prmt['pareto']):
                     from Populations_Types.pareto_population import pareto_Population
                     population = pareto_Population(namefolder, inits.prmt['npareto_functions'], inits.prmt['rshare'])
                 else:
@@ -142,6 +140,7 @@ def launch_evolution(options):
 
 def launch_seed(seed_number):
     NotImplemented
+
 def test_network(options):
     """ Test the behavior of a particular network (indicated by the -t
     option) with respect to a given model (the -m or -i option)
