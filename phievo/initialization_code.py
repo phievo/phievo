@@ -40,9 +40,9 @@ def init_evolution(inits, deriv2):
     mutation.build_lists(mutation.dictionary_mutation)
 
     # import parameters/fns into gillespie evolution module
+
     import phievo.Populations_Types.evolution_gillespie as evo_gis
     evo_gis.prmt.update(inits.prmt)
-
     evo_gis.compile_and_integrate = deriv2.compile_and_integrate
     mutation.compile_and_integrate = deriv2.compile_and_integrate
 
@@ -115,8 +115,8 @@ def init_classes_eds2(inits):
     pretty_graph2 = import_module(inits.pfile["pretty_graph"])
     return [net_class, pretty_graph2]
 
-def init_deriv2(inits, workplace_dir, prmt):
-    """import module deriv2 and setup C files dictionary as per initialization & set workplace_dir
+def init_deriv2(inits, prmt):
+    """import module deriv2 and setup C files dictionary as per initialization
     """
     deriv2 = import_module('phievo.Networks.deriv2')
     # Define default directory for cfile then overwrite with information from inits
@@ -132,7 +132,7 @@ def init_deriv2(inits, workplace_dir, prmt):
             deriv2.cfile[k] = path
         else:
             raise FileNotFoundError("ERROR to find the C code:\n{} doesn't match a file.".format(path))
-    deriv2.workplace_dir = workplace_dir
+
     if ('langevin_noise' in prmt):
         if (prmt['langevin_noise'] > 0):
             deriv2.noise_flag = 1
@@ -199,7 +199,7 @@ def make_workplace_dir(parent_dir):
     workplace_dir = os.path.normpath(workplace_dir)
     if ( not os.access(workplace_dir, os.F_OK) ):
         os.mkdir(workplace_dir)
-    return workplace_dir + os.sep  # in other modules use dir + filename, inconsistently
+    return workplace_dir # in other modules use dir + filename, inconsistently
 
 def display_error(msg = 'ERROR',filename = 'error.txt'):
     """A pretty function to display the catched errors and log them in a file

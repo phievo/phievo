@@ -283,7 +283,7 @@ class Population(object):
             net_stat.add_net(self.genus[nnetwork])
         return None
 
-    def evolution(self):
+    def evolution(self,prmt):
         """Main method to evolve population
         Return:
             None

@@ -21,16 +21,15 @@ def launch_evolution(options):
     """
 
     #initializes deriv2 and mutation for all processors
-    [model_dir, inits, init_dir] = check_model_dir(options["model"])
+    [model_dir, inits, init_file] = check_model_dir(options["model"])
     ### Write STOP file
     if options["clear"]:
-        toClear = glob.glob(os.path.join(model_dir,"Seed*"))+glob.glob(os.path.join(model_dir,"Workplace*"))
+        toClear = glob.glob(os.path.join(model_dir,"Seed*"))
         for directory in toClear:
             shutil.rmtree(directory, ignore_errors=True)
     inits.prmt["stop_file"] = create_STOP_file(model_dir)
     [classes_eds2, pretty_graph] = init_classes_eds2(inits)
-    workplace_dir = make_workplace_dir(model_dir)
-    deriv2 = init_deriv2(inits, workplace_dir, inits.prmt)
+    deriv2 = init_deriv2(inits, inits.prmt)
     [mutation, evolution_gillespie] = init_evolution(inits, deriv2)
 
     # to distinguish master and slave nodes when running on cluster with pypar
@@ -63,69 +62,24 @@ def launch_evolution(options):
 
         ## The following line allows running multiple runs in parallel on the same project
         ## without interfering.
-        # seeds = list(range(firstseed, firstseed + inits.prmt['nseed']))
-        # time.sleep(random.random()*10)
-        # while seeds:
-        #
-        #     done_seeds = map(lambda path:os.path.split(path)[-1],glob.glob(os.path.join(model_dir,"Seed*")))
-        #     seed = seeds[0]
-        #     try:
-        #         seeds.remove(seed)
-        #     except ValueError:
-        #         pass
-        #     if seed in done_seeds:
-        #         continue
+        seeds = list(range(firstseed, firstseed + inits.prmt['nseed']))
+        time.sleep(random.random()*10)
+        while seeds:
+
+            done_seeds = map(lambda path:os.path.split(path)[-1],glob.glob(os.path.join(model_dir,"Seed*")))
+            seed = seeds[0]
+            try:
+                seeds.remove(seed)
+            except ValueError:
+                pass
+            if seed in done_seeds:
+                continue
 
 
-        for seed in range(firstseed, firstseed + inits.prmt['nseed']):
-            print('initializing random() with seed=', seed, 'prior to beginning the evolution')
-            random.seed(seed)
-            namefolder = os.path.join(model_dir,"Seed%i" % seed)
-            # Create a directory if needed and check if data already present
-            if os.access(namefolder, os.F_OK):
-                if (len(os.listdir(namefolder)) > 2) and not inits.prmt["restart"]["activated"]:  #ok to overwrite paramter file, and Bests but not simulation data
-                    message = 'dir= {0} has data in it, exiting'
-                    sys.exit(message.format(namefolder))
-            else:
-                os.mkdir(namefolder)
-                # Copy some inits file in the Seed directory
-                shutil.copyfile(model_dir+os.sep+inits.cfile['fitness'],namefolder+os.sep+'log_fitness.c')
-                shutil.copyfile(model_dir+os.sep+inits.cfile['input'],namefolder+os.sep+'log_input.c')
-                shutil.copyfile(model_dir+os.sep+inits.cfile['init_history'],namefolder+os.sep+'log_init_histo.c')
-                shutil.copyfile(init_dir,namefolder+os.sep+'log_init_file.py')
+        #for seed in range(firstseed, firstseed + inits.prmt['nseed']):
 
-            parameters2file(inits, os.path.join(namefolder,'parameters'))
+            launch_seed(seed,inits,init_file)
 
-            # Population construction for run on several machine with pypar
-            if (inits.prmt['multipro_level'] == 2):
-                if (inits.prmt['pareto']):
-                    from phievo.Populations_Types.pareto_population import pareto_parallel_Population
-                    population = pareto_parallel_Population(namefolder, inits.prmt['npareto_functions'],
-                                                            inits.prmt['rshare'])
-                else:
-                    from phievo.Populations_Types.parallel_population import parallel_Population
-                    population = parallel_Population(namefolder)
-
-            # Population construction for multiprocessor run on one machine
-            elif (inits.prmt['multipro_level'] == 1):
-                if (inits.prmt['pareto']):
-                    from phievo.Populations_Types.pareto_population import pareto_thread_Population
-                    population = pareto_thread_Population(namefolder, inits.prmt['npareto_functions'],
-                                                          inits.prmt['rshare'])
-                else:
-                    from phievo.Populations_Types.thread_population import thread_Population
-                    population = thread_Population(namefolder)
-
-            # Population construction for single processor run
-            else:
-                if (inits.prmt['pareto']):
-                    from Populations_Types.pareto_population import pareto_Population
-                    population = pareto_Population(namefolder, inits.prmt['npareto_functions'], inits.prmt['rshare'])
-                else:
-                    population = evolution_gillespie.Population(namefolder)
-
-            # Finaly launch the genetic algorithm
-            population.evolution()
 
     else: # this part describes the slave nodes under pypar
         while True:
@@ -138,8 +92,66 @@ def launch_evolution(options):
             pypar.barrier()  #wait here until job completion of all other processors, do not know why, should try to remove it at some point for performance
             pypar.send(result, 0)
 
-def launch_seed(seed_number):
-    NotImplemented
+def launch_seed(seed,inits,init_file):
+    """
+    Launch the evolution for a new seed.
+
+    Args:
+        seed: index of the seed to run
+        inits: initialization parameter dictionnary
+                (obtained from initialization file)
+    """
+    print('initializing random() with seed=', seed, 'prior to beginning the evolution')
+    random.seed(seed)
+    namefolder = os.path.join(inits.model_dir,"Seed%i" % seed)
+
+    # Create a directory if needed and check if data already present
+    if os.access(namefolder, os.F_OK):
+        if (len(os.listdir(namefolder)) > 2) and not inits.prmt["restart"]["activated"]:  #ok to overwrite paramter file, and Bests but not simulation data
+            message = 'dir= {0} has data in it, exiting'
+            sys.exit(message.format(namefolder))
+    else:
+        os.mkdir(namefolder)
+        # Copy some inits file in the Seed directory
+        shutil.copyfile(inits.model_dir+os.sep+inits.cfile['fitness'],namefolder+os.sep+'log_fitness.c')
+        shutil.copyfile(inits.model_dir+os.sep+inits.cfile['input'],namefolder+os.sep+'log_input.c')
+        shutil.copyfile(inits.model_dir+os.sep+inits.cfile['init_history'],namefolder+os.sep+'log_init_histo.c')
+        shutil.copyfile(init_file,namefolder+os.sep+'log_init_file.py')
+
+    parameters2file(inits, os.path.join(namefolder,'parameters'))
+
+    # Population construction for run on several machine with pypar
+    if (inits.prmt['multipro_level'] == 2):
+        if (inits.prmt['pareto']):
+            from phievo.Populations_Types.pareto_population import pareto_parallel_Population
+            population = pareto_parallel_Population(namefolder, inits.prmt['npareto_functions'],
+                                                    inits.prmt['rshare'])
+        else:
+            from phievo.Populations_Types.parallel_population import parallel_Population
+            population = parallel_Population(namefolder)
+
+    # Population construction for multiprocessor run on one machine
+    elif (inits.prmt['multipro_level'] == 1):
+        if (inits.prmt['pareto']):
+            from phievo.Populations_Types.pareto_population import pareto_thread_Population
+            population = pareto_thread_Population(namefolder, inits.prmt['npareto_functions'],
+                                                  inits.prmt['rshare'])
+        else:
+            from phievo.Populations_Types.thread_population import thread_Population
+            population = thread_Population(namefolder)
+
+    # Population construction for single processor run
+    else:
+        if (inits.prmt['pareto']):
+            from phievo.Populations_Types.pareto_population import pareto_Population
+            population = pareto_Population(namefolder, inits.prmt['npareto_functions'], inits.prmt['rshare'])
+        else:
+            from phievo.Populations_Types.pareto_population import Population
+            population = Population(namefolder)
+
+    # Finaly launch the genetic algorithm
+    inits.prmt["workplace_dir"] = make_workplace_dir(os.path.join(inits.model_dir,"Seed{0}".format(seed)))
+    population.evolution(inits.prmt)
 
 def test_network(options):
     """ Test the behavior of a particular network (indicated by the -t
@@ -163,7 +175,7 @@ def test_network(options):
         test_output_dir = './'
         [classes_eds2, pretty_graph] = init_classes_eds2(inits)
     elif (options["model"]):
-        [model_dir, inits, init_dir] = check_model_dir(options["model"])
+        [model_dir, inits, init_file] = check_model_dir(options["model"])
         test_output_dir = model_dir
 
         [classes_eds2, pretty_graph] = init_classes_eds2(inits)

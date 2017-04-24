@@ -267,7 +267,6 @@ def write_program(programm_file,net, prmt, print_buf, Cseed=0):
 def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
     """Compile and integrate a network
 
-    Run the code in 'workplace_dir defined top of this file.
     Wait for process completion before launching another integration
     See https://www.python.org/dev/peps/pep-0324/ for interface to run C code
 
@@ -282,9 +281,14 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
         list: corresponding to the different line of the output of treatment_fitness
         (see your fitness.c file) or None if an error occured
     """
-    network.write_id()
-    cfile_directory = workplace_dir+'built_integrator'+str(nnetwork)
 
+    network.write_id()
+    if "workplace_dir" in prmt:
+        workplace_dir = prmt["workplace_dir"]
+    if not os.path.exists(workplace_dir):
+        os.makedirs(workplace_dir)
+    cfile_directory = os.path.join(workplace_dir,'built_integrator'+str(nnetwork))
+    #import pdb;pdb.set_trace()
     # check for outputs
     if 'Output' not in network.list_types:
         print("No Output for network %i" % nnetwork)
