@@ -114,7 +114,6 @@ prmt['ngeneration'] =5001
 prmt['tgeneration']=0.01       #initial generation time (for gillespie), reset during evolution
 prmt['noutput']=5    # to define initial network
 prmt['ninput']=1
-prmt['freq_plot'] = 100  #plot time course every generation%freq_plot = 0
 prmt['freq_stat'] = 5     # print stats every freq_stat generations
 prmt['frac_mutate'] = 0.5 #fraction of networks to mutate
 prmt['redo'] = 1   # rerun the networks that do not change to compute fitness for different IC

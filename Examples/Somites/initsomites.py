@@ -100,7 +100,6 @@ prmt['ngeneration'] =501
 prmt['tgeneration']=1.0       #initial generation time (for gillespie)
 prmt['noutput']=3     # to define initial network
 prmt['ninput']=1
-prmt['freq_plot'] = 40    #plot time course every generation%freq_plot = 0
 prmt['freq_stat'] = 5     # print stats every freq_stat generations
 prmt['frac_mutate'] = 0.5 #fraction of networks to mutate
 prmt['redo'] = 0

@@ -22,7 +22,6 @@ if __verbose__:
     print('Execute evolution_gillespie.py')
 
 import phievo.Networks.classes_eds2 as classes_eds2
-import phievo.Networks.plotdata as plotdata
 import phievo.Networks.mutation as mutation
 import gc # Garbage collector
 from math import log,sqrt
@@ -338,9 +337,12 @@ class Population(object):
             self.storing(t_gen,self.genus[0])
 
             # Handling of different options
-            if prmt['pareto'] == 1 and t_gen % prmt['freq_plot'] == 0:
-                self.pop_print_pareto(self.namefolder+'/pareto'+str(t_gen),self.namefolder+'/rank1_nets'+str(t_gen))
-
+            try:
+                if prmt['pareto'] and prmt['freq_plot']:
+                    if t_gen % prmt['freq_plot'] == 0:
+                        self.pop_print_pareto(self.namefolder+'/pareto'+str(t_gen),self.namefolder+'/rank1_nets'+str(t_gen))
+            except KeyError:
+                pass
             # Selection step, replace less fit networks by the fitter ones.
             for nnetwork in range( self.npopulation//2 ):
                 self.genus[-1-nnetwork]=copy.deepcopy(self.genus[nnetwork]) # duplicates best half
