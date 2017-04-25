@@ -154,8 +154,10 @@ class Population(object):
                 random.setstate( rprmt['state'] )
                 self.same_seed = True
                 self.generation0 = 1 + prmt['restart']['kgeneration']
+            prmt['restart']['activated'] = False
             return None
-
+        else:
+            prmt['restart']['kgeneration'] = self.generation0
         # no restart, generate randomized list of networks from init file or routines supplied here.
         self.genus=[]
         for i in range(self.npopulation):
@@ -302,7 +304,9 @@ class Population(object):
             print('Best/worst fitness prior to mutation=', self.genus[0].fitness, self.genus[-1].fitness)
 
         # MAIN EVOLUTIONARY LOOP
-        for t_gen in range(self.generation0, prmt['ngeneration'] + self.generation0):
+        start_gen = max(self.generation0,prmt["restart"]["kgeneration"])
+        prmt["restart"]["kgeneration"] = 0
+        for t_gen in range(start_gen,prmt['ngeneration']):
 
             net_stat = pop_stat.NetworkStat(stat_dict)
             gen_stat = pop_stat.GenusStat()

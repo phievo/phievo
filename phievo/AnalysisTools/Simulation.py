@@ -24,7 +24,9 @@ class Simulation:
         ## Upload Run parameters
         model_files = os.listdir(self.root)
         (model_dir , self.inits , init_file) =tuple(initialization_code.check_model_dir(self.root))
-        self.deriv2 = initialization_code.init_deriv2(self.inits,self.root,self.inits.prmt)
+        self.inits.prmt["workplace_dir"] = os.path.join(self.inits.model_dir,"Workplace")
+        
+        self.deriv2 = initialization_code.init_deriv2(self.inits,self.inits.prmt)
         self.plotdata = initialization_code.import_module(self.inits.pfile['plotdata'])
 
         searchSeed  = re.compile("\d+$") ## integer ## at the end of the string "project_root/Seed##"
@@ -186,7 +188,7 @@ class Simulation:
         Args:
             trial_index: index of the trial you. Refere to run_dynamics to know how
             many trials there are.
-            time: Index of the time to select 
+            time: Index of the time to select
         Return:
             figure
         """
