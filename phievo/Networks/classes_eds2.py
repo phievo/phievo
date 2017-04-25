@@ -862,10 +862,8 @@ class Network(object):
                         modification=True
 
         if (nloop>900):
-            print("Potential infinite loop")
-            P=draw_Network(self.graph)
-            name="Infiniteloop.jpg"
-            P.write_jpg(name)
+            self.draw(file="Infiniteloop.jpg")
+            
 
     def draw(self,file=None,edgeLegend=False,extended=False):
         """Draw the network in a matplotlib framework
