@@ -865,7 +865,7 @@ class Network(object):
             self.draw(file="Infiniteloop.png")
 
 
-    def draw(self,file=None,edgeLegend=False,extended=False):
+    def draw(self,file=None,edgeLegend=False,extended=False,display=True):
         """Draw the network in a matplotlib framework
 
         Delegate to :class:`Networks.lovelyGraph.pretty_graph`

@@ -6,6 +6,8 @@ from ipywidgets import interact, interactive, fixed
 from IPython.display import display,HTML,clear_output
 import os
 from phievo.AnalysisTools import Simulation
+## Load plotly_graph in order to use plotly in the notebook
+import phievo.AnalysisTools.plotly_graph
 
 found_str = "<p style=\"color:#31B404;font-size: 30px;\">✔</p>"
 notfound_str = "<p style=\"color:#DF3A01;font-size: 30px;\">✘</p>"
@@ -166,7 +168,7 @@ class Plot_Evolution_Observable(CellModule):
             self.widget_Yobs.value = self.notebook.sim.seeds[self.notebook.seed].default_observable
 
 
-class Select_Generation(CellModule): 
+class Select_Generation(CellModule):
     def __init__(self,Notebook):
         super(Select_Generation, self).__init__(Notebook)
         self.notebook.dependencies_dict["seed"].append(self)

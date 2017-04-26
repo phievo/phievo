@@ -58,6 +58,7 @@ def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_outpu
         if i in list_output:
             style = '-'
         if i in list_toplot:
+            print(len(result[i]))
             plt.plot(result[i], style, color=colors[i], lw=4.0)
         # plt.ylim(ymax=1.2)
         if (len(list_time) > 0) and (list_time[i] >= 0):

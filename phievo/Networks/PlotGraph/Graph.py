@@ -174,7 +174,7 @@ class Graph:
 
 
 
-    def draw(self,file=None,edgeLegend=False):
+    def draw(self,file=None,edgeLegend=False,display=True):
         """
         Draw the graph in a matplib framework. The node and edges are generated using patches.
 
@@ -229,6 +229,6 @@ class Graph:
         plt.axis("scaled")
         if file:
             fig.savefig(file)
-        else:
+        elif display:
             plt.show()
         return fig
