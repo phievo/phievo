@@ -289,7 +289,7 @@ class Seed:
             Networks : the best network for the selected generation
         """
 
-        return classes_eds2.retrieve_from_pickle(self.root+"Bests_%d.net"%generation,verbose=False)
+        return MF.read_network(self.root+"Bests_%d.net"%generation,verbose=False)
 
     def get_backup_net(self,generation,index):
         """

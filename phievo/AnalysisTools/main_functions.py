@@ -1,5 +1,21 @@
 import numpy as np
 import shelve
+import pickle
+
+def read_network(filename,verbose=False):
+    """Retrieve a whole network from a pickle object named filename
+
+    Args:
+        filename (str): the directory where the object is saved
+
+    Returns:
+        Network: the object having been stored
+    """
+    with open(filename,'rb') as my_file:
+        net = pickle.load(my_file)
+    if verbose:
+        print("Network retrieve from: {}".format(filename))
+    return net
 
 def smoothing(array,param):
     """Smoothen an array by averaging over the neighbourhood

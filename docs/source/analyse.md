@@ -86,6 +86,22 @@ lost_stored = sim.seeds[1].stored_generation_indexes()
 lost_stored = sim.stored_generation_indexes(1)
 ```
 
+### Read a network from the pickle file
+The simulation stores the best networks of every generation in the name `Bests_#.net`. This is only a pickle file and can be read using pickle:
+
+```python3
+import pickle
+
+with open("Bests_#.net","rb") as net_file:
+    net = pickle.load(net_file)
+```
+Or using the φ-evo function:
+```python3
+import phievo
+
+phievo.read_network("Bests_#.net")
+```
+
 ### Running a network's dynamics
 
 By construction φ-evo does not allow to quickly run the dynamics of a network. More precisely a Network object does not have method that directly returns the derivative from at a given state of gene quantities. Instead φ-evo has a method to write a **c** file containing the derivative function and that runs the dynamics on pre-defined inputs. This may seem a bit bulky but the software was initially written to evaluate the fitness of a given network as quickly as possible. This is better done in **c**.

@@ -944,22 +944,6 @@ class Network(object):
 ### Printing function definition ###
 ####################################
 
-# functions to be deprecated, using shelve object instead
-def retrieve_from_pickle(filename,verbose=True):
-    """Retrieve a whole network from a pickle object named filename
-
-    Args:
-        filename (str): the directory where the object is saved
-
-    Returns:
-        Network: the object having been stored
-    """
-    with open(filename,'rb') as my_file:
-        net = pickle.load(my_file)
-    if verbose:
-        print("Network retrieve from: {}".format(filename))
-    return net
-
 def print_Network(net):
     """Return a string defining the network net as a python file
 
@@ -993,4 +977,3 @@ if __name__ == "__main__":
     # traditionnal canned test
     X = Network()
     X.store_to_pickle('dummy.ntk')
-    Y = retrieve_from_pickle('dummy.ntk')

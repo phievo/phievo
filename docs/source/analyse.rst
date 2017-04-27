@@ -133,6 +133,28 @@ stored generations.
     # Or
     lost_stored = sim.stored_generation_indexes(1)
 
+Read a network from the pickle file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The simulation stores the best networks of every generation in the name
+``Bests_#.net``. This is only a pickle file and can be read using
+pickle:
+
+.. code:: python3
+
+    import pickle
+
+    with open("Bests_#.net","rb") as net_file:
+        net = pickle.load(net_file)
+
+Or using the φ-evo function:
+
+.. code:: python3
+
+    import phievo
+
+    phievo.read_network("Bests_#.net")
+
 Running a network's dynamics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
