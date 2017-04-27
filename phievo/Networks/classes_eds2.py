@@ -861,8 +861,8 @@ class Network(object):
                         self.remove_Node(inter)
                         modification=True
 
-        if (nloop>900):
-            self.draw(file="Infiniteloop.png")
+        # if (nloop>900):
+        #     self.draw(file="Infiniteloop.png")
 
 
     def draw(self,file=None,edgeLegend=False,extended=False,display=True):

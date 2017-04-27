@@ -343,6 +343,7 @@ class Population(object):
             # Handling of different options
             try:
                 if prmt['pareto'] and prmt['freq_plot']:
+                    print("Hello")
                     if t_gen % prmt['freq_plot'] == 0:
                         self.pop_print_pareto(self.namefolder+'/pareto'+str(t_gen),self.namefolder+'/rank1_nets'+str(t_gen))
             except KeyError:
