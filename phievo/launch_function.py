@@ -49,7 +49,7 @@ def launch_evolution(options):
                 seeds = glob.glob(os.path.join(model_dir,"Seed*"))
                 if len(seeds) == 0:
                     raise FileExistsError("No seed to start from in {0}.".format(model_dir))
-                
+
                 inits.prmt['restart']['seed'] = max([int(seed.replace(os.path.join(model_dir,"Seed"),"")) for seed in seeds])
             print('WARNING initializing from Seed{0}'.format(inits.prmt['restart']['seed']), 'and exactly continuing prior data')
             #print('Therefore no need to for nseed=', inits.prmt['nseed'], 'to be >1, resetting to 1')

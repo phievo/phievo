@@ -326,7 +326,7 @@ class Population(object):
 
             fitness_treatment(self)
             self.pop_sort()
-            gen_stat.process_sorted_genus( self )
+            gen_stat.process_sorted_genus(self)
 
             # print info after mutation step so built_integrator*.c consistent with Bests file
             header = "\nAfter generation {0:d} Best fitness={1}".format(t_gen,self.genus[0].fitness)
