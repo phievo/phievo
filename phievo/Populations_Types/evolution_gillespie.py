@@ -101,6 +101,7 @@ def restart(directory, generation, verbose = True):
     if verbose:
         print('successfully restarted from file= ', dir, 'generation= ', generation)
         print('header=', rprmt['header'])
+
     return rprmt,genus,generation
 
 ###################################
@@ -153,7 +154,7 @@ class Population(object):
             if prmt['restart'].get('same_seed',True):
                 random.setstate( rprmt['state'] )
                 self.same_seed = True
-                self.generation0 = 1 + prmt['restart']['kgeneration']
+            prmt['restart']['kgeneration'] +=1
             prmt['restart']['activated'] = False
             return None
         else:
@@ -306,6 +307,7 @@ class Population(object):
         # MAIN EVOLUTIONARY LOOP
         start_gen = max(self.generation0,prmt["restart"]["kgeneration"])
         prmt["restart"]["kgeneration"] = 0
+
         for t_gen in range(start_gen,prmt['ngeneration']):
 
             net_stat = pop_stat.NetworkStat(stat_dict)

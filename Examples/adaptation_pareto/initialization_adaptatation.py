@@ -37,7 +37,7 @@ dictionary_ranges['LR.concentration']=C
 # skip by setting cfile[] = ' ' or ''
 
 cfile = {}
-cfile['fitness'] = 'fitness_adaptation.c'
+cfile['fitness'] = 'fitness_adaptation_pareto.c'
 cfile['init_history'] = 'init_history_adaptation.c'
 cfile['input'] =  'input_adaptation.c'
 
@@ -104,7 +104,7 @@ prmt['dt'] = 0.05     # time step
 
 # Needed in evolution_gill to define evol algorithm and create initial network
 prmt['npopulation'] =50
-prmt['ngeneration'] =501
+prmt['ngeneration'] =5001
 prmt['tgeneration']=1.0       #initial generation time (for gillespie), reset during evolution
 prmt['noutput']=1    # to define initial network
 prmt['ninput']=1
@@ -113,11 +113,11 @@ prmt['frac_mutate'] = 0.5 #fraction of networks to mutate
 prmt['redo'] = 1   # rerun the networks that do not change to compute fitness for different IC
 
 # used in run_evolution,
-prmt['nseed'] = 5  # number of times entire evol procedure repeated, see main program.
+prmt['nseed'] = 10  # number of times entire evol procedure repeated, see main program.
 prmt['firstseed'] = 0  #first seed
 
 
-prmt['multipro_level']=0
+prmt['multipro_level']=1
 prmt['pareto']=True
 prmt['npareto_functions'] = 2
 prmt['rshare']= 0.0
@@ -170,7 +170,11 @@ def init_network():
    return L
 
 def fitness_treatment(population):
-    """Function to change the fitness of the networks"""
-    pass
+    # Function to slightly change the fitness of the networks
     #for nnetwork in range(population.npopulation):
-    #    population.genus[nnetwork].fitness=eval(population.genus[nnetwork].data_evolution[0])
+     #  population.genus[nnetwork].fitness-=0.001*random.random()
+   for ind in population:
+      try:
+         ind.fitness = [fit + 0.001*random.random() for fit in ind.fitness]
+      except Exception:
+         ind.fitness = [None,None]

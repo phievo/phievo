@@ -24,6 +24,9 @@ def launch_evolution(options):
     [model_dir, inits, init_file] = check_model_dir(options["model"])
     ### Write STOP file
     if options["clear"]:
+        if inits.prmt["restart"]["activated"]:
+            print("The clear(-c) option can not be activated when prmt[\"restart\"][\"activated\"] is set to True.")
+            os._exit(0)
         toClear = glob.glob(os.path.join(model_dir,"Seed*"))
         for directory in toClear:
             shutil.rmtree(directory, ignore_errors=True)
@@ -78,8 +81,11 @@ def launch_evolution(options):
 
 
         #for seed in range(firstseed, firstseed + inits.prmt['nseed']):
-
-            launch_seed(seed,inits,init_file)
+            try:
+                launch_seed(seed,inits,init_file)
+            except KeyboardInterrupt:
+                print("\n\tThe run was interrupted by the user.")
+                os._exit(0)
 
 
     else: # this part describes the slave nodes under pypar
