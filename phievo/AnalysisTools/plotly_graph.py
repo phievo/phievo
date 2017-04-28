@@ -2,6 +2,7 @@ import phievo.AnalysisTools
 from phievo.AnalysisTools import Simulation
 from phievo.AnalysisTools import Seed
 from phievo.AnalysisTools import main_functions as MF
+from phievo.AnalysisTools import palette
 import numpy as np
 import plotly.offline as py
 py.init_notebook_mode()
@@ -9,6 +10,14 @@ import plotly.graph_objs as go
 import plotly.tools as tls
 from matplotlib import pylab,colors
 from string import Template
+
+
+linewidth = 5
+plotfunc = py.plot
+
+def run_in_nb():
+    global plotfunc
+    plotfunc = py.iplot
 
 def custom_plot(self,X,Y):
     """Plot the Y as a function of X. X and Y can be chosen in the keys of
@@ -30,7 +39,8 @@ def custom_plot(self,X,Y):
         trace = go.Scatter(
             name=label,
             x = x_val,
-            y = y_val
+            y = y_val,
+            line = dict(width=linewidth)
         )
         data.append(trace)
         #clear_output()
@@ -40,7 +50,7 @@ def custom_plot(self,X,Y):
         yaxis=dict(title=Y[0]),
         )
     fig = go.Figure(data=data, layout=layout)
-    py.iplot(fig)
+    plotfunc(fig)
     return fig
 setattr(Seed,"custom_plot",custom_plot)
 
@@ -62,8 +72,7 @@ def plot_multiGen_front2D(generation_fitness,generation_indexes=None):
     NUM_COLORS = len(generation_fitness)
     # https://plot.ly/python/reference/
     shapes = ["circle","square","triangle-up"]
-    cm = pylab.get_cmap('gist_rainbow')
-    color_l= [colors.rgb2hex(cm(1.*i/NUM_COLORS)) for i in range(NUM_COLORS)]
+    color_l = palette.color_generate(NUM_COLORS)
     legend_patches = []
 
     i = 0
@@ -101,37 +110,59 @@ def plot_multiGen_front2D(generation_fitness,generation_indexes=None):
         hovermode='closest',
         )
     fig = go.Figure(data=data, layout=layout)
-    py.plot(fig)
+    plotfunc(fig)
     return fig
 #import pdb;pdb.set_trace()
 setattr(MF,"plot_multiGen_front2D",plot_multiGen_front2D)
 
 
 def Plot_Profile(self,trial_index,time=0):
-    N_cell = len(self.buffer_data[trial_index])
-    print(N_cell)
-    profiles = np.array([self.buffer_data[trial_index][i][time,:] for i in range(N_cell) ])
-    cell_indexes = list(range(N_cell))
+    """
+    Searches in the data last stored in the Simulation buffer for the cell profile
+    corresponding to the time point "time" and plot the profile.
+
+    Args:
+        trial_index: index of the trial you. Refere to run_dynamics to know how
+        many trials there are.
+        time: Index of the time point to plot
+    Return:
+        figure
+    """
+
     data = []
-    print(profiles.shape)
-    for i,profile in enumerate(profiles.T):
+    nstep = self.inits.prmt['nstep']
+    nSpecies = self.buffer_data[trial_index][0].shape[1]
+    nCell = len(self.buffer_data[trial_index])
+    cells = list(range(nCell))
+    self.buffer_data[trial_index][0]
+    profiles = np.array([self.buffer_data[trial_index][cc][time,:] for cc in range(nCell)]).T
+
+    species_labels = ["Species {}".format(i) for i in range(nSpecies)]
+    for ind in self.buffer_data["outputs"]:
+        species_labels[ind] = species_labels[ind].replace("Species","Output")
+    for ind in self.buffer_data["inputs"]:
+        species_labels[ind] = species_labels[ind].replace("Species","Inputs")
+    dt = self.inits.prmt["dt"]
+    colors = palette.color_generate(nSpecies)
+    for i in range(nSpecies):
         trace = go.Scatter(
-            x = cell_indexes,
-            y = profile,
-            name = "Species{}".format(i)
+            x=cells,
+            y=profiles[i,:],
+            name=species_labels[i],
+            line = dict(color=colors[i],width=linewidth)
         )
         data.append(trace)
     layout = go.Layout(
-        title="Cell Profile ",
-        xaxis=dict(title="cell indexes"),
+        title="Cell profile",
+        xaxis=dict(title="Cell, time={}".format(time)),
         yaxis=dict(title="Concentration"),
         autosize=True,
         hovermode='closest',
         )
     fig = go.Figure(data=data, layout=layout)
-    py.plot(fig)
+    plotfunc(fig)
     return fig
-setattr(Simulation,"Plot_Profile2",Plot_Profile)
+setattr(Simulation,"Plot_Profile",Plot_Profile)
 
 def Plot_TimeCourse(self,trial_index,cell=0):
     """
@@ -145,27 +176,36 @@ def Plot_TimeCourse(self,trial_index,cell=0):
     Return:
         figure
     """
+
     data = []
     nstep = self.inits.prmt['nstep']
     time_course = self.buffer_data[trial_index][cell]
+    nSpecies = time_course.shape[1]
+    species_labels = ["Species {}".format(i) for i in range(nSpecies)]
+    for ind in self.buffer_data["outputs"]:
+        species_labels[ind] = species_labels[ind].replace("Species","Output")
+    for ind in self.buffer_data["inputs"]:
+        species_labels[ind] = species_labels[ind].replace("Species","Inputs")
     dt = self.inits.prmt["dt"]
     nstep = self.inits.prmt["nstep"]
     time_axis = np.arange(0,nstep*dt,dt)
-    #import pdb;pdb.set_trace()
-    for i in range(time_course.shape[1]):
+    colors = palette.color_generate(nSpecies)
+    for i in range(nSpecies):
         trace = go.Scatter(
             x=time_axis,
-            y=time_course[:,i]
+            y=time_course[:,i],
+            name=species_labels[i],
+            line = dict(color=colors[i],width=linewidth)
         )
         data.append(trace)
     layout = go.Layout(
-        title="Cell Profile ",
+        title="Time course",
         xaxis=dict(title="Time, cell={}".format(cell)),
         yaxis=dict(title="Concentration"),
         autosize=True,
         hovermode='closest',
         )
     fig = go.Figure(data=data, layout=layout)
-    py.plot(fig)
+    plotfunc(fig)
     return fig
-setattr(Simulation,"Plot_TimeCourse2",Plot_TimeCourse)
+setattr(Simulation,"Plot_TimeCourse",Plot_TimeCourse)

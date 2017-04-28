@@ -7,8 +7,7 @@ import numpy
 from matplotlib import pyplot as plt
 import subprocess
 import linecache, copy
-
-from phievo.Networks.palette import *
+from phievo.AnalysisTools import palette
 
 """ Various utilities to plot data"""
 
@@ -29,7 +28,7 @@ def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_outpu
 	nstep = number of time steps (beginning from 0) to plot
 	npoints= number of points for each curve
 	"""
-    colors = color_generate(size)
+    colors = palette.color_generate(size)
     data = open(Name, "r")
     legendkey = []
     if list_species==[]:
@@ -58,7 +57,6 @@ def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_outpu
         if i in list_output:
             style = '-'
         if i in list_toplot:
-            print(len(result[i]))
             plt.plot(result[i], style, color=colors[i], lw=4.0)
         # plt.ylim(ymax=1.2)
         if (len(list_time) > 0) and (list_time[i] >= 0):
@@ -83,7 +81,7 @@ def Plot_Profile(Name, ncelltot, size, nline, position='best', list_species=[],l
     """ Plot profile of all proteins at time nline, size is the number of variables (proteins) in the cell, ncelltot the total number of cells in the embryo"""
 
     result = numpy.zeros((size, ncelltot),dtype=float)  # creates a table result to store data, results[i,j] will contain the concentration of protein i in cell j at time defined by nline
-    colors = color_generate(size)
+    colors = palette.color_generate(size)
     legendkey = []
     linestyle = ['-', '--', ':', '-.']
     cursor = 0  # cursor will be the index of the column
@@ -139,7 +137,7 @@ def Plot_pMHC(Name, ncelltot, size, ntau, position='best', list_species=[],list_
     """ Plot profile of all proteins at time nline, size is the number of variables (proteins) in the cell, ncelltot the total number of cells in the embryo"""
 
     result = numpy.zeros((size, ncelltot,ntau),dtype=float)  # creates a table result to store data, results[i,j] will contain the concentration of protein i in cell j at time defined by nline
-    colors = color_generate(size)
+    colors = palette.color_generate(size)
     plt.clf()
     plt.hold(True)
     legendkey = []

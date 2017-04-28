@@ -7,7 +7,8 @@ from IPython.display import display,HTML,clear_output
 import os
 from phievo.AnalysisTools import Simulation
 ## Load plotly_graph in order to use plotly in the notebook
-import phievo.AnalysisTools.plotly_graph
+import phievo.AnalysisTools.plotly_graph as plotly_graph
+plotly_graph.run_in_nb()
 
 found_str = "<p style=\"color:#31B404;font-size: 30px;\">✔</p>"
 notfound_str = "<p style=\"color:#DF3A01;font-size: 30px;\">✘</p>"
@@ -347,7 +348,7 @@ class Plot_Pareto_Fronts(CellModule):
             gen = [int(xx) for xx in self.widget_selectText.value.split(",")]
             #gen = [int(xx) for xx in self.widget_selectText.value.split(",")]
 
-        self.notebook.sim.seeds[self.notebook.seed].plot_pareto_fronts(gen,self._widget_with_indexes.value)
+        self.notebook.sim.seeds[self.notebook.seed].plot_pareto_fronts(gen,True)#self._widget_with_indexes.value)
     def update(self):
         if self.notebook.seed is None or self.notebook.type!="pareto":
             self.widget_selectGenerations.options = [None]
@@ -371,6 +372,6 @@ class Plot_Pareto_Fronts(CellModule):
         #interactive(self.read_selected,generations=self.widget_selectGenerations)
         self.widget_plot.on_click(self.plot_function)
         instructions  = widgets.HTML("<p>Press <i>ctrl</i>, <i>cmd</i>, or <i>shift</i>  for multi-select</p>")
-        to_display = widgets.VBox([instructions,widgets.HBox([self.widget_selectGenerations,self.widget_selectText,self._widget_with_indexes]),self.widget_plot])
+        to_display = widgets.VBox([instructions,widgets.HBox([self.widget_selectGenerations,self.widget_selectText]),self.widget_plot])
         #to_display = widgets.VBox([self.widget_plot])
         display(to_display)

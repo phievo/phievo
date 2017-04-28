@@ -3,6 +3,7 @@ import shelve
 import glob,os,sys
 import re
 from phievo.AnalysisTools import main_functions as MF
+from phievo.AnalysisTools  import palette
 import matplotlib.pyplot as plt
 from matplotlib import pylab,colors
 import matplotlib.patches as mpatches
@@ -42,6 +43,10 @@ class Simulation:
             self.type = "default"
             self.seeds = {seed:Seed(self.root+"Seed%d"%seed) for seed in seeds}
 
+        try:
+            palette.upadate_default_colormap(self.inits.prmt["palette"]["colormap"])
+        except KeyError:
+            pass
         self.buffer_data = None
 
 
@@ -119,6 +124,8 @@ class Simulation:
             time series for index of the trial.
              - net : Network
              - time : time list
+             - outputs: list of output indexes
+             - inputs: list of input indexes
              - 0 : data for trial 0
                 - 0 : array for cell 0:
                        g0 g1 g2 g3 ..
@@ -138,14 +145,21 @@ class Simulation:
         self.buffer_data = {"time":np.arange(0,prmt["dt"]*(prmt["nstep"]),prmt["dt"])}
         prmt["ntries"] = trial
         self.deriv2.compile_and_integrate(net,prmt,1000,True)
+        col_select = np.arange(N_species)
         for i in range(trial):
-            temp = np.genfromtxt('Buffer%d'%i, delimiter='\t')[::,1:]
-            self.buffer_data[i] = {cell:temp[::,cell:cell+N_species] for cell in range(N_cell)}
+
+            temp = np.genfromtxt('Buffer%d'%i, delimiter='\t')[:,1:]
+            self.buffer_data[i] = {cell:temp[:,col_select + cell*N_species] for cell in range(N_cell)}
             if erase_buffer:
                 os.remove("Buffer%d"%i)
             else:
                 os.rename("Buffer{0}".format(i),os.path.join(self.root,"Buffer{0}".format(i)))
         self.buffer_data["net"] = net
+        get_species = re.compile("s\[(\d+)\]")
+
+        self.buffer_data["outputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Output"]]
+        self.buffer_data["inputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Input"]]
+
         return self.buffer_data
 
 

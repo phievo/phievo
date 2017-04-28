@@ -3,7 +3,7 @@
 import phievo.Networks.PlotGraph as PlotGraph
 from phievo.initialization_code import *
 from .classes_eds2 import *
-from .palette import *
+from phievo.AnalysisTools import palette
 from .interaction import *
 
 ## Node Parameters
@@ -82,7 +82,7 @@ def pretty_graph(net,extended=True):
         """
         net.__build_list_types__()
         size=len(net.list_types['Species'])
-        colors=color_generate(size)
+        colors=palette.color_generate(size)
         graph = PlotGraph.Graph()
         # create pydot nodes for all species nodes in net and store in dictionary
         map_species = {}

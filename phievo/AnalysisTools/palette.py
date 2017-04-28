@@ -1,6 +1,21 @@
 from phievo import __silent__,__verbose__
 if __verbose__:
     print("Execute palette.py")
+from matplotlib import pylab,colors
+
+default_colormap = "gist_rainbow"
+
+def upadate_default_colormap(colormap):
+    """
+    Update the color map used by the palette modules
+
+    Arg:
+        colormap (str): name of the matplotlib colormap
+            http://matplotlib.org/examples/color/colormaps_reference.html
+    """
+    global default_colormap
+    default_colormap = colormap
+
 
 def HSL_to_RGB(h,s,l):
     '''Converts HSL colorspace (Hue/Saturation/Value) to RGB colorspace.
@@ -61,11 +76,13 @@ def floatrange(start,stop,steps):
     '''
     return [start+float(i)*(stop-start)/(float(steps)-1) for i in range(steps)]
 
-def color_generate(n):
+def color_generate(n,colormap=None):
     """Returns a palette of colors suited for charting.
 
     Args:
         n (int): The number of colors to return
+        colormap (str): matplotlib colormap name
+                http://matplotlib.org/examples/color/colormaps_reference.html
 
     Return:
         list: A list of colors in HTML notation (eg.['#cce0ff', '#ffcccc', '#ccffe0', '#f5ccff', '#f5ffcc'])
@@ -74,17 +91,19 @@ def color_generate(n):
         >>> print color_generate(5)
         ['#5fcbff','#e5edad','#f0b99b','#c3e5e4','#ffff64']
     """
-    if n==0:
-        return []
-
-    #small_palette = ['#5fcbff','#e5edad','#f0b99b','#c3e5e4','#ffff64']
-    #if n<=len(small_palette):
-        #return small_palette[:n]
-    start_hue = 0.333  # 0=red    1/3=0.333=green   2/3=0.666=blue
-    saturation = 0.9
-    lightness = 0.5
-    colors = ['#%02x%02x%02x' % HSL_to_RGB(hue,saturation,lightness) for hue in floatrange(start_hue,start_hue+1,n+1)][:-1]
-    small_colors= ['#%02x%02x%02x' % HSL_to_RGB(hue,saturation,lightness) for hue in floatrange(start_hue,start_hue+1,5)][:-1]
-    if (n<5):
-        return small_colors[0::2]+small_colors[1::2]
-    return colors[0::2]+colors[1::2]
+    # if n==0:
+    #     return []
+    #
+    # start_hue = 0.333  # 0=red    1/3=0.333=green   2/3=0.666=blue
+    # saturation = 0.9
+    # lightness = 0.5
+    # colors = ['#%02x%02x%02x' % HSL_to_RGB(hue,saturation,lightness) for hue in floatrange(start_hue,start_hue+1,n+1)][:-1]
+    # small_colors= ['#%02x%02x%02x' % HSL_to_RGB(hue,saturation,lightness) for hue in floatrange(start_hue,start_hue+1,5)][:-1]
+    # if (n<5):
+    #     return small_colors[0::2]+small_colors[1::2]
+    # return colors[0::2]+colors[1::2]
+    if not colormap:
+        colormap = default_colormap
+    cm = pylab.get_cmap(default_colormap)
+    color_l= [colors.rgb2hex(cm(1.*i/n)) for i in range(n)]
+    return color_l
