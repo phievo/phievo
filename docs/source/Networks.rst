@@ -107,13 +107,6 @@ phievo.Networks.mutation module
     :undoc-members:
     :show-inheritance:
 
-phievo.Networks.palette module
-------------------------------
-
-.. automodule:: phievo.Networks.palette
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 phievo.Networks.plotdata module
 -------------------------------
