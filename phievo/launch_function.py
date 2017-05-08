@@ -21,15 +21,11 @@ def launch_evolution(options):
     """
 
     #initializes deriv2 and mutation for all processors
+
     [model_dir, inits, init_file] = check_model_dir(options["model"])
     ### Write STOP file
     if options["clear"]:
-        if inits.prmt["restart"]["activated"]:
-            print("The clear(-c) option can not be activated when prmt[\"restart\"][\"activated\"] is set to True.")
-            os._exit(0)
-        toClear = glob.glob(os.path.join(model_dir,"Seed*"))
-        for directory in toClear:
-            shutil.rmtree(directory, ignore_errors=True)
+        clear_project(model_dir,inits)
     inits.prmt["stop_file"] = create_STOP_file(model_dir)
     [classes_eds2, pretty_graph] = init_classes_eds2(inits)
     deriv2 = init_deriv2(inits, inits.prmt)
@@ -99,6 +95,28 @@ def launch_evolution(options):
             pypar.barrier()  #wait here until job completion of all other processors, do not know why, should try to remove it at some point for performance
             pypar.send(result, 0)
 
+def clear_project(model_dir=None,inits=None,options = None):
+    """
+    Clears a project's old run files.
+
+    Args:
+        model_dir: project directory
+        inits: initialization parameters
+    """
+    if options:
+        [model_dir, inits, init_file] = check_model_dir(options["model"])
+    if inits.prmt["restart"]["activated"]:
+        print("The clear(-c) option can not be activated when prmt[\"restart\"][\"activated\"] is set to True.")
+        os._exit(0)
+    toClear = glob.glob(os.path.join(model_dir,"__pycache__")) + glob.glob(os.path.join(model_dir,"Seed*")) + glob.glob(os.path.join(model_dir,"Workplace"))
+    ## Remove dictionnaries
+    for directory in toClear:
+        shutil.rmtree(directory, ignore_errors=True)
+    ## Remove files
+    toClear = glob.glob(os.path.join(model_dir,"STOP.txt")) + glob.glob(os.path.join(model_dir,"Buffer*"))
+    for ff in toClear:
+        os.remove(ff)
+
 def launch_seed(seed,inits,init_file):
     """
     Launch the evolution for a new seed.
@@ -160,50 +178,31 @@ def launch_seed(seed,inits,init_file):
     inits.prmt["workplace_dir"] = make_workplace_dir(os.path.join(inits.model_dir,"Seed{0}".format(seed)))
     population.evolution(inits.prmt)
 
-def test_network(options):
-    """ Test the behavior of a particular network (indicated by the -t
-    option) with respect to a given model (the -m or -i option)
+def test_project(options):
+    """
+    Test the project on the initial file.
+     - Load the initial network from the initialization file.
+     - Genertate the C file containing the ODEs
+     - Compile and integrade
+     - Print the the network's fitness
+     - plot the fitness
+
 
     Args:
-        options (optparse.Values): a dictionnary like class containing
-        the network (options.test) and model (options.model) or init*.py
-        (options.inits) file path.
+        options: options["test"] = Project to test
 
     Returns:
         None
     """
-    plotdata = import_module(name_plotdata)
+    from phievo.AnalysisTools import Simulation
+    sim = Simulation(options["test"])
+    net = sim.inits.init_network()
 
-    print(plotdata)
-    # Define the model to be used
-
-    if (options["init"]):
-        inits = initialize_test(options["init"])
-        test_output_dir = './'
-        [classes_eds2, pretty_graph] = init_classes_eds2(inits)
-    elif (options["model"]):
-        [model_dir, inits, init_file] = check_model_dir(options["model"])
-        test_output_dir = model_dir
-
-        [classes_eds2, pretty_graph] = init_classes_eds2(inits)
-    else:
-        inits = False
-
-    # Initialize the network and the working directory
-    net = get_network_from_test(options["test"], classes_eds2)
-    net.write_id()
-    workplace_dir = make_workplace_dir(test_output_dir)
-    gr = net.draw(workplace_dir+"test_net.pdf")
-    print('network diagram= test_net.pdf (all nodes), *dot (species only) drawn for test file=', options["test"])
-    print('output sent to dir= ', test_output_dir)
-
-    # Launch the integraion with relevant parameters
-    if inits:
-        deriv2 = init_deriv2(inits, workplace_dir, inits.prmt)
-        print('running test file with initialization,')
-        my_ntries = inits.prmt['ntries']
-        ncell = int(options["ncell"]) if options["ncell"] else -1 #default value
-        liszt = [int(n) for n in options["list"].split(',')] if options["list"] else [] #default value
-        plotdata.net_test_plot(deriv2.compile_and_integrate, net, inits.prmt, test_output_dir, 0, my_ntries,ncell,liszt)
-    else:
-        print("No init* file found, use -m or -i option to specify one")
+    data = sim.run_dynamics(net=net,trial=sim.inits.prmt['ntries'],erase_buffer=False,return_treatment_fitness=True)
+    cfile = glob.glob(os.path.join(options["test"],"Workplace","*.c"))[0]
+    print("C file created.")
+    print("You can recompile by running:")
+    print(str.encode("gcc {cfile} -lm -o executable".format(cfile=cfile)))
+    print(data)
+    #print("The network's C file and executable are stored in {}".format())
+    net.draw()

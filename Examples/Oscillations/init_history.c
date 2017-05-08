@@ -11,7 +11,7 @@ void init_signal(){
     int next_time(){
         return 100+(rand()%500);
     }
-    
+
     int k, t, tnext, val;
     // Construct the first signal
     for(k=0; k<NCELLTOT; k++){
@@ -41,7 +41,7 @@ void init_signal(){
     }
 }
 
-void init_history(){
+void init_history(int trial){
     init_signal();
     int ncell,n_gene;
     for (ncell=0;ncell<NCELLTOT;ncell++){
@@ -50,4 +50,3 @@ void init_history(){
         }
     }
 }
-

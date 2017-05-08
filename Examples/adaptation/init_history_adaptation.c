@@ -1,6 +1,6 @@
 /* set history of all species at initial time to rand number in [0.1,1) eg avoid 0 and initializes Input.
 For this problem, we created a function init_signal that defines random steps of inputs.
-init_signal creates time dependent input from [0, NSTEP) by integrating a sum of random positive delta functions and then exponentiating. 
+init_signal creates time dependent input from [0, NSTEP) by integrating a sum of random positive delta functions and then exponentiating.
 
 tfitness is defined in the fitness C file
 */
@@ -8,7 +8,7 @@ tfitness is defined in the fitness C file
 static double isignal[NSTEP][NCELLTOT];
 static double dsignal[NSTEP][NCELLTOT];
 
-    
+
 static int t1 = 1;   // duration of delta function spike in dsignal, dt units
 static int t2 = 1000;  // mean time between delta fns (uniform distrib [1, 2*t2]  dt units
 
@@ -24,9 +24,9 @@ void init_signal( ) {
       }
     }
 
-    
+
     tnext=tfitness;
-    
+
     for(k=0; k<NCELLTOT; k++)  {
 
       while( tnext < NSTEP ) {
@@ -42,7 +42,7 @@ void init_signal( ) {
 	tnext += t1;
       }
     }
-	
+
 /* integrate the derivative and expon to get real signal applied to cell  */
 
     for(k=0; k<NCELLTOT; k++)  {
@@ -58,7 +58,7 @@ void init_signal( ) {
 }
 
 
-void init_history()  {
+void init_history(int trial)  {
 
     int ncell,n_gene;
     init_signal();  // initialize signal for all times.
@@ -69,4 +69,3 @@ void init_history()  {
         }
     }
 }
-

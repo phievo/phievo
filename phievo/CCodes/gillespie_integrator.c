@@ -48,7 +48,7 @@ int index_next_event(double a){// randomly draws the index of the next mutation
 
 /* compute the evolution of a system using gillepsie algorithm
 */
- 
+
 void integrator(int kk){
 
     double s[SIZE][NCELLTOT];
@@ -57,15 +57,15 @@ void integrator(int kk){
     double t=0;
     double dt=0;
     double a0=0;
-    
+
     /* initialize geometry here, incase cells move  */
     init_geometry();
-    init_history();
+    init_history(kk);
     for (n=0;n<NACTIONS;n++)
       p[n]=0.0;
 
     for (index=0;index<SIZE;index++)
-      for (ncell=0;ncell<NCELLTOT;ncell++) 
+      for (ncell=0;ncell<NCELLTOT;ncell++)
 	s[index][ncell] = history[index][0][ncell];
 
 
@@ -74,7 +74,7 @@ void integrator(int kk){
       for (ncell=0;ncell<NCELLTOT;ncell++)
 	{
 	  inputs(pas,ncell,kk);
-     
+
 	  for (index=0;index<NINPUT;index++) {
 	    s[trackin[index]][ncell]=history[trackin[index]][pas][ncell];
 	  }
@@ -92,12 +92,12 @@ void integrator(int kk){
 	    {
 	      pas+=1;
 	      for (index=0;index<SIZE;index++)
-		for (ncell=0;ncell<NCELLTOT;ncell++) 
+		for (ncell=0;ncell<NCELLTOT;ncell++)
 		  history[index][pas][ncell]= s[index][ncell] ;
 	    }
 	}
 	else	 {
-	  
+
 	    t+=DT;
 	    pas+=1;
 	  }
@@ -105,4 +105,3 @@ void integrator(int kk){
     }while(pas<NSTEP);
 
 }
-

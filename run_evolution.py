@@ -38,10 +38,13 @@ options = options.__dict__
 ### MAIN ###
 ############
 if __name__ == "__main__":
-    
-    if options["test"]:
-        phievo.test_network(options)
-    elif options["model"]:
+
+    if options["model"]:
         phievo.launch_evolution(options)
+    elif options["test"]:
+        phievo.test_project(options)
+    elif options["clear"]:
+        options["model"] = arg[0]
+        phievo.clear_project(options=options)
     else:
         print('must specify either --test file OR --model directory.  Use -h for help')

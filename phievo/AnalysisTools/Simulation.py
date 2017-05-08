@@ -112,7 +112,7 @@ class Simulation:
         """
         return self.seeds[seed].stored_generation_indexes()
 
-    def run_dynamics(self,net=None,trial=1,erase_buffer=False):
+    def run_dynamics(self,net=None,trial=1,erase_buffer=False,return_treatment_fitness=False):
         """
         Run Dynamics for the selected network. The function either needs the network as an argument or the seed and generation information to select it. If a network is provided, seed and generation are ignored.
 
@@ -135,7 +135,6 @@ class Simulation:
                     .
                     .
         """
-
         if net is None:
             net = self.seeds[seed].get_best_net(generation)
         self.inits.prmt["ntries"] = trial
@@ -144,7 +143,9 @@ class Simulation:
         N_species = len(net.list_types['Species'])
         self.buffer_data = {"time":np.arange(0,prmt["dt"]*(prmt["nstep"]),prmt["dt"])}
         prmt["ntries"] = trial
-        self.deriv2.compile_and_integrate(net,prmt,1000,True)
+        treatment_fitness = self.deriv2.compile_and_integrate(net,prmt,1000,True)
+        if return_treatment_fitness:
+            return treatment_fitness
         col_select = np.arange(N_species)
         for i in range(trial):
 

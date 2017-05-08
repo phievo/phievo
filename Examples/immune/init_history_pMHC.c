@@ -39,7 +39,7 @@ double N_to_L_SELF(int ncell)  {
 
 
 
-void init_history()  {
+void init_history(int trial)  {
     int ncell,n_species;
     for (ncell=0;ncell<NCELLTOT;ncell++){
     	for (n_species=0;n_species<SIZE;n_species++){
@@ -67,4 +67,3 @@ void init_history()  {
       	}
     }
 }
-
