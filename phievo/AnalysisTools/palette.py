@@ -5,7 +5,7 @@ from matplotlib import pylab,colors
 
 default_colormap = "gist_rainbow"
 
-def upadate_default_colormap(colormap):
+def update_default_colormap(colormap):
     """
     Update the color map used by the palette modules
 

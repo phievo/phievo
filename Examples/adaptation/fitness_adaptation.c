@@ -19,7 +19,7 @@ void nogood(int ntry){
     result[ntry][3]=RAND_MAX;
     result[ntry][4]=RAND_MAX;
 }
-    
+
 
 void fitness( double history[][NSTEP][NCELLTOT], int trackout[],int ntry)  {
 
@@ -62,7 +62,7 @@ void fitness( double history[][NSTEP][NCELLTOT], int trackout[],int ntry)  {
     int ngene=0;
     double som_tot=0;
     for(k=0; k<NCELLTOT; k++)  {
-      
+
       int tlimit=(int) (tfitness/2);
       if (fabs(history[trackout[0]][tfitness/2][k]/history[trackout[0]][tfitness][k]-1)>0.05)
 	{
@@ -70,38 +70,38 @@ void fitness( double history[][NSTEP][NCELLTOT], int trackout[],int ntry)  {
 	 //if not within 5% of steady state before the first pulse, does not select
 	  return;
 	}
-      
-      
+
+
       if (fabs(history[trackout[0]][tfitness][k])<0.2)
 	{
 	  nogood(ntry);
 	  //minimum concentration
 	  return;
 	}
-      
 
-      
+
+
       for(t=tfitness; t<NSTEP; t++){
-       
+
 	for(ngene=0;ngene<SIZE;ngene++){
 	  som_tot+=history[ngene][t][k];
 	}
 
 	som_tot-=history[trackin[0]][t][k];
-	
+
 
 	if (history[trackin[0]][t][k]!=history[trackin[0]][t-1][k]){ //detects the pulse of input
-	  
+
 	  DeltaO=MAX(fabs(Omax-Oprevious),fabs(Omin-Oprevious));//computes maximum deviation from previous concentration of O
-	  
+
 	  if (notfirst>0)
 	    {sum_deviation+=fabs(history[trackout[0]][t-1][k]-Oprevious);//computes final deviation with previous value of O
 	     sum_deriv+=DeltaO;
-	   
+
 	    }
-	  
+
 	  notfirst+=1;
-	  Oprevious=history[trackout[0]][t-1][k];//updates previous value of O	  
+	  Oprevious=history[trackout[0]][t-1][k];//updates previous value of O
 	  //reinitializes other variables
 	  Omin=RAND_MAX;
 	  Omax=0;
@@ -112,14 +112,14 @@ void fitness( double history[][NSTEP][NCELLTOT], int trackout[],int ntry)  {
 	Omin=MIN(Omin,history[trackout[0]][t][k]);
 
 
-	
+
 
       }
-      
+
     }
 
-  
-    //averages over the pulses the values of the max deviation and of the final deviation 
+
+    //averages over the pulses the values of the max deviation and of the final deviation
     sum_deviation=sum_deviation/(notfirst-1);
     sum_deriv=sum_deriv/(notfirst-1);
     result[ntry][0]=(sum_deviation+0.01)/(sum_deriv+0.0001);
@@ -135,18 +135,14 @@ void fitness( double history[][NSTEP][NCELLTOT], int trackout[],int ntry)  {
 
 
 void treatment_fitness( double history2[][NSTEP][NCELLTOT], int trackout[]){
- 
+
   /* function to print out the result*/
-
-
-
   //if you want to do anything with the average output history2, this is the right place
-
 
   int l,k;
   double score;
   double stat_score[NTRIES];
- 
+
 
   for (l=0;l<NFUNCTIONS;l++){
     for (k=0; k<NTRIES; k++){
@@ -160,4 +156,3 @@ void treatment_fitness( double history2[][NSTEP][NCELLTOT], int trackout[]){
        printf("%f",score);
   }
 }
-

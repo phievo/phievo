@@ -44,7 +44,7 @@ class Simulation:
             self.seeds = {seed:Seed(self.root+"Seed%d"%seed) for seed in seeds}
 
         try:
-            palette.upadate_default_colormap(self.inits.prmt["palette"]["colormap"])
+            palette.update_default_colormap(self.inits.prmt["palette"]["colormap"])
         except KeyError:
             pass
         self.buffer_data = None
