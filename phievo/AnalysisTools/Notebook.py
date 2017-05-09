@@ -355,7 +355,7 @@ class Plot_Pareto_Fronts(CellModule):
             self.widget_selectGenerations.value = [None]
             self.widget_selectGenerations.disabled = True
             self.widget_selectText.value = ""
-            self.widget_selectText = True
+            self.widget_selectText.disabled = True
             self.widget_plot.disabled = True
             self._widget_with_indexes.value = False
         else:
