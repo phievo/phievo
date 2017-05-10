@@ -27,8 +27,7 @@ def launch_evolution(options):
     if options["clear"]:
         clear_project(model_dir,inits)
     inits.prmt["stop_file"] = create_STOP_file(model_dir)
-    [classes_eds2, pretty_graph] = init_classes_eds2(inits)
-    deriv2 = init_deriv2(inits, inits.prmt)
+    deriv2 = init_networks(inits)
     [mutation, evolution_gillespie] = init_evolution(inits, deriv2)
 
     # to distinguish master and slave nodes when running on cluster with pypar
@@ -197,7 +196,6 @@ def test_project(options):
     from phievo.AnalysisTools import Simulation
     sim = Simulation(options["test"])
     net = sim.inits.init_network()
-
     data = sim.run_dynamics(net=net,trial=sim.inits.prmt['ntries'],erase_buffer=False,return_treatment_fitness=True)
     cfile = glob.glob(os.path.join(options["test"],"Workplace","*.c"))[0]
     print("C file created.")

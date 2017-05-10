@@ -86,7 +86,6 @@ dictionary_mutation['mutate_Node(\'Phosphorylation\')']=0.0
 dictionary_mutation['random_add_output()']=0.0
 dictionary_mutation['random_remove_output()']=0.0
 dictionary_mutation['random_change_output()']=0.1
-
 dictionary_mutation['random_duplicate()']=0.02
 
 #############################################################################

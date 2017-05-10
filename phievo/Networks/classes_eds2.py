@@ -865,7 +865,7 @@ class Network(object):
         #     self.draw(file="Infiniteloop.png")
 
 
-    def draw(self,file=None,edgeLegend=False,extended=False,display=True):
+    def draw(self,file=None,edgeLegend=False,extended=False,display=True,return_graph=False):
         """Draw the network in a matplotlib framework
 
         Delegate to :class:`Networks.lovelyGraph.pretty_graph`
@@ -873,7 +873,10 @@ class Network(object):
         Args:
             file (str): save the picture in file,
                         or print it on screen if file is None
-
+            edgeLegend (bool): Label the graph edges
+            extended (bool): Display inner modules (ex: TModules)
+            display (bool): Display the figure
+            return_graph(bool): Returns a graph object rather than a figure
         Returns:
             None
 
@@ -883,9 +886,11 @@ class Network(object):
         from io import StringIO
         from matplotlib import pyplot as plt
         from matplotlib import image as mpimg
-        from phievo.Networks.lovelyGraph import pretty_graph
+        from phievo import Networks
         self.write_id()
-        graph = pretty_graph(self,extended=extended)
+        graph = Networks.pretty_graph.pretty_graph(self,extended=extended)
+        if return_graph:
+            return graph
         fig = graph.draw(file,edgeLegend=edgeLegend)
         return fig
 

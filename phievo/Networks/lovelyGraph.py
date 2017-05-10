@@ -2,9 +2,9 @@
 
 import phievo.Networks.PlotGraph as PlotGraph
 from phievo.initialization_code import *
-from .classes_eds2 import *
+from phievo.Networks.classes_eds2 import *
 from phievo.AnalysisTools import palette
-from .interaction import *
+from phievo.Networks.interaction import *
 
 ## Node Parameters
 node_types= ['Output','Input','Ligand','Receptor',"PPI","TModule"]

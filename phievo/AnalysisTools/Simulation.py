@@ -26,10 +26,8 @@ class Simulation:
         model_files = os.listdir(self.root)
         (model_dir , self.inits , init_file) =tuple(initialization_code.check_model_dir(self.root))
         self.inits.prmt["workplace_dir"] = os.path.join(self.inits.model_dir,"Workplace")
-
-        self.deriv2 = initialization_code.init_deriv2(self.inits,self.inits.prmt)
+        self.deriv2 = initialization_code.init_networks(self.inits)
         self.plotdata = initialization_code.import_module(self.inits.pfile['plotdata'])
-
         searchSeed  = re.compile("\d+$") ## integer ## at the end of the string "project_root/Seed##"
         seeds = [int(searchSeed.search(seed).group(0)) for seed in glob.glob(os.path.join(self.root,"Seed*"))]
         seeds.sort()
