@@ -94,7 +94,9 @@ def check_model_dir(model):
         raise SystemExit
     # add default configuration for pfile
     if hasattr(init_module,"pfile"):
+
         for key,ff in init_module.pfile.items():
+            ff=ff.replace(".","/")
             if not os.path.isfile(ff+".py"):
                 if os.path.isfile(os.path.join(model_dir,ff)+".py"):
                     inits.pfile[key] = os.path.join(model_dir,ff).replace(os.sep,".")
