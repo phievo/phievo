@@ -76,9 +76,12 @@ class NetworkStat(object):
             None: in place modification
         """
         net.write_id()
-        #import pdb; pdb.set_trace()
+        
         for lbl, cmd in self.cmd_label.items():
-            val = cmd(net)
+            try:
+                val = cmd(net)
+            except TypeError:
+                import pdb; pdb.set_trace()
             if isinstance(val, list): val = len(val)
             self.stat_box[lbl].add_value(val)
 

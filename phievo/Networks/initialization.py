@@ -47,10 +47,7 @@ dictionary_ranges['LR.threshold']=C
 cfile = {}
 cfile['header'] = 'integrator_header.h'
 cfile['utilities'] = 'utilities.c'
-cfile['fitness'] = 'Examples/Adaptation/fitness_adaptation_multistep_general.c'
 cfile['geometry'] = 'linear_geometry.c'
-cfile['init_history'] = 'Examples/Adaptation/init_history_adaptation1.c'
-cfile['input'] =  'Examples/Adaptation/input_adaptation1.c'
 cfile['integrator'] = 'euler_integrator.c'
 cfile['main'] = 'main_general.c'
 

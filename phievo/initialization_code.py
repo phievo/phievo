@@ -96,7 +96,7 @@ def check_model_dir(model):
     if hasattr(init_module,"pfile"):
 
         for key,ff in init_module.pfile.items():
-            ff=ff.replace(".","/")
+            ff=ff.replace(".",os.sep)
             if not os.path.isfile(ff+".py"):
                 if os.path.isfile(os.path.join(model_dir,ff)+".py"):
                     inits.pfile[key] = os.path.join(model_dir,ff).replace(os.sep,".")

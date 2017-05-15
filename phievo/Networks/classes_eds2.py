@@ -887,6 +887,9 @@ class Network(object):
         from matplotlib import pyplot as plt
         from matplotlib import image as mpimg
         from phievo import Networks
+        if not hasattr(Networks,"pretty_graph"):
+            from phievo.Networks import lovelyGraph
+            setattr(Networks,"pretty_graph",lovelyGraph)
         self.write_id()
         graph = Networks.pretty_graph.pretty_graph(self,extended=extended)
         if return_graph:

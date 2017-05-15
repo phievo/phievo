@@ -194,8 +194,8 @@ class Population(object):
         with shelve.open(self.data_file) as data:
             add(data,'generation',t_gen)
             add(data,'fitness',net.fitness)
-            add(data,'n_interactions',len(net.list_types['Interaction']))
-            add(data,'n_species',len(net.list_types['Species']))
+            add(data,'n_interactions',len(net.list_types.get('Interaction',[])))
+            add(data,'n_species',len(net.list_types.get('Species',[])))
 
         with open(self.bests_file.format(t_gen),'wb') as freezer:
             pickle.dump(net,freezer)
@@ -344,8 +344,7 @@ class Population(object):
 
             # Handling of different options
             try:
-                if prmt['pareto'] and prmt['freq_plot']:
-                    print("Hello")
+                if prmt['pareto'] and prmt['freq_plot']:                    
                     if t_gen % prmt['freq_plot'] == 0:
                         self.pop_print_pareto(self.namefolder+'/pareto'+str(t_gen),self.namefolder+'/rank1_nets'+str(t_gen))
             except KeyError:
