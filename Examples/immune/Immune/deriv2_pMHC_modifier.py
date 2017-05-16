@@ -16,6 +16,12 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
     #print len(net.list_types['pMHC'])
     #print net.list_types['pMHC']
     hdr.append("#define SIZE %i" %(size+pMHC_size+1) )
+    #Index are organized in the following way
+    #from 0 to size-1-> agonist, kinases,phosphatases and complex of the agonist cascades. Order is imposed by evolution
+    # from size: self ligand
+    # size+1->pmHC_size_1: cascade of the self ligands
+    
+    
     #hdr.append("#define NSTEP %i" %prmt['nstep'] )
     hdr.append("#define NNEIGHBOR %i" %prmt['nneighbor'] )
     hdr.append("#define NTRIES %i" %prmt['ntries'] )

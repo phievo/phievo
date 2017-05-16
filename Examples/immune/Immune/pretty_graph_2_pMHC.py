@@ -2,7 +2,7 @@ import pydot
 from phievo.initialization_code import *
 from phievo.Networks.classes_eds2 import *
 from immune.Immune.interaction_pMHC import *
-from phievo.AnalysisTools.palette import *
+from phievo.Networks.palette import *
 # independent of both above routines, goes from Network instance to Dot instance, and latter can be
 # written out as .dot file and viewed with display
 
@@ -25,20 +25,20 @@ def pretty_graph(net):
     Best Doc on pydot is http://dkbza.org/pydot/pydot.html   For attributes see
     http://www.graphviz.org/doc/info
     """
-    net.build_list_types()
-    size=len(net.list_types['Species'])
+    net.__build_list_types__()
+    size=len(net.list_types['Species'])+len(net.list_types['pMHC'])+1
     colors=color_generate(size)
     # compose a short species label from selected types and their values,  Other types inferred from interactions
     #(NB TF might be dispensed with, and its activity recorded in arrow shape
 
-    # complete list of
+    # complete list of 
     protein_types= ['Output','Input','Ligand','Receptor']
-
+   
     def short_label(species):
         label = ' '
         for k in species.types:
             if k == 'Output':
-                label += ' Output'
+                label += ' Output' 
             elif k == 'Input':
                 label += ' Input'
             elif protein_types.count(k):
@@ -59,7 +59,7 @@ def pretty_graph(net):
 
     # there are many different edge-arrow types available see the graphviz web site above.
     # unclear how to get key with shapes/colores, create subgraph? nodes only?
-
+    
     # define graph with title
     graph = pydot.Dot(graph_type='digraph')
     #try:
@@ -68,7 +68,7 @@ def pretty_graph(net):
     #    graph.set_label('species graph: ')   # for compatability with old code or if change input net->net.graph
     #graph.set_fontcolor('red')
     #graph.set_labelloc('t')
-
+    
     # create pydot nodes for all species nodes in net and store in dictionary
     map_species = {}
     for nn in net.list_types['Node']:
@@ -93,7 +93,7 @@ def pretty_graph(net):
         map_species[nn] = pydot.Node(name, **attribute_dict[kk] )
         graph.add_node( map_species[nn] )
 
-
+   
     # find the species connected by interactions and create pydot.Edges
     # NB pydot has no delete node methods, so can not eliminate just interactions, build new graph
     # and then go back and eliminate the TModules (phys object)
@@ -105,7 +105,7 @@ def pretty_graph(net):
     attribute['generic']={}
     attribute['generic']['color']='0.6 1 1'
     for nn in net.list_types['Node']:
-        if isinstance(nn, TModule):
+        if isinstance(nn, TModule):  
             for pre in net.graph.predecessors(nn):
                 pre_species = net.graph.predecessors(pre)[0]  #only one species input to TFHill
                 activity=pre.activity
@@ -124,13 +124,13 @@ def pretty_graph(net):
                             #if (net.fixed_activity_for_TF==0):
                                     if (activity==1):
                                         ee = pydot.Edge(pre_dot_name, post_dot_name,**attribute['activation'])
-
+                                        
                                     else:
                                         ee = pydot.Edge(pre_dot_name, post_dot_name,**attribute['repression'] )
                                         ee.set_arrowhead('tee')
                     ee.set_arrowsize(2)
                     graph.add_edge( ee )
-
+                    
         elif isinstance(nn, Interaction):
             if isinstance(nn,Initial_Concentration):
                 continue
@@ -164,7 +164,7 @@ def pretty_graph(net):
                     ee = pydot.Edge(map_species[PPI_components[k]].compute_name(),nameLR, **attribute['generic']  )
                     graph.add_edge( ee )
                 ee = pydot.Edge(nameLR,map_species[Complex].compute_name(), **attribute['generic']  )
-                graph.add_edge( ee )
+                graph.add_edge( ee )      
                 continue
             if isinstance(nn,KPR_Unbinding):
                 name = 'KPRU'
@@ -178,8 +178,8 @@ def pretty_graph(net):
                     L=P2
                 #nppi=pydot.Node('PPI',label='PPI',style='filled',fillcolor='0.6 1 1',width=0.6,height=0.8)
                 ee = pydot.Edge(map_species[Complex].compute_name(),map_species[L].compute_name(), label="1/&tau;",**attribute['generic']  )
-                graph.add_edge( ee )
-                continue
+                graph.add_edge( ee )      
+                continue                
             name = nn.label
             print(name)
             for pre in net.graph.predecessors(nn):
@@ -188,8 +188,11 @@ def pretty_graph(net):
                     post_dot_name = map_species[post].compute_name()
                     ee = pydot.Edge(pre_dot_name, post_dot_name,**attribute['generic'] )  # color code interaction types?
                     graph.add_edge( ee )
-
+                    
         else:
             pass
     # end of loop to eliminate interaction nodes.
     return graph
+    
+    
+    
