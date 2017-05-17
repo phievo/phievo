@@ -16,8 +16,8 @@ from . import deriv2
 import copy
 
 #default range
-mutation.dictionary_ranges['TFHill.hill']=5.0
-mutation.dictionary_ranges['TFHill.threshold']=mutation.C
+mutation.dictionary_ranges['TFHill.hill'] = 0.0
+mutation.dictionary_ranges['TFHill.threshold'] = 0.0 * mutation.C
 
 ###############################
 ### TFHill Class definition ###

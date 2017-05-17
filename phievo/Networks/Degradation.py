@@ -14,7 +14,7 @@ import copy
 from . import deriv2
 
 #default range
-mutation.dictionary_ranges['Degradation.rate']=1.0/mutation.T
+mutation.dictionary_ranges['Degradation.rate'] = 0.0/mutation.T
 
 ####################################
 ### Degradation Class definition ###

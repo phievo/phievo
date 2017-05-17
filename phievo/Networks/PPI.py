@@ -13,8 +13,8 @@ from . import deriv2
 import copy
 
 #default range
-mutation.dictionary_ranges['PPI.association']=1.0/(mutation.C*mutation.T)
-mutation.dictionary_ranges['PPI.disassociation']=1.0/mutation.T
+mutation.dictionary_ranges['PPI.association'] = 0.0/(mutation.C*mutation.T)
+mutation.dictionary_ranges['PPI.disassociation'] = 0.0/mutation.T
 
 ############################
 ### PPI Class definition ###

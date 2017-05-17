@@ -18,10 +18,10 @@ from . import deriv2
 import copy
 
 #default range
-mutation.dictionary_ranges['Phosphorylation.rate']=1.0/mutation.T
-mutation.dictionary_ranges['Phosphorylation.hill']=5.0
-mutation.dictionary_ranges['Phosphorylation.threshold']=mutation.C
-mutation.dictionary_ranges['Phosphorylation.dephosphorylation']=1.0/mutation.T
+mutation.dictionary_ranges['Phosphorylation.rate'] = 0.0/mutation.T
+mutation.dictionary_ranges['Phosphorylation.hill'] = 0.0
+mutation.dictionary_ranges['Phosphorylation.threshold'] = 0.0 * mutation.C
+mutation.dictionary_ranges['Phosphorylation.dephosphorylation'] = 0.0 / mutation.T
 
 ########################################
 ### Phosphorylation Class definition ###

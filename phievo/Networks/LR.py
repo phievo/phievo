@@ -13,8 +13,8 @@ from . import mutation
 import copy
 
 #default range
-mutation.dictionary_ranges['LR.association']=1.0/mutation.T
-mutation.dictionary_ranges['LR.threshold']=mutation.C
+mutation.dictionary_ranges['LR.association'] = 0.0 / mutation.T
+mutation.dictionary_ranges['LR.threshold'] = 0.0 * mutation.C
 
 #######################################
 ### LigandReceptor Class definition ###
