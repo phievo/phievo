@@ -1,8 +1,8 @@
 import pydot
-from phievo.initialization_code import *
+#from phievo.initialization_code import *
 from phievo.Networks.classes_eds2 import *
 from immune.Immune.interaction_pMHC import *
-from phievo.Networks.palette import *
+from phievo.AnalysisTools import palette
 # independent of both above routines, goes from Network instance to Dot instance, and latter can be
 # written out as .dot file and viewed with display
 
@@ -27,7 +27,7 @@ def pretty_graph(net):
     """
     net.__build_list_types__()
     size=len(net.list_types['Species'])+len(net.list_types['pMHC'])+1
-    colors=color_generate(size)
+    colors=palette.color_generate(size)
     # compose a short species label from selected types and their values,  Other types inferred from interactions
     #(NB TF might be dispensed with, and its activity recorded in arrow shape
 
