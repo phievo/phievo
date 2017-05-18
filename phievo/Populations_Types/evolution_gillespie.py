@@ -30,7 +30,7 @@ import shelve
 import time, pickle, dbm  # for restart's
 import phievo.Populations_Types.population_stat as pop_stat
 from phievo import test_STOP_file
-
+import re
 #########################
 ### Global Parameters ###
 #########################
@@ -309,10 +309,8 @@ class Population(object):
         prmt["restart"]["kgeneration"] = 0
 
         for t_gen in range(start_gen,prmt['ngeneration']):
-
             net_stat = pop_stat.NetworkStat(stat_dict)
             gen_stat = pop_stat.GenusStat()
-            test_STOP_file(prmt["stop_file"])
             # mutate a fraction of networks in population (those least fit)
             if (prmt['redo']==1): # in this case, recompute the fitness of non-mutated ind.
                 self.pop_mutate_and_integrate(0,first_mutated,self.npopulation,prmt,net_stat)
@@ -331,6 +329,8 @@ class Population(object):
             gen_stat.process_sorted_genus(self)
 
             # print info after mutation step so built_integrator*.c consistent with Bests file
+            seed = int(re.search("Seed(\d+)",prmt["workplace_dir"]).group(1)) # extract seed from worplace_dir name
+            test_STOP_file(prmt["stop_file"],dict(seed=seed,generation=t_gen,fitness=self.genus[0].fitness))
             header = "\nAfter generation {0:d} Best fitness={1}".format(t_gen,self.genus[0].fitness)
             if __verbose__:
                 header+="data=[]\n"
@@ -344,7 +344,7 @@ class Population(object):
 
             # Handling of different options
             try:
-                if prmt['pareto'] and prmt['freq_plot']:                    
+                if prmt['pareto'] and prmt['freq_plot']:
                     if t_gen % prmt['freq_plot'] == 0:
                         self.pop_print_pareto(self.namefolder+'/pareto'+str(t_gen),self.namefolder+'/rank1_nets'+str(t_gen))
             except KeyError:
