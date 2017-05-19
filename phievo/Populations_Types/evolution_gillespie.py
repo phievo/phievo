@@ -162,6 +162,7 @@ class Population(object):
         # no restart, generate randomized list of networks from init file or routines supplied here.
         self.genus=[]
         for i in range(self.npopulation):
+
             L = init_network()
             L.write_id()
             self.genus.append(L)

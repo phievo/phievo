@@ -1,5 +1,5 @@
 from phievo.initialization_code import *
-from phievo import create_STOP_file
+import phievo
 from importlib import import_module
 import time,random
 import os,shutil,glob
@@ -26,9 +26,16 @@ def launch_evolution(options):
     ### Write STOP file
     if options["clear"]:
         clear_project(model_dir,inits)
-    inits.prmt["stop_file"] = create_STOP_file(model_dir)
+    if options["network"]:
+        def net_func():
+            return phievo.read_network(options["network"])
+        setattr(inits,"init_network",net_func)
+    inits.prmt["stop_file"] = phievo.create_STOP_file(model_dir)
     deriv2 = init_networks(inits)
+
+
     [mutation, evolution_gillespie] = init_evolution(inits, deriv2)
+
 
     # to distinguish master and slave nodes when running on cluster with pypar
     main_loop = False
@@ -177,7 +184,7 @@ def launch_seed(seed,inits,init_file):
     inits.prmt["workplace_dir"] = make_workplace_dir(os.path.join(inits.model_dir,"Seed{0}".format(seed)))
     population.evolution(inits.prmt)
 
-def test_project(project_path,return_sim= False):
+def test_project(project_path,network=None,return_sim= False):
     """
     Test the project on the initial file.
      - Load the initial network from the initialization file.
@@ -189,13 +196,17 @@ def test_project(project_path,return_sim= False):
 
     Args:
         project_path: Project to test
+        network: path to a test .net file
         return_sim: return The simulation object after running the trials.
     Returns:
         None
     """
     from phievo.AnalysisTools import Simulation
     sim = Simulation(project_path,mode="test")
-    net = sim.inits.init_network()
+    if network:
+        net = phievo.read_network(network)
+    else:
+        net = sim.inits.init_network()
     if return_sim:
         sim.run_dynamics(net=net,trial=sim.inits.prmt['ntries'],erase_buffer=True,return_treatment_fitness=False)
         return sim

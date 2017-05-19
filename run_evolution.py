@@ -26,10 +26,8 @@ pp.add_option('--model', '-m', action='store',
               help='name of directory with file called init*.py and which receives all output of evolution simulation')
 pp.add_option('--test', '-t', action='store',
               help='name of file in CWD with network to run as test (need -i or -m options to supply initialization file to time .) Output goes to dir defined by -m if used, or CWD. Test.py file created by stat_best_net.py')
-pp.add_option('--init', '-i', action='store',
-              help='name of optional initialization file in CWD needed to time step test network')
-pp.add_option('--ncell', '-n', action='store', help='index of cell to display for -t option')
-pp.add_option('--list', '-l', action='store', help='index of species to display for -t option')
+pp.add_option('--network', '-n', action='store',
+              help='Curtom initial network')
 pp.add_option("--clear","-c", action="store_true", dest="clear",default=False)
 (options, arg) = pp.parse_args()  # NB arg=[], but required output
 options = options.__dict__
@@ -42,7 +40,7 @@ if __name__ == "__main__":
     if options["model"]:
         phievo.launch_evolution(options)
     elif options["test"]:
-        phievo.test_project(options["test"])
+        phievo.test_project(options["test"],network=options["network"])
     elif options["clear"]:
         options["model"] = arg[0]
         phievo.clear_project(options=options)
