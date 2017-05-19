@@ -177,7 +177,7 @@ def launch_seed(seed,inits,init_file):
     inits.prmt["workplace_dir"] = make_workplace_dir(os.path.join(inits.model_dir,"Seed{0}".format(seed)))
     population.evolution(inits.prmt)
 
-def test_project(options):
+def test_project(project_path,return_sim= False):
     """
     Test the project on the initial file.
      - Load the initial network from the initialization file.
@@ -188,16 +188,19 @@ def test_project(options):
 
 
     Args:
-        options: options["test"] = Project to test
-
+        project_path: Project to test
+        return_sim: return The simulation object after running the trials.
     Returns:
         None
     """
     from phievo.AnalysisTools import Simulation
-    sim = Simulation(options["test"])
+    sim = Simulation(project_path,mode="test")
     net = sim.inits.init_network()
-    data = sim.run_dynamics(net=net,trial=sim.inits.prmt['ntries'],erase_buffer=False,return_treatment_fitness=True)
-    cfile = glob.glob(os.path.join(options["test"],"Workplace","*.c"))[0]
+    if return_sim:
+        sim.run_dynamics(net=net,trial=sim.inits.prmt['ntries'],erase_buffer=True,return_treatment_fitness=False)
+        return sim
+    data = sim.run_dynamics(net=net,trial=sim.inits.prmt['ntries'],erase_buffer=True,return_treatment_fitness=True)
+    cfile = glob.glob(os.path.join(project_path,"Workplace","*.c"))[0]
     print("C file created.")
     print("You can recompile by running:")
     print(str.encode("gcc {cfile} -lm -o executable".format(cfile=cfile)))

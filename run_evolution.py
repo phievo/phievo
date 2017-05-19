@@ -42,7 +42,7 @@ if __name__ == "__main__":
     if options["model"]:
         phievo.launch_evolution(options)
     elif options["test"]:
-        phievo.test_project(options)
+        phievo.test_project(options["test"])
     elif options["clear"]:
         options["model"] = arg[0]
         phievo.clear_project(options=options)

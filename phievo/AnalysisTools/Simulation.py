@@ -17,29 +17,34 @@ class Simulation:
     """
     The simulation class is a container in which the informations about a simulation are unpacked. This is used for easy access to a simulation results.
     """
-    def  __init__(self, path,verbose=False):
+    def  __init__(self, path,mode="default"):
+        """
+        Creates a Simulation object. When th mode is not default (ex:test), the seeds are not loaded.
+        usefull for prerun test.
+        Args:
+            path: directory of the project
+            mode: Allows different mode to load the project.
+        """
         self.root = path
         if self.root[-1] != os.sep:
             self.root += os.sep
-
         ## Upload Run parameters
         model_files = os.listdir(self.root)
         (model_dir , self.inits , init_file) =tuple(initialization_code.check_model_dir(self.root))
         self.inits.prmt["workplace_dir"] = os.path.join(self.inits.model_dir,"Workplace")
         self.deriv2 = initialization_code.init_networks(self.inits)
         self.plotdata = initialization_code.import_module(self.inits.pfile['plotdata'])
-        searchSeed  = re.compile("\d+$") ## integer ## at the end of the string "project_root/Seed##"
-        seeds = [int(searchSeed.search(seed).group(0)) for seed in glob.glob(os.path.join(self.root,"Seed*"))]
-        seeds.sort()
-
-        if self.inits.prmt["pareto"]:
-            self.type = "pareto"
-
-            nbFunctions = self.inits.prmt["npareto_functions"]
-            self.seeds = {seed:Seed_Pareto(self.root+"Seed%d"%seed,nbFunctions=nbFunctions) for seed in seeds}
-        else:
-            self.type = "default"
-            self.seeds = {seed:Seed(self.root+"Seed%d"%seed) for seed in seeds}
+        if mode in ["default"]:
+            searchSeed  = re.compile("\d+$") ## integer ## at the end of the string "project_root/Seed##"
+            seeds = [int(searchSeed.search(seed).group(0)) for seed in glob.glob(os.path.join(self.root,"Seed*"))]
+            seeds.sort()
+            if self.inits.prmt["pareto"]:
+                self.type = "pareto"
+                nbFunctions = self.inits.prmt["npareto_functions"]
+                self.seeds = {seed:Seed_Pareto(self.root+"Seed%d"%seed,nbFunctions=nbFunctions) for seed in seeds}
+            else:
+                self.type = "default"
+                self.seeds = {seed:Seed(self.root+"Seed%d"%seed) for seed in seeds}
 
         try:
             palette.update_default_colormap(self.inits.prmt["palette"]["colormap"])
@@ -150,14 +155,14 @@ class Simulation:
                 os.remove("Buffer%d"%i)
             else:
                 os.rename("Buffer{0}".format(i),os.path.join(self.root,"Buffer{0}".format(i)))
-        if return_treatment_fitness:
-            return treatment_fitness
+
         self.buffer_data["net"] = net
         get_species = re.compile("s\[(\d+)\]")
-
         self.buffer_data["outputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Output"]]
         self.buffer_data["inputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Input"]]
 
+        if return_treatment_fitness:
+            return treatment_fitness
         return self.buffer_data
 
 
