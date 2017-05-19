@@ -142,17 +142,16 @@ class Simulation:
         self.buffer_data = {"time":np.arange(0,prmt["dt"]*(prmt["nstep"]),prmt["dt"])}
         prmt["ntries"] = trial
         treatment_fitness = self.deriv2.compile_and_integrate(net,prmt,1000,True)
-        if return_treatment_fitness:
-            return treatment_fitness
         col_select = np.arange(N_species)
         for i in range(trial):
-
             temp = np.genfromtxt('Buffer%d'%i, delimiter='\t')[:,1:]
             self.buffer_data[i] = {cell:temp[:,col_select + cell*N_species] for cell in range(N_cell)}
             if erase_buffer:
                 os.remove("Buffer%d"%i)
             else:
                 os.rename("Buffer{0}".format(i),os.path.join(self.root,"Buffer{0}".format(i)))
+        if return_treatment_fitness:
+            return treatment_fitness
         self.buffer_data["net"] = net
         get_species = re.compile("s\[(\d+)\]")
 
