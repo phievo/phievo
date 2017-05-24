@@ -56,8 +56,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Network evolution'
-copyright = '2017, Paul François, Mathieu Hemery, Adrien Henry'
-author = 'Paul François, Mathieu Hemery, Adrien Henry'
+copyright = '2017, Paul Francois, Mathieu Hemery, Adrien Henry'
+author = 'Paul Francois, Mathieu Hemery, Adrien Henry'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
