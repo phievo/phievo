@@ -174,7 +174,7 @@ class Simulation:
 
 
 
-    def Plot_TimeCourse(self,trial_index,cell=0):
+    def Plot_TimeCourse(self,trial_index,cell=0,list_species=[]):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and the cell and plot the gene time series
@@ -191,7 +191,7 @@ class Simulation:
         size = len(net.list_types['Species'])
 
         try:
-            self.plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep)
+            self.plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep,list_species=list_species)
         except FileNotFoundError:
             print("Make sure you have run the function run_dynamics with the correct number of trials.")
             raise
