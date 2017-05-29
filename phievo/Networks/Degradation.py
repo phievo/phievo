@@ -56,6 +56,21 @@ class Degradation(classes_eds2.Interaction):
         """
         return []
 
+    def check_grammar(self,input_list,output_list):
+        """checks the grammar for the interactions (custom for degradation)
+
+        Args:
+            input_list (list): nodes to be checked
+            output_list (list): nodes to be checked
+
+        Return:
+            bool: the consistency of up and downstream grammar
+        """
+        if len(input_list) != 2 or len(output_list) != 1: return False
+        if output_list[0] not in input_list: return False
+        input_list.remove(output_list[0])
+        return input_list[0].isinstance('Degradable')
+
 ########## Attributes attached to Network for Degradation ##########
 
 def new_Degradation(self,Input1, Input2, rate):
