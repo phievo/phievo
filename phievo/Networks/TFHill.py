@@ -2,8 +2,8 @@
 Definition of TFHill interaction
 TFHill are mainly a convenient link between TModule and their regulating
 species. It is used to conserve the bipartite nature of the network.
-Creation: unknown
-Last edition: 2016-10-26
+
+--------
 """
 from phievo import __silent__,__verbose__
 if __verbose__:

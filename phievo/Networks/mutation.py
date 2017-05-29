@@ -369,7 +369,7 @@ class Mutable_Network(classes_eds2.Network):
         """randomly selects then mutates a Node of a given Type
 
         Args:
-            Type (str): the Type to mutate (e.g. ``Species``: :class:`Networks.classes_eds2.Species`, ``TFHill``: :class:`Networks.TFHill.TFHill`, ``Node``: :class:`Networks.classes_eds2.Node`...)
+            Type (str): the Type to mutate (e.g. ``Species``: :any:`Species`, ``TFHill``: :class:`TFHill <phievo.Networks.TFHill.TFHill>`, ``Node``: :any:`Node`...)
 
         Return:
             bool: if something is mutated

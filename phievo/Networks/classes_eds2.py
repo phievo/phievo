@@ -577,7 +577,7 @@ class Network(object):
     def check_existing_binary(self,list,Type):
         """Check if a specific binary interaction of type Type already exists
 
-        typically used for PPI or LR
+        typically used for PPI 
 
         Args:
             list (list): the reactants (Nodes) you are looking for

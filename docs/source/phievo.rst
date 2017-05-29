@@ -20,3 +20,11 @@ Mutation
         :members:
         :undoc-members:
         :show-inheritance:
+
+TFHill
+^^^^^^^^
+
+.. automodule:: phievo.Networks.TFHill
+        :members:
+        :undoc-members:
+        :show-inheritance:
