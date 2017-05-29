@@ -275,4 +275,4 @@ def transcription_deriv_inC(net):
 
 #update deriv2
 deriv2.compute_transcription=compute_transcription
-deriv2.transcription_deriv_inC=transcription_deriv_inC
+deriv2.interactions_deriv_inC["TFHill"] = transcription_deriv_inC

@@ -38,6 +38,7 @@ import subprocess
 workplace_dir = './Workplace/'
 Ccompiler = 'gcc'
 cfile = {}  # see initialization_code.init_deriv2 for the whole definition
+interactions_deriv_inC = {}
 noise_flag = False
 
 ########## Routine Functions ##########
@@ -123,6 +124,7 @@ def degrad_deriv_inC(net):
         return func
     else:
         return "\n"
+interactions_deriv_inC["degrad"] = degrad_deriv_inC
 
 def write_deriv_inC(net,programm_file):
     """Write the integration equations in the C-file

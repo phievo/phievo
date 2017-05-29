@@ -34,7 +34,7 @@ void integrator(int kk){
             derivC(s,history,pas,ds,memory,ncell);  //local integration
             sum_concentration(ncell,pas,sumligands);  //perform sum of ligands concentrations for non external ligands
 	    diffusion(ncell,pas,ds,history,geometry);//computes diffusion of external ligands
-            LRinC(s,ds,sumligands);
+            /*LRinC(s,ds,sumligands);*/
 
             for (index=0;index<SIZE;index++) {
 	 	 history[index][pas+1][ncell] = s[index] + DT*ds[index];

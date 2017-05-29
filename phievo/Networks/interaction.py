@@ -14,7 +14,6 @@ if __verbose__:
 from .CorePromoter import *
 from .TFHill import *
 from .PPI import *
-from .LR import *
 from .Phosphorylation import *
 from .Degradation import *
 from . import deriv2
@@ -39,13 +38,9 @@ def write_deriv_inC(net,programm_file):
     add("\t for (index=0;index<SIZE;index++) ds[index]=0;//initialization\n")
     add("\t double increment=0;\n")
     add("\t double rate=0;\n")
-    add(deriv2.degrad_deriv_inC(net))#add degradation rates
-    add(deriv2.transcription_deriv_inC(net))#add transcription rates
-    add(deriv2.PPI_deriv_inC(net))#add PPIs
-    add(deriv2.Phospho_deriv_inC(net))#add phosphorylation
-    add(deriv2.Degradation_deriv_inC(net))#add degradation
+    for ind,deriv_inC in deriv2.interactions_deriv_inC.items():
+        add(deriv_inC(net))
     add("}\n\n")
-    add(deriv2.compute_LR(net))#add LR Interaction (why the hell is it different from all the other ???)
 
 #updates deriv2
 deriv2.write_deriv_inC=write_deriv_inC

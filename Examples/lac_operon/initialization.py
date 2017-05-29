@@ -29,8 +29,6 @@ dictionary_ranges['Phosphorylation.rate']=1.0/T
 dictionary_ranges['Phosphorylation.hill']=5.0
 dictionary_ranges['Phosphorylation.threshold']=C
 dictionary_ranges['Phosphorylation.dephosphorylation']=1.0/T
-dictionary_ranges['LR.association']=1.0/T
-dictionary_ranges['LR.concentration']=C
 dictionary_ranges['Degradation.rate']=1.0/T
 
 # when key='relative_variation' is present, use this fraction of parameter range listed
@@ -64,7 +62,6 @@ dictionary_mutation['random_gene(\'Receptor\')']=0.00
 dictionary_mutation['random_Interaction(\'TFHill\')']=0.002
 dictionary_mutation['random_Interaction(\'PPI\')']=0.002
 dictionary_mutation['random_Interaction(\'Phosphorylation\')']=0.000
-dictionary_mutation['random_Interaction(\'LR\')']=0.0
 dictionary_mutation['random_Interaction(\'Degradation\')']=0.00
 
 # Rates for nodes to remove
@@ -72,7 +69,6 @@ dictionary_mutation['remove_Interaction(\'TFHill\')']=0.01
 dictionary_mutation['remove_Interaction(\'PPI\')']=0.02
 dictionary_mutation['remove_Interaction(\'CorePromoter\')']=0.02
 dictionary_mutation['remove_Interaction(\'Phosphorylation\')']=0.00
-dictionary_mutation['remove_Interaction(\'LR\')']=0.0
 dictionary_mutation['remove_Interaction(\'Degradation\')']=0.00
 
 # Rates to change parameters for a node
@@ -81,7 +77,6 @@ dictionary_mutation['mutate_Node(\'TFHill\')']=0.1
 dictionary_mutation['mutate_Node(\'CorePromoter\')']=0.1
 dictionary_mutation['mutate_Node(\'TModule\')']=0.1
 dictionary_mutation['mutate_Node(\'PPI\')']=0.1
-dictionary_mutation['mutate_Node(\'LR\')']=0.0
 dictionary_mutation['mutate_Node(\'Phosphorylation\')']=0.1
 dictionary_mutation['mutate_Node(\'Degradation\')']=0.1
 

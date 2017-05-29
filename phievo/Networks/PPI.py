@@ -224,4 +224,4 @@ def PPI_deriv_inC(net):
     return func
 
 #update deriv2
-deriv2.PPI_deriv_inC=PPI_deriv_inC
+deriv2.interactions_deriv_inC["PPI"] = PPI_deriv_inC

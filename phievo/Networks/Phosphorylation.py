@@ -214,4 +214,4 @@ def Phospho_deriv_inC(net):
     return func
 
 #update deriv2
-deriv2.Phospho_deriv_inC=Phospho_deriv_inC
+deriv2.interactions_deriv_inC["Phospho"] = Phospho_deriv_inC

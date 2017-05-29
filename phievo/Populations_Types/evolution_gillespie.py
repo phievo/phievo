@@ -43,7 +43,7 @@ stat_dict = {}
 stat_dict['Node'] = lambda net: net.list_types['Node']
 stat_dict['Species'] = lambda net: net.list_types['Species']
 
-count_interactions = ['TFHill', 'PPI', 'LR', 'Phosphorylation']
+count_interactions = ['TFHill', 'PPI', 'Phosphorylation']
 count_keys = list(mutation.dictionary_mutation.keys())
 for i in count_interactions:
     rates0 = [mutation.dictionary_mutation[kk]==0 for kk in count_keys if kk.find(i) >= 0]

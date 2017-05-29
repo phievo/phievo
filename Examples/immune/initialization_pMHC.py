@@ -31,8 +31,6 @@ dictionary_ranges['Simple_Dephosphorylation.rate']=1.0/(C*T)
 dictionary_ranges['Initial_Concentration.concentration'] = C
 dictionary_ranges['Mutable_Threshold.thresh'] = 1.0
 dictionary_ranges['KPR_Binding.association'] = 2.0/(R*T)
-dictionary_ranges['LR.association']=1.0/T
-dictionary_ranges['LR.threshold']=C
 
 # when key='relative_variation' is present, use this fraction of parameter range listed
 # above, to vary parameter for each mutation.  Comment out line to pick parameter
@@ -84,14 +82,12 @@ dictionary_mutation['random_Interaction(\'PPI\')']=0.000
 dictionary_mutation['random_Interaction(\'Phosphorylation\')']=0.000
 dictionary_mutation['random_Interaction(\'Simple_Phosphorylation\')']=0.05
 dictionary_mutation['random_Interaction(\'Simple_Dephosphorylation\')']=0.05
-dictionary_mutation['random_Interaction(\'LR\')']=0.0
 
 # Rates for nodes to remove
 dictionary_mutation['remove_Interaction(\'TFHill\')']=0.000
 dictionary_mutation['remove_Interaction(\'PPI\')']=0.000
 dictionary_mutation['remove_Interaction(\'CorePromoter\')']=0.00
 dictionary_mutation['remove_Interaction(\'Phosphorylation\')']=0.00
-dictionary_mutation['remove_Interaction(\'LR\')']=0.0
 dictionary_mutation['remove_Interaction(\'Simple_Phosphorylation\')']=0.5
 dictionary_mutation['remove_Interaction(\'Simple_Dephosphorylation\')']=0.5
 dictionary_mutation['remove_Interaction(\'Initial_Concentration\')']=0.00
@@ -104,7 +100,6 @@ dictionary_mutation['mutate_Node(\'TFHill\')']=0.0
 dictionary_mutation['mutate_Node(\'CorePromoter\')']=0.0
 dictionary_mutation['mutate_Node(\'TModule\')']=0.0
 dictionary_mutation['mutate_Node(\'PPI\')']=0.0
-dictionary_mutation['mutate_Node(\'LR\')']=0.0
 dictionary_mutation['mutate_Node(\'Phosphorylation\')']=0.0
 dictionary_mutation['mutate_Node(\'Simple_Phosphorylation\')']=0.5
 dictionary_mutation['mutate_Node(\'Simple_Dephosphorylation\')']=0.5

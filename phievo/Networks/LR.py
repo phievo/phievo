@@ -167,4 +167,4 @@ def compute_LR(net):
     return func
 
 #update deriv2
-deriv2.compute_LR = compute_LR
+deriv2.interactions_deriv_inC["LR"] = compute_LR
