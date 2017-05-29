@@ -1,15 +1,10 @@
-.. Network evolution documentation master file, created by
-   sphinx-quickstart on Tue Nov  1 12:13:13 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to Network evolution's documentation!
+φ-evo documentation
 =============================================
 
-Contents:
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    installation
    Presentation
@@ -17,7 +12,7 @@ Contents:
    howto
    analyse
    new_interaction
-
+   phievo
 
 
 Indices and tables

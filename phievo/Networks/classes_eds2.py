@@ -1,29 +1,33 @@
 """
-Define the main class used to describe the evolved networks
-The class ierarchy is the following:
-Node
-....Species
-....TModule
-....Interaction
-........Corepromoter
-........PPI
-........<other interactions>
+Defines the main class used to describe the evolved networks
+The class hierarchy is the following:
+
 Network
+ - Node
+     - Species
+     - TModule
+     - Interaction
+        - Corepromoter
+        - TFHill
+        - PPI
+        - other interactions
 
-Types: Should be just the class, but for Species we have mutliple types (eg TF, Complex, Kinase, Phosphatase, Input, Output), several of which can apply at once, so the class defn in python not general enough.
+**Types:** Should be just the class, but for Species we have mutliple types (eg TF, Complex, Kinase, Phosphatase, Input, Output), several of which can apply at once, so the class defn in python not general enough.
 
-IO: species of type = 'Input' has a defined time course supplied within the integrator.c.  Type = 'Output' are the species whos time course is used by the fitness function, they are numbered and created as genes ie with TModule and CorePromoter nodes attached to them.
+**IO:** species of type = 'Input' has a defined time course supplied within the integrator.c.  Type = 'Output' are the species whos time course is used by the fitness function, they are numbered and created as genes ie with TModule and CorePromoter nodes attached to them.
 
-Grammar: the rules as for what can interact with what, depends on the type of interaction and the types of inputs and outputs.  All the data for checking grammar given in the class defn of interaction.  The grammar also enters the function, Network.remove_Node().
+**Grammar:** the rules as for what can interact with what, depends on the type of interaction and the types of inputs and outputs.  All the data for checking grammar given in the class defn of interaction.  The grammar also enters the function, Network.remove_Node().
 
-Class Network, then defines a bipartite graphs with adjacent nodes either 'physical-objects, segments of the genome (eg Species or TModule) or interactions. Network class then has lots of methods to add and remove nodes and edges, check the grammar rules, and output the network either as C-code or as dot diagram .
+**Class Network:** defines a bipartite graphs with adjacent nodes either 'physical-objects, segments of the genome (eg Species or TModule) or interactions. Network class then has lots of methods to add and remove nodes and edges, check the grammar rules, and output the network either as C-code or as dot diagram .
 
-
-Caps:  Classes begin as caps, abbreviations eg TF in CAPS.  Functions within classes lc, '_' to separate names, retain Caps for embedded class names.
+**Caps:**  Classes begin as caps, abbreviations eg TF in CAPS.  Functions within classes lc, '_' to separate names, retain Caps for embedded class names.
 
 Arguments to functions are in order implied by directed graph, eg
 check_grammar( nodes_in, node_tested, nodes_out)
 add_interaction( upstream_species, interaction, downstream species)
+
+
+----------------------------
 """
 from phievo import __silent__,__verbose__
 if __verbose__:
@@ -44,7 +48,8 @@ list_unremovable=['Input'] #list of attributes that are unremovable : a species 
 #############################
 
 class Node(object):
-    """Superclass for all nodes object
+    """
+    Superclass for all nodes object
     """
     id = 'None' # inherited by all derived classes and instances
 
@@ -190,11 +195,12 @@ For species input list of [Type, parameters] eg
 ****************************************************************************"""
 
 class Species(Node):
-    """Class for any type of species, or list of species of various types
-       Input list of lists eg [ [Degradation, degradation], [TF, activity], [Complex,],
-       [Kinase],..
-       [Output, n_put], [Input, n_put] ]  where n_put is an integer enumerating IO
-       The first tag of ['Species'] is assumed and should not be input
+    """
+    Class for any type of species, or list of species of various types
+    Input list of lists eg [ [Degradation, degradation], [TF, activity], [Complex,],
+    [Kinase],..
+    [Output, n_put], [Input, n_put] ]  where n_put is an integer enumerating IO
+    The first tag of ['Species'] is assumed and should not be input
     """
     #Dictionnary of possible tags with list of corresponding attributes
     Tags_Species=dict(Species = [],

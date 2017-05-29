@@ -129,9 +129,9 @@ stored generations.
 
 .. code:: python
 
-    lost_stored = sim.seeds[1].stored_generation_indexes()
+    list_stored = sim.seeds[1].stored_generation_indexes()
     # Or
-    lost_stored = sim.stored_generation_indexes(1)
+    list_stored = sim.stored_generation_indexes(1)
 
 Read a network from the pickle file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

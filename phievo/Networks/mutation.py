@@ -1,14 +1,17 @@
-""" This program contains or calls all the functions used for mutations which are defined to act on a subclass of network
-called Mutable_Network defined here
+""" This module adds a layer to the elements defined in :any:`classes_eds2` and creates an extended version of :any:`Species` called :any:`Mutable_Network`.
+The addon adds a set of tools for node mutations.
 For mutation/removal, effective mutation rate will be the reference mutation rate times the number of instances of the considered Type.
-Attributes:
-    C,L,T (float):
-    dictionary_mutation (dict): referenced mutation rates and associated command as key
-    dictionary_ranges (dict): referenced parameters that can change and their ranges
-    list_create (list): list of Nodes subject to creation
-    list_mutate (list): list of Nodes subject to mutation
-    list_remove (list): list of Nodes subject to removal
-    list_types_output (list): list of the possible types for the output
+
+Attributes
+ - C,L,T (float):
+ - dictionary_mutation (dict): referenced mutation rates and associated command as key
+ - dictionary_ranges (dict): referenced parameters that can change and their ranges
+ - list_create (list): list of Nodes subject to creation
+ - list_mutate (list): list of Nodes subject to mutation
+ - list_remove (list): list of Nodes subject to removal
+ - list_types_output (list): list of the possible types for the output
+
+------------------
 """
 from phievo import __silent__,__verbose__
 if __verbose__:
