@@ -867,9 +867,23 @@ class Network(object):
                         self.remove_Node(inter)
                         modification=True
 
-        # if (nloop>900):
-        #     self.draw(file="Infiniteloop.png")
+    def delete_clean(self,id,verbose=False):
+        """Remove a node according to its id and clean the network
 
+        Warning: This operation renames all the nodes (and changes the id)
+        """
+        for node in self.graph.nodes():
+            if node.int_id() == id:
+                bRemove = self.remove_Node(node,verbose)
+                if not bRemove:
+                    if verbose: print('Error while removing the node')
+                    return False
+                bClean = self.clean_Nodes(verbose)
+                if not bClean and verbose:
+                    if verbose: print('Error while cleaning the network')
+                return bClean
+        if verbose: print('Node {0} not found!'.format(id))
+        return False
 
     def draw(self,file=None,edgeLegend=False,extended=False,display=True,return_graph=False):
         """Draw the network in a matplotlib framework

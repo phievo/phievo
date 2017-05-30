@@ -66,6 +66,8 @@ class Degradation(classes_eds2.Interaction):
         Return:
             bool: the consistency of up and downstream grammar
         """
+        if len(input_list) != 1: return False
+        if len(output_list) != 1: return False
         return output_list[0].isinstance('Degradable')
 
 ########## Attributes attached to Network for Degradation ##########

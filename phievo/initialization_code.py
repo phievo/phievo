@@ -2,7 +2,7 @@
 
 from phievo import __silent__,__verbose__
 if __verbose__:
-    print("execute initialization_code.py")
+    print("Execute initialization_code.py")
 
 import os
 import optparse
