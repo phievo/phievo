@@ -57,15 +57,13 @@ class TFHill(classes_eds2.Interaction):
 # it to species, either up or down stream of it.
 
 def add_TFHill(self, tf, inter, module):
-    """Add a TF, a TModule and a :class:`Networks.TFHill.TFHill` interaction to the network
+    """Add a TF, a TModule and a :class:`TFHill <phievo.Networks.TFHill.TFHill>` interaction to the network
 
     Args:
-        tf (Species): with the 'TF' tag
-        inter (:class:`Networks.TFHill.TFHill`): will link tf and module
-        module (TModule): TModule to link the TFHill to
+        tf (:class:`Species <phievo.Networks.classes_eds2.Species>`): with the 'TF' tag
+        inter (:class:`TFHill <phievo.Networks.TFHill.TFHill>`): will link tf and module
+        module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): TModule to link the TFHill to
 
-    Return:
-        None: in place modification
     """
     if inter.isinstance('TFHill') and inter.check_grammar([tf], [module]):
         self.add_Node(tf)
@@ -86,8 +84,6 @@ def number_TFHill(self):
 def propagate_activity_TFHill(self):
     """Ensure that TFHill activity correspond to the one of their predecessor - done for compatibility with older versions
 
-    Return:
-        None: in place modification
     """
     self.write_id()
     if self.fixed_activity_for_TF:
@@ -99,14 +95,14 @@ def new_TFHill(self, tf, hill, threshold, module, activity=0):
     """Create a new TFHill with given parameters and link it to the network.
 
     Args:
-        tf (Species): the upstrem Species
+        tf (:class:`Species <phievo.Networks.classes_eds2.Species>`): the upstrem Species
         hill (float): the hill coefficient of the reaction
         threshold (float): the Michaelis-Menten constant
-        module (TModule): the downstream TModule
+        module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the downstream TModule
         activity (int): if fixed_activity_for_TF is True, always use the activity of tf
 
     Return:
-        :class:`Networks.TFHill.TFHill`: return the new interaction or None if an error occured
+        :class:`TFHill <phievo.Networks.TFHill.TFHill>`: return the new interaction or None if an error occured
     """
 
     if self.fixed_activity_for_TF:
@@ -126,13 +122,11 @@ def duplicate_TFHill(self,D_species,interaction,module,D_module):
     """duplicate a TFHill interaction
 
     Args:
-        D_species (Species): the new species
-        interaction (:class:`Networks.TFHill.TFHill`): the interaction you want to duplicate
-        module (TModule): the original module
-        D_module (TModule): the new module
+        D_species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the new species
+        interaction (:class:`TFHill <phievo.Networks.TFHill.TFHill>`): the interaction you want to duplicate
+        module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the original module
+        D_module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the new module
 
-    Return:
-        None: in place modification
     """
     #copy the TFHill
     D_interaction=copy.deepcopy(interaction)
@@ -164,11 +158,11 @@ def new_random_TFHill(self, tf, module):
     """Creates a TFHill between tf and module with random parameters
 
     Args:
-        tf (Species): must have the 'TF' tag
-        module (TModule): TModule associated to the TFHill
+        tf (:class:`Species <phievo.Networks.classes_eds2.Species>`): must have the 'TF' tag
+        module (:class:`TModule <phievo.Networks.classes_eds2>`): TModule associated to the TFHill
 
     Return:
-        :class:`Networks.TFHill.TFHill`: return the new interaction or None if an error occured
+        :class:`TFHill <phievo.Networks.TFHill.TFHill>`: return the new interaction or None if an error occured
     """
     hill = mutation.sample_dictionary_ranges('TFHill.hill',self.Random)
     threshold = mutation.sample_dictionary_ranges('TFHill.threshold',self.Random)
@@ -176,10 +170,10 @@ def new_random_TFHill(self, tf, module):
     return self.new_TFHill(tf, hill, threshold, module,activity)
 
 def random_TFHill(self):
-    """Creates a new :class:`Networks.TFHill.TFHill` among all possibles
+    """Creates a new :class:`TFHill <phievo.Networks.TFHill.TFHill>` among all possibles
 
     Return:
-        :class:`Networks.TFHill.TFHill`: return the new interaction or None if an error occured
+        :class:`TFHill <phievo.Networks.TFHill.TFHill>`: return the new interaction or None if an error occured
     """
     if 'TF' in self.list_types and 'TModule' in self.list_types:
         #Evaluate all possible TFHill
@@ -211,10 +205,10 @@ def compute_transcription(net,module):
     Used for integration in transcription_deriv_inC
 
     Args:
-        module (TModule): TModule to compute .
+        module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): TModule to compute .
 
     Return:
-        str: the algebraic transcription rate of module
+        string the algebraic transcription rate of module
     """
     listactivator=[]
     listrepressor=[]
@@ -256,8 +250,7 @@ def compute_transcription(net,module):
 def transcription_deriv_inC(net):
     """gives the string corresponding to transcription for integration
 
-    Return:
-        str: a single string for all transcriptions in the network
+    Return: A single string for all transcriptions in the network
     """
     func="\n/**************Transcription rates*****************/\n"
     func=func+" \t int k,memory=-1;\n"

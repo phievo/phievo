@@ -32,11 +32,11 @@ def pcompare(x,y,n_functions): #AW added
     their different fitness
 
     Args:
-        x,y (Networks): the object to compare
+        x,y (:class:`Network <phievo.Networks.mutation.Mutable_Network>`): the object to compare
         n_functions (int): the number of function taken into account
 
     Returns:
-        int: the comparison of x & y (1 if x>y), 0 indicates that they are pareto equivalent
+         the comparison of x & y (1 if x>y), 0 indicates that they are pareto equivalent
     """
     # case where some fitnesses are None
     if (None not in x.fitness) and (None in y.fitness):
@@ -74,7 +74,7 @@ class pareto_Population(Population):
     them a list-like fitness.
 
     Attributes:
-        nfunctions (int): number of functions tekne into account by pareto
+        nfunctions (int): number of functions taken into account by pareto
         rshare (float): parameter for the fitness sharing
     """
     def __init__(self,namefolder,nfunctions,rshare):
@@ -95,11 +95,6 @@ class pareto_Population(Population):
         To avoid having population dominated by 0,0 function assigns lowest rank
         to networks with this score.
 
-        Args:
-            -
-
-        Returns:
-            None: in place modification
         """
         if verbose:
             print("start_sort")
@@ -150,11 +145,6 @@ class pareto_Population(Population):
         The implementation is a variant on the basic fitness sharing algorithm
         in section II of Cioppa et al. IEEE Trans. Evol Comp. 11:453
 
-        Args:
-            -
-
-        Returns:
-            None: in place modification
         """
         k = 0
         while( k < self.npopulation and self.genus[k].prank==1):
@@ -193,8 +183,6 @@ class pareto_Population(Population):
             nnetwork (int): the index of the network in the population
             integration_result (list): the output of compile_and_integrate
 
-        Returns:
-            None: in place modification
         """
         if integration_result:
             current_fitness = [float(integration_result[i]) for i in range(self.nfunctions)]

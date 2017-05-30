@@ -1,8 +1,7 @@
 """
-Definition of degradation catalysis
-Coder: M.Hemery
-Creation: 2016-08-16
-Last edition: 2016-10-25
+Definition of catalysed degradations.
+
+--------------------
 """
 from phievo import __silent__,__verbose__
 if __verbose__:
@@ -49,7 +48,7 @@ class Degradation(classes_eds2.Interaction):
         """indicate the Nodes to remove when deleting the Degradation
 
         Args:
-            net (Networks): The network to which the interaction belongs
+            net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): The network to which the interaction belongs
 
         Return:
             list: here an empty list
@@ -64,7 +63,7 @@ class Degradation(classes_eds2.Interaction):
             output_list (list): nodes to be checked
 
         Return:
-            bool: the consistency of up and downstream grammar
+            Boolean of the consistency of up and downstream grammar
         """
         if len(input_list) != 1: return False
         if len(output_list) != 1: return False
@@ -76,12 +75,12 @@ def new_Degradation(self,Input1, Input2, rate):
     """Create a new Degradation and add it to the network
 
     Args:
-        Input1 (Species): the 'enzyme'
-        Input2 (Species): the species degraded (have to be Degradable)
+        Input1 (:class:`Species <phievo.Networks.classes_eds2.Species>`): the 'enzyme'
+        Input2 (:class:`Species <phievo.Networks.classes_eds2.Species>`): the species degraded (have to be Degradable)
         rate (float): the degradation rate
 
     Return:
-        list: of the form [Degradation]
+        list of the form [Degradation]
         or None if an error occured
     """
     p=Degradation(rate)
@@ -98,11 +97,11 @@ def check_existing_Degradation(self,i1,i2):
     """Check if a Degradation exists between species i1 and i2
 
     Args:
-        i1 (Species): the 'enzyme'
-        i2 (Species): the species degraded
+        i1 (:class:`Species <phievo.Networks.classes_eds2.Species>`): the 'enzyme'
+        i2 (:class:`Species <phievo.Networks.classes_eds2.Species>`): the species degraded
 
     Return:
-        bool: if i1 is known to degrade i2
+        True if i1 is known to degrade i2
     """
     if 'Degradation' in self.list_types: #goes through the list of interactions
         for reaction in self.list_types['Degradation']:
@@ -138,11 +137,11 @@ def new_random_Degradation(self, Input1, Input2):
     """Creates a Degradation with random parameters between the Species
 
     Args:
-        Input1 (Species): the 'enzyme'
-        Input2 (Species): the species degraded (have to be Degradable)
+        Input1 (:class:`Species <phievo.Networks.classes_eds2.Species>`): the 'enzyme'
+        Input2 (:class:`Species <phievo.Networks.classes_eds2.Species>`): the species degraded (have to be Degradable)
 
     Return:
-        list: of the form [Degradation]
+        list of of the form [Degradation]
     """
     rate = mutation.sample_dictionary_ranges('Degradation.rate',self.Random)
     [Deg] = self.new_Degradation(Input1,Input2,rate)
@@ -150,9 +149,6 @@ def new_random_Degradation(self, Input1, Input2):
 
 def random_Degradation(self):
     """Create new random Degradation among all possible ones
-
-    Args:
-        -
 
     Return:
         list: of the form [Degradation]
@@ -182,8 +178,7 @@ setattr(mutation.Mutable_Network,'new_random_Degradation',new_random_Degradation
 def Degradation_deriv_inC(net):
     """gives the string corresponding to degradations for integration
 
-    Return:
-        str: a single string for all degradation in the network
+    Return:A single string for all degradation in the network
     """
     if ('Degradation' in net.list_types):
         func="\n/**************Degradation interactions*****************/\n"

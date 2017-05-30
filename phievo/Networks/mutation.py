@@ -62,9 +62,6 @@ def build_lists(mutation_dict):
 
     Args:
         mutation_dict (dict): the dictionary listing the various operation (typically inits.dictionary_mutations)
-
-    Return:
-        None: modify list_create - list_mutate - list_remove as global variable
     """
     global list_mutate, list_remove, list_create
     # when a term is found, we used split on ', the type should be the second term
@@ -88,7 +85,7 @@ def sample_dictionary_ranges(key,random_generator):
         random_generator: a random number generator (.random() called here)
 
     Return:
-        float: a random value
+        float a random value
         or int if key is CorePromoter.delay
         or None if an error occured
     """
@@ -119,7 +116,7 @@ def random_parameters(Type,random_generator,multiple_phospho=True):
         random_generator: a random number generator (.random() called here)
 
     Return:
-        list: a list of random parameters that can create a new Species
+        list a list of random parameters that can create a new Species
         or None if an error occured
     """
     if not Type in classes_eds2.Species.Tags_Species: #look directly at the class attribute
@@ -150,11 +147,11 @@ def random_parameters(Type,random_generator,multiple_phospho=True):
 def rand_modify(self,random_generator):
     """modify every parameters of the node self
 
-    This subroutine is then export to the :class:`Networks.classes_eds2.Node` class and used as a method
+    This subroutine is then export to the :class:`Node <phievo.Networks.classes_eds2.Node>` class and used as a method
     Called the sample_dictionary_ranges subroutine when needed
 
     Args:
-        self (:class:`Networks.classes_eds2.Node`): the node you want to modify
+        self (:class:`Node <phievo.Networks.classes_eds2.Node>`): the node you want to modify
         random_generator: a random number generator (.random() called here)
 
     Return:
@@ -285,10 +282,10 @@ class Mutable_Network(classes_eds2.Network):
         """Randomly removes a Node of a given Type
 
         Args:
-            Type (str): the type you want to remove (e.g. 'Interaction', :class:`Networks.TFHill.TFHill`, ...)
+            Type (str): the type you want to remove (e.g. ':class:`Interaction <phievo.Networks.classes_eds2.Species>`', :class:`Species <phievo.Networks.TFHill.TFHill>`, ...)
 
         Return:
-            bool: indicate if something is effectively removed
+            boolean indicating if something is effectively removed
         """
         self.write_id()
         if Type in self.list_types:
@@ -348,7 +345,7 @@ class Mutable_Network(classes_eds2.Network):
         If duplicating an output gene, add a new output tag to duplicated species, irrespective of other dictionary_mutation['*output*'] values in initialization.
 
         Return:
-            bool: indicate if a duplication has been finally done
+            boolean indicating if a duplication has been finally done
         """
         possible_duplicate = [self.graph.successors(interaction)[0] for interaction in self.list_types['CorePromoter']]
         possible_duplicate.sort(key = classes_eds2.compare_node) #to be deterministic
@@ -369,10 +366,10 @@ class Mutable_Network(classes_eds2.Network):
         """randomly selects then mutates a Node of a given Type
 
         Args:
-            Type (str): the Type to mutate (e.g. ``Species``: :any:`Species`, ``TFHill``: :class:`TFHill <phievo.Networks.TFHill.TFHill>`, ``Node``: :any:`Node`...)
+            Type (str): the Type to mutate (e.g. ``Species``: :any:`Species`, ``TFHill``: :class:`TFHill <phievo.Networks.TFHill.TFHill>`, ``Node``: `Node <phievo.Networks.classes_eds2.Node>`...)
 
         Return:
-            bool: if something is mutated
+            boolean if something is mutated
         """
         self.write_id()
         possible_mutated = self.list_types.get(Type,[])
@@ -390,7 +387,7 @@ class Mutable_Network(classes_eds2.Network):
 
 
         Returns:
-            dict: with the rate of each events for the network
+            dict with the rates of each events for the network
         """
         self.write_id()
         dictionary=copy.deepcopy(dictionary_mutation) #takes the predefined dictionary
@@ -436,7 +433,7 @@ class Mutable_Network(classes_eds2.Network):
         """determine the time and type of next mutation for the gillespie algo.
 
         Return:
-            float: time to next mutation
+            float time to next mutation
 
         given a network, computes the time of the next mutation and the command to execute to perform the mutation
         for the gillispie algorithm
@@ -474,10 +471,10 @@ class Mutable_Network(classes_eds2.Network):
             mutation (bool): if False, no mutation will be made
 
         Returns:
-            (list): [n_mutations,nnetwork,self,result] where:
+            List [n_mutations,nnetwork,self,result] where:
                 - n_mutations (int): the numbre of mutation performed
                 - nnetwork (int): same as args
-                - self (Network): the Mutable_Network object itself
+                - self (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): the Mutable_Network object itself
                 - result (list): output of treatment_fitness (see compile_and_integrate)
         """
         n_mutations,age = 0,0

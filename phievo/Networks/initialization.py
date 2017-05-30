@@ -1,4 +1,8 @@
-""" initialization script, import and copy data to like named variables in other modules.
+"""
+This module contains the default for the creation of a mutable network.
+All of the present parameter can be changed in the initialization file present in
+the project directory.
+This module also contains default init_network and fitness_treatment functions.
 """
 
 # ranges over which parmeters in classes_eds2 classes can vary. Defined in mutation.py
@@ -174,6 +178,9 @@ from . import mutation
 def init_network():
    """
    Generate a initial network to start the algorithm with.
+
+   Return:
+        initial :class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`
    """
    seed=int(random.random()*100000)
    g=random.Random(seed)
@@ -200,7 +207,13 @@ def init_network():
 
 
 def fitness_treatment(population):
-    """Function to change the fitness of the networks"""
+    """
+    Function to change the fitness of the networks.
+    It can add a small random number to the computed fitness for example.
+
+    Args:
+        population (:class:`Population <phievo.Population_Types.evol_gillespie.Population>`): Population to modify.
+    """
 
 
     for nnetwork in range(population.npopulation):

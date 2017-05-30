@@ -1,4 +1,7 @@
-## Adrien's version of prettyGraph
+"""
+The lovelyGraph modules contains a set of utilities to plot a network.
+It uses the homemade package PlotGraph_.
+"""
 
 import phievo.Networks.PlotGraph as PlotGraph
 from phievo.initialization_code import *
@@ -78,6 +81,12 @@ def produce_Phospho_name(node_reac,cat=False):
 
 def pretty_graph(net,extended=True):
         """
+        Creates a ready-to-plot graph object from a network.
+
+        Args:
+            net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`)
+        Return:
+            returns a :class:`PlotGraph graph <phievo.Networks.PlotGraph.Graph.Graph>`
 
         """
         net.__build_list_types__()

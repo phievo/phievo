@@ -57,15 +57,15 @@ def new_PPI(self,P1,P2,assoc,dissoc,types):
     """Create a new :class:`Networks.PPI.PPI`, its associated complex and add then to the network.
 
     Args:
-        P1 (Species): First Protein
-        P2 (Species): Second Protein
+        P1 (:class:`Species <phievo.Networks.classes_eds2.Species>`): First Protein
+        P2 (:class:`Species <phievo.Networks.classes_eds2.Species>`): Second Protein
         assoc (float): the association rate
         dissoc (float): the dissociation rate of the complex
         types (list): the types of the complex species
     Returns:
-        list: of the form [`ppi`,`complex created`] with:
-            - `ppi`: :class:`Networks.PPI.PPI`
-            - `complex created`: :class:`Networks.classes_eds2.Species`
+        list of the form [`ppi`,`complex created`] with:
+            - `ppi`: :class:`PPI <phievo.Networks.PPI.PPI>`
+            - `complex created`: :class:`Species <phievo.Networks.classes_eds2.Species>`
     """
     complex = classes_eds2.Species(types)
     ppi=PPI(assoc,dissoc)
@@ -84,14 +84,12 @@ def duplicate_PPI(self,species,D_species,interaction,module,D_module):
     """function to duplicate a PPI interaction
 
     Args:
-        species (Species): the original species
-        D_species (Species): the new species
-        interaction (:class:`Networks.PPI.PPI`): the interaction you want to duplicate
-        module (:class:`Networks.classes_eds2.TModule`): the original module
-        D_module (:class:`Networks.classes_eds2.TModule`): the new module
+        species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the original species
+        D_species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the new species
+        interaction (:class:`PPI <phievo.Networks.PPI.PPI>`): the interaction you want to duplicate
+        module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the original module
+        D_module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the new module
 
-    Return:
-        None: in place modification
     """
     # Copy the interaction and add it to the network
     D_interaction=copy.deepcopy(interaction)
@@ -137,13 +135,13 @@ def new_random_PPI(self, P1, P2):
     """Creates a PPI with random parameters between the Species
 
     Args:
-        P1 (Species): First  protein
-        P2 (Species): Second  protein
+        P1 (:class:`Species <phievo.Networks.classes_eds2.Species>`): First  protein
+        P2 (:class:`Species <phievo.Networks.classes_eds2.Species>`): Second  protein
 
     Returns:
-        list: of the form [`ppi`,`complex created`] with:
-            - `ppi`: :class:`Networks.PPI.PPI`
-            - `complex created`: :class:`Networks.classes_eds2.Species`
+        list of the form [`ppi`,`complex created`] with:
+            - `ppi`: :class:`PPI <phievo.Networks.PPi.PPI>`
+            - `complex created`: :class:`Species <phievo.Networks.classes_eds2.Species>`
     """
     types=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',self.Random)],
           ['Complex'],['Phosphorylable']]
@@ -163,9 +161,9 @@ def random_PPI(self):
     """Create new random PPI among all those possible
 
     Returns:
-        list: of the form [`ppi`,`complex created`] with:
-            - `ppi`: :class:`Networks.PPI.PPI`
-            - `complex created`: :class:`Networks.classes_eds2.Species`
+        list of the form [`ppi`,`complex created`] with:
+            - `ppi`: :class:`PPI <phievo.Networks.PPI.PPI>`
+            - `complex created`: :class:`Species <phievo.Networks.classes_eds2.Species>`
     """
     if 'Complexable' in self.list_types:
         list_complexable=self.list_types['Complexable']
@@ -203,7 +201,7 @@ def PPI_deriv_inC(net):
     """gives the string corresponding to :class:`Networks.PPI.PPI` for integration
 
     Return:
-        str: a single string for all :class:`Networks.PPI.PPI` in the network
+        str a single string for all :class:`Networks.PPI.PPI` in the network
     """
     func="\n/**************Protein protein interactions*****************/\n"
     if ('PPI' in net.list_types):

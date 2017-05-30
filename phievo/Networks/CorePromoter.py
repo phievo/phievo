@@ -1,7 +1,8 @@
 """
-Definition of CorePromoter Interaction
-Creation: unknown
-Last edition: 2016-10-25
+Definition of CorePromoter Interaction. The CorePromoter is part of a *gene* system
+ and binds a :class:`TModule <phievo.Networks.classes_eds2.TModule>` to a :class:`Species <phievo.Networks.classes_eds2.Species>`.
+
+---------------
 """
 from phievo import __silent__,__verbose__
 if __verbose__:
@@ -34,7 +35,7 @@ class CorePromoter(classes_eds2.Interaction):
         """Constructor of a new CorePromoter
 
         Args:
-            delay (int): -
+            delay (int):
         """
         classes_eds2.Node.__init__(self)
         self.delay=int(delay)
@@ -49,10 +50,9 @@ class CorePromoter(classes_eds2.Interaction):
         """indicate the Nodes to remove when deleting the CorePromoter
 
         Args:
-            net (Networks): The network to which the CP belongs
+            net (:class:`Network <phievo.Networks.classes_eds2.Networks>`): The network to which the CP belongs
 
-        Return:
-            list: All the predec. and succ. of self in net
+        Return: list of all the predec. and succ. of self in net
         """
         toDelete = net.graph.predecessors(self)
         successorNode = net.graph.successors(self)[0]
@@ -73,11 +73,9 @@ def add_CorePromoter2Species(self,inter,output):
     """Add a CorePromoter Interaction and its output to the network
 
     Args:
-        inter (:class:`Networks.CorePromoter.CorePromoter`): the CorePromoter to be added
-        output (:class:`Networks.classes_eds2.Species`): the CorePromoter output
+        inter (:class:`CorePromoter <phievo.Networks.CorePromoter.CorePromoter>`): the CorePromoter to be added
+        output (:class:`Species <phievo.Networks.classes_eds2.Species>`): the CorePromoter output
 
-    Return:
-        None: in place modification
     """
     if inter.isinstance('CorePromoter'):
         self.add_Node(inter)
@@ -90,11 +88,9 @@ def add_TModule2CorePromoter(self,module,inter):
     """Add a CorePromoter Interaction and its TModule to the network
 
     Args:
-        module (:class:`Networks.classes_eds2.TModule`): the CorePromoter module
-        inter (:class:`Networks.CorePromoter.CorePromoter`): the CorePromoter to be added
+        module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the CorePromoter module
+        inter (:class:`CorePromoter <phievo.Networks.CorePromoter.CorePromoter>`): the CorePromoter to be added
 
-    Return:
-        None: in place modification
     """
     if module.isinstance('TModule'):
         self.add_Node(inter)
@@ -112,8 +108,7 @@ def new_gene(self, rate, delay, parameters,basal=0.):
         parameters (list): the species parameter (see Network.new_Species)
         basal (float): the basal production of the TModule (default to 0.)
 
-    Return:
-        list: of the form [:class:`Networks.classes_eds2.TModule`, :class:`Networks.CorePromoter.CorePromoter`, :class:`Networks.classes_eds2.Species`]
+    Return: list of the form [:class:`Networks.classes_eds2.TModule`, :class:`Networks.CorePromoter.CorePromoter`, :class:`Networks.classes_eds2.Species`]
         or None if an error occured
     """
     species = self.new_Species(parameters)
@@ -131,14 +126,14 @@ def duplicate_gene(self,species):
     """Duplicate a gene, i.e. a triplet Tmodule/CorePromoter/Species
 
     Args:
-        species (:class:`Networks.classes_eds2.Species`): Species to duplicate
+        species (:class:`Species <phievo.Networks.classes_eds2.Species>`): Species to duplicate
 
     Return:
-        list: of the form [`new_TModule`, `new_CorePromoter`, `new_Species`, `old_TModule`]
-            - `new_TModule`: :class:`Networks.classes_eds2.TModule`
-            - `new_CorePromoter`: :class:`Networks.CorePromoter.CorePromoter`
-            - `new_Species`: :class:`Networks.classes_eds2.Species`
-            - `old_TModule`: :class:`Networks.classes_eds2.TModule`
+        list of the form [`new_TModule`, `new_CorePromoter`, `new_Species`, `old_TModule`]
+            - `new_TModule`: :class:`TModule <phievo.Networks.classes_eds2.TModule>`
+            - `new_CorePromoter`: :class:`CorePromoter <phievoNetworks.CorePromoter.CorePromoter>`
+            - `new_Species`: :class:`Species <phievo.Networks.classes_eds2.Species>`
+            - `old_TModule`: :class:`TModule <phievo.Networks.classes_eds2.TModule>`
 
         or None if an error occured
     """
@@ -187,8 +182,7 @@ def new_enhancer(self, species, rate, delay, parameters,basal=0.):
         parameters (list): the species parameter (see Network.new_Species)
         basal (float): the basal production of the TModule (default to 0.)
 
-    Return:
-        list: of the form [:class:`Networks.classes_eds2.TModule`, :class:`Networks.CorePromoter.CorePromoter`]
+    Return: list of the form [:class:`Networks.classes_eds2.TModule`, :class:`Networks.CorePromoter.CorePromoter`]
         or None if an error occured
     """
     module = classes_eds2.TModule(rate,basal)
@@ -219,10 +213,10 @@ def random_gene(self,Type='Species'):
         Type (list): following the traditional template ['type', param]
 
     Return:
-        list: of the form [`tmodule`, `core_promoter`, `species`] with:
-            - `tModule`: :class:`Networks.classes_eds2.TModule`
-            - `core_promoter`: :class:`Networks.CorePromoter.CorePromoter`
-            - `species`: :class:`Networks.classes_eds2.Species`
+        list of the form [`tmodule`, `core_promoter`, `species`] with:
+            - `tModule`: :class:`TModule <phievo.Networks.classes_eds2.TModule>`
+            - `core_promoter`: :class:`CorePromoter <phievo.Networks.CorePromoter.CorePromoter>`
+            - `species`: :class:`Species <phievo.Networks.classes_eds2.Species>`
     """
     rate = mutation.sample_dictionary_ranges('TModule.rate',self.Random)
     basal = mutation.sample_dictionary_ranges('TModule.basal',self.Random)
@@ -237,9 +231,9 @@ def random_enhancer(self,Type='TModule'):
         Type (list): following the traditional template ['type', param]
 
     Return:
-        list: of the form [`tmodule`, `core_promoter`] with:
-            - `tModule`: :class:`Networks.classes_eds2.TModule`
-            - `core_promoter`: :class:`Networks.CorePromoter.CorePromoter`
+        list of the form [`tmodule`, `core_promoter`] with:
+            - `tModule`: :class:`TModule <phievo.Networks.classes_eds2.TModule>`
+            - `core_promoter`: :class:`CorePromoter <phievo.Networks.CorePromoter.CorePromoter>`
     """
     rate = mutation.sample_dictionary_ranges('TModule.rate',self.Random)
     basal = mutation.sample_dictionary_ranges('TModule.basal',self.Random)

@@ -54,7 +54,7 @@ def compute_leap(list_input_id, list_output_id, rate):
         rate (str): the rate, should be positive
 
     Return:
-        str: a C-formatted string
+        a C-formatted string
     """
     func = "\t \t rate=" + rate + ";\n"
     func += "\t \t increment=compute_noisy_increment(rate);\n" if noise_flag else "\t \t increment=rate;\n"
@@ -71,11 +71,11 @@ def track_variable(net, name):
     algorithm, otherwise, use track_changing_variable
 
     Args:
-        net (Networks): -
+        net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): -
         name (str): a Species tag, usually 'Input' or 'Output'
 
     Return:
-        list: the id species list ordered by growing n_put
+        list of the id species list ordered by growing n_put
     """
     if name not in net.list_types:
         return []
@@ -99,11 +99,11 @@ def track_changing_variable(net, name):
     (we do not care about their order)
 
     Args:
-        net (Networks): -
+        net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): -
         name (str): a Species tag, usually 'Input' or 'Output'
 
     Return:
-        list: the id species list ordered by growing n_put
+        list of the id species list ordered by growing n_put
     """
     return [s.int_id() for s in net.list_types.get(name,[])]
 
@@ -114,7 +114,7 @@ def degrad_deriv_inC(net):
     """gives the string corresponding to the degradation integration
 
     Return:
-        str: a single string for all degradations in the network
+        A single string for all degradations in the network
     """
     if 'Degradable' in net.list_types:
         func = "\n/**************degradation rates*****************/\n"
@@ -132,10 +132,8 @@ def write_deriv_inC(net,programm_file):
     This function is a default and should be updated in Networks/interaction.py
 
     Args:
-        net (Network): the network under study
+        net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): the network under study
         programm_file (TextIOWrapper): the built_integrator file
-    Return:
-        None: directly write the string in the C-file
     """
     start="void derivC(double s[],double history[][NSTEP][NCELLTOT],int step, double ds[],double memories[],int ncell){\n int index;"
     add = programm_file.write #create a bound method for readibility
@@ -152,13 +150,13 @@ def all_params2C(net, prmt, print_buf, Cseed=0):
     neelocalneig,diff,index_ligand,ded
 
     Args:
-        net (Network): -
+        net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): -
         prmt (dict): dictionary from initialization file
         print_buf (bool): control printing of time history by C codes
         Cseed (int): seed for the integrator random number generator
 
     Return:
-        str: a C formated string of parameters
+        A C formated string of parameters
     """
     hdr = [] # collect lines of output as list then join, speed issue
 
@@ -244,13 +242,13 @@ def write_program(programm_file,net, prmt, print_buf, Cseed=0):
 
     Args:
         programm_file (TextIOWrapper): the built_integrator file
-        net (Network): -
+        net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): -
         prmt (dict): passed to all_params2C
         print_buf (bool): passed to all_params2C
         Cseed (int): passed to all_params2C
 
     Return:
-        str: the C programm as a python string
+        The C programm as a python string
     """
     # these have to be loaded in this order due to implicit type def's
     required_files2 = ['fitness', 'geometry', 'init_history', 'input', 'integrator', 'main']
@@ -273,14 +271,14 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
     See https://www.python.org/dev/peps/pep-0324/ for interface to run C code
 
     Args:
-        network (Network): -
+        network (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): -
         prmt (dict): dictionary from initialization file
         nnetwork (int): an id to separate the different C-file
         print_buf (bool): control printing of time history by C codes to a file
         Cseed (int): seed for the integrator random number generator
 
     Return:
-        list: corresponding to the different line of the output of treatment_fitness
+        list of corresponding to the different line of the output of treatment_fitness
         (see your fitness.c file) or None if an error occured
     """
 

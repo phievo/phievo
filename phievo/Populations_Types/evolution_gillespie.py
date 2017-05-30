@@ -1,5 +1,5 @@
 """
-Define the Class Population with her principal method, evolution, which
+Defines the Class Population with her principal method, evolution, which
 evolve a set of networks. All initialization done from an initialization.py
 file. All the modules are initialized through run_evolution.py.
 
@@ -82,7 +82,7 @@ def restart(directory, generation, verbose = True):
 
         Returns:
             rprmt (dict): the parameters of the run
-            genus (list): the list of individuals of the population
+            genus (list): the list of individuals(:class:`Network <phievo.Networks.mutation.Mutable_Network>`) of the population
     """
 
     restart_file = os.path.join(directory,"Restart_file")
@@ -109,13 +109,15 @@ def restart(directory, generation, verbose = True):
 ###################################
 
 class Population(object):
-    """Define a population as a list of networks called Population. genus and a principal method evolution; object means it is a newstyle class ! See the web for distinction between new and olds style class, important for inheritance"""
 
-    """Define a population as a list of networks called Population.genus
+    """
+    Define a population as a list of networks called Population.
+    Genus and a principal method evolution.
+    object means it is a newstyle class ! See the web for distinction between new and olds style class, important for inheritance
 
     Attributes:
         best_fitness (float): keep trace of the best fitness in the population
-        genus (list): the list of individuals of the population
+        genus (list): the list of individuals(:class:`Network <phievo.Networks.mutation.Mutable_Network>`) of the population
         same_seed (bool): indicate if the file is a restart or not
         tgeneration (float): starting hop time for the gillespie algorithm
         npopulation (int): size of te population
@@ -184,7 +186,7 @@ class Population(object):
 
         Args:
             t_gen: the key (normally the generation number)
-            net (Network): the object to be saved
+            net (:class:`Network <phievo.Networks.mutation.Mutable_Network>`): the object to be saved
 
         Return:
             None

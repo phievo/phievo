@@ -2,14 +2,15 @@
 Defines the main class used to describe the evolved networks
 The class hierarchy is the following:
 
-Network
- - Node
-     - Species
-     - TModule
-     - Interaction
-        - Corepromoter
-        - TFHill
-        - PPI
+:class:`Network <phievo.Networks.classes_eds2.Network>`
+ - :class:`Node <phievo.Networks.classes_eds2.Node>`:
+     - :class:`Species <phievo.Networks.classes_eds2.Species>`
+     - :class:`TModule <phievo.Networks.classes_eds2.TModule>`
+     - :class:`Interaction <phievo.Networks.classes_eds2.Interaction>`:
+        - :class:`CorePromoter <phievo.Networks.CorePromoter.CorePromoter>`
+        - :class:`TFHill <phievo.Networks.TFHill.TFHill>`
+        - :class:`PPI <phievo.Networks.PPI.PPI>`
+        - :class:`Phosphorylation <phievo.Networks.Phosphorylation.Phosphorylation>`
         - other interactions
 
 **Types:** Should be just the class, but for Species we have mutliple types (eg TF, Complex, Kinase, Phosphatase, Input, Output), several of which can apply at once, so the class defn in python not general enough.
@@ -65,9 +66,6 @@ class Node(object):
 
     def print_node(self):
         """print a full description of the current node
-
-        Return:
-            None: everything is diplayed through stdout
         """
         str_class = str(self.__class__).split("'")[-2]
         label = self.__dict__.get('label',None)
@@ -85,7 +83,7 @@ class Node(object):
             name: the type to be tested
 
         Return:
-            bool: return True if self is of type name
+             returns True if self is of type name
         """
         return name==self.__class__.__name__
 
@@ -97,8 +95,8 @@ class Node(object):
         """ extract the integer identifer computed in Network.write_id()
 
         Return:
-            (int): the identifier of the Node
-            None: when valid int not found eg if write_id not called
+            int - the identifier of the Node
+            None when valid int not found eg if write_id not called
         """
         # extract the int from the 's[1]' format
         index = self.id.split(']')[0]
@@ -117,7 +115,7 @@ class Node(object):
         Args:
             net (Network): the network self belongs to
         Return:
-            (list): default empty list
+            list - default empty list
         """
         return []
 
@@ -129,7 +127,7 @@ class Node(object):
             list_nodes_loop (list): to handle non tree like network
             debug (bool): Flag to activate a prolix version
         Return:
-            (bool): if self is removable or not
+            Boolean removable or not
         """
 
         if self in list_nodes_loop:
@@ -184,7 +182,7 @@ class Node(object):
         Mainly here to be customized in subclasses
 
         Return:
-            string: default '.'
+            string , default '.'
         """
         return " "
 
@@ -288,8 +286,7 @@ class Species(Node):
         Args:
             name: the type to be tested
 
-        Return:
-            bool: return True if self is of type name
+        Return: return True if self is of type name
         """
         return name in self.types
 
@@ -300,8 +297,6 @@ class Species(Node):
     def def_label(self):
         """Function to write labels for graphical representation
 
-        Return:
-            None: this function update the label attribute
         """
         self.label=""
         for k in self.types:
@@ -344,8 +339,8 @@ class Species(Node):
             Type (list): must be provided in a list of the form
             ['Tag',parameter1,parameter2] as defined in Tags_Species
         Return:
-            1: if everything is done properly
-            None: if an error occur during the process
+            1 if everything is done properly
+            None if an error occur during the process
         """
         if not isinstance(Type,list): #catch the case where Type is not a list
             print("Error in Species.add_type : "+str(Type)+" is not a list")
@@ -368,8 +363,10 @@ class Species(Node):
                 display_error('Error in Species.add_type tag={0} require attributes {1} input as [Type, a1,..]'.format(Type[0],self.Tags_Species[Type[0]]))
         return 1
 
+
+
 class TModule(Node):
-    """Definition of the Transcription Factor (TF)
+    """
 
     A TModule regulate the production of a Species, it generally binds
     upstream to a CorePromoter (direct production) or a TFHill
@@ -405,7 +402,7 @@ class Interaction(Node):
             output_list (list): nodes to be checked
 
         Return:
-            bool: the consistency of up and downstream grammar
+            Boolean for the consistency of up and downstream grammar
         """
         input_check = check_consistency(self.input,input_list)
         output_check = check_consistency(self.output,output_list)
@@ -431,7 +428,7 @@ def check_consistency(list_types,list_nodes):
         list_nodes: the list of nodes
 
     Return:
-        bool: Indicating if the consistency is OK
+        Boolean indicating if the consistency is OK
     """
     if not (len(list_types)==len(list_nodes)): return False
     if (len(list_types)<=1):
@@ -513,10 +510,10 @@ class Network(object):
         """add_node to graph unless already present
 
         Args:
-            node (:class:`Networks.classes_eds2.Node`): The node to be added
+            node (:class:`Node <phievo.Networks.classes_eds2.Node>`): The node to be added
 
         Return:
-            bool: indicate if the node has effectively been added
+            boolean indicating if the node has effectively been added
         """
         if self.graph.has_node(node):
             return False
@@ -534,7 +531,7 @@ class Network(object):
             types (list): the list types of the Species (see Species.__init__)
 
         Return:
-            Species: the species which have been created
+            The :class:`Species <phievo.Networks.classes_eds2.Species>` which have been created
         """
         S=Species(types)
         self.add_Node(S)
@@ -546,8 +543,7 @@ class Network(object):
 
         Args:
             Type (str): the type you are looking for
-        Return:
-            int: the number of Nodes of types Type in list_types
+        Return: The number of Nodes of types Type in list_types
         """
         return len(self.list_types[Type]) if Type in self.list_types else 0
 
@@ -558,7 +554,7 @@ class Network(object):
             interaction: the Interaction you are interested in
 
         Return:
-            list: of the form [catalyst,reactants,products]
+            list of the form [catalyst,reactants,products]
         """
         listIn=self.graph.predecessors(interaction)
         if (len(listIn)==1): #special case of autocatalysis
@@ -577,13 +573,12 @@ class Network(object):
     def check_existing_binary(self,list,Type):
         """Check if a specific binary interaction of type Type already exists
 
-        typically used for PPI 
+        typically used for PPI
 
         Args:
             list (list): the reactants (Nodes) you are looking for
             Type (str): the type of Interaction you are looking for
-        Return:
-            bool
+        Return: bool
         """
         list.sort(key=compare_node)
         if Type in self.list_types: #goes through the list of interactions
@@ -600,8 +595,7 @@ class Network(object):
         Args:
             list (list): the reactant/product couple (Nodes) you are looking for
             Type (str): the type of Interaction you are looking for
-        Return:
-            bool
+        Return: bool
         """
         list.sort(key=compare_node)
         if Type in self.list_types:#goes through the list of interactions
@@ -619,8 +613,6 @@ class Network(object):
         label_them run through the list and give the correct index to all
         the items
 
-        Return:
-            None: in place modification
         """
         def label_them(liszt):
             for index,species in enumerate(liszt):
@@ -635,13 +627,11 @@ class Network(object):
         """Called in case of gene duplication to copy the downstream interactions
 
         Args:
-            species (Species): the 'mother' species
-            D_species (Species): the 'daughter' species
-            module (TModule): the 'father' module
-            D_module (TModule): the 'son' module
+            species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the 'mother' species
+            D_species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the 'daughter' species
+            module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the 'father' module
+            D_module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the 'son' module
 
-        Return:
-            None: in place modification
         """
         listOut = sorted(self.graph.successors(species),key=compare_node) #careful, for self PPI, counted twice
         already_seen_PPI = [] #to keep a list of the PPI already considered
@@ -661,13 +651,13 @@ class Network(object):
         (see self.remove_output_when_dulicate)
 
         Args:
-            species (Species): the mother species
+            species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the mother species
 
         Return:
             A list [D_module,D_promoter,D_species]
-            D_module (TModule): the duplicate TModule
-            D_promoter (CorePromoter): the duplicate CorePromoter
-            D_species (Species): the duplicate Species
+            D_module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the duplicate TModule
+            D_promoter (:class:`CorePromoter <phievo.Networks.CorePromoter.CorePromoter>`): the duplicate CorePromoter
+            D_species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the duplicate Species
         """
         print("Duplicate")
         #one first starts to duplicate the gene
@@ -703,8 +693,6 @@ class Network(object):
         Note that it include all types (Node, Species and all Species type),
         one object can thus appear in several lists.
 
-        Return:
-            None: in place modification
         """
         self.list_types=dict(Node=self.graph.nodes())
         for index in self.graph.nodes():
@@ -722,8 +710,6 @@ class Network(object):
         Update the id of all Nodes with a form n[int] for nodes
         and s[int] for species.
 
-        Return:
-            None: in place modification
         """
         for index,node in enumerate(self.list_types['Node']):
             node.id = "n[%i]"%index
@@ -739,8 +725,7 @@ class Network(object):
         and Species.types (it ignore all numerical parameters)
         PRIVATE METHOD, called by __build_list_types__() which must be current
 
-        Return:
-            int: a number comprise between 0 and sys.maxint
+        Return: a number comprise between 0 and sys.maxint
         """
         hh = 1
         for index in self.list_types['Node']:
@@ -754,8 +739,7 @@ class Network(object):
     def write_id(self):
         """Update all indexations of the network
 
-        Return:
-            int: a number comprise between 0 and sys.maxint
+        Return: a number comprise between 0 and sys.maxint
         """
         self.__build_list_types__()
         self.__hash_net_topology__()
@@ -771,10 +755,9 @@ class Network(object):
         (eg part of output gene)
 
         Args:
-            node (:class:`Networks.classes_eds2.Node`): the node to be checked
+            node (:class:`Node <phievo.Networks.classes_eds2.Node>`): the node to be checked
             list_node_loops (list): to handle non tree like network
-        Return
-            bool: indicate if node can be safely removed
+        Return: Boolean indicates if node can be safely removed
         """
         return node.isremovable(self,list_nodes_loop)
 
@@ -783,10 +766,8 @@ class Network(object):
         Used to handle the diff. version of networkx
 
         Args:
-            node (:class:`Networks.classes_eds2.Node`): the node to be deleted
+            node (:class:`Node <phievo.Networks.classes_eds2.Node>`): the node to be deleted
 
-        Return:
-            None: in place modification
         """
         if (int(self.versionnx[0])<1):
             self.graph.delete_node(node)
@@ -802,11 +783,10 @@ class Network(object):
         removed, then the other nodes are managed with the help of clean_nodes
 
         Args:
-            node (:class:`Networks.classes_eds2.Node`): The node to be removed
+            node (:class:`Node <phievo.Networks.classes_eds2.Node>`): The node to be removed
             verbose (bool): Flag to activate the prolix mode
 
-        Return:
-            bool: indicating the completion of the process
+        Return: Boolean indicating the completion of the process
         """
         list_nodes_loop = []
         if (self.graph.has_node(Node)) and (self.check_Node(Node,list_nodes_loop)):
@@ -840,8 +820,7 @@ class Network(object):
         Args:
             verbose (bool): Flag to activate the prolix mode
 
-        Return:
-            bool: indicating the completion of the process
+        Return: Boolean indicating the completion of the process
 
         Delete any node with incorrect grammar until all remaining nodes pass test
         Currently implemented to check grammar on interaction nodes only, thus need
@@ -888,7 +867,7 @@ class Network(object):
     def draw(self,file=None,edgeLegend=False,extended=False,display=True,return_graph=False):
         """Draw the network in a matplotlib framework
 
-        Delegate to :class:`Networks.lovelyGraph.pretty_graph`
+        Delegate to :func:`pretty_graph <phievo.Networks.lovelyGraph.pretty_graph>`
 
         Args:
             file (str): save the picture in file,
@@ -897,8 +876,7 @@ class Network(object):
             extended (bool): Display inner modules (ex: TModules)
             display (bool): Display the figure
             return_graph(bool): Returns a graph object rather than a figure
-        Returns:
-            None
+
 
         Examples:
             my_Network.draw('my_lovely_network.pdf')
@@ -923,8 +901,6 @@ class Network(object):
         Args:
             filename (str): the directory where the object is saved
 
-        Returns:
-            None: in place saving
         """
         with open(filename,'wb') as my_file:
             pickle.dump(self,my_file)
@@ -933,8 +909,7 @@ class Network(object):
     def network_to_string(self):
         """Return a string defining the network net as a python file
 
-        Return:
-            str: the network description
+        Return: the network description
         """
         term="import random\ng=random.Random(42)\nL=Mutable_Network(g)\nL.Cseed=%i\n"%self.Cseed #initialization of the network
         name=""
@@ -980,8 +955,7 @@ def print_Network(net):
     Args:
         net (Network): the network you want to write
 
-    Return:
-        (str): the network description
+    Return: the network description
     """
     return net.__repr__()
 
@@ -991,8 +965,7 @@ def str2Network(net_str):
     Args:
         net_str (str): A description of a network as produced by print_Network
 
-    Return:
-        Network: the corresponding network
+    Return: the corresponding network
     """
     exec_dict = {}
     exec_str = 'from phievo.Networks.classes_eds2 import *\nfrom phievo.Networks.mutation import *\nfrom phievo.Networks.interaction import *\nfrom phievo.Networks.mutation import Mutable_Network\n' + ''.join( net_str )

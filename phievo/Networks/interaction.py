@@ -24,10 +24,8 @@ def write_deriv_inC(net,programm_file):
     This function is an update from the one in deriv2
 
     Args:
-        net (Network): the network under study
+        net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): the network under study
         programm_file (TextIOWrapper): the built_integrator file
-    Return:
-        None: directly write the string in the C-file
     """
     start="void derivC(double s[],double history[][NSTEP][NCELLTOT],int step, double ds[],double memories[],int ncell){\n int index;"
 

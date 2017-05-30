@@ -21,7 +21,7 @@ class Interaction:
             node2 (Node): Node added second to the graph
 
         Returns:
-            :class:`Networks.PlotGraph.Components.Interaction`:Reference to the interaction
+            :class:`Interaction <phievo.Networks.PlotGraph.Components.Interaction>`:Reference to the interaction
         """
 
         self.node1 = min(node1,node2)
@@ -35,7 +35,7 @@ class Interaction:
         """Add an edge to an the existing interaction
 
         Args:
-            edge (Edge): edge to be added to the list of edge references
+            edge (:class:`Edge <phievo.Networks.PlotGraph.Components.Edge>`): edge to be added to the list of edge references
         Returns:
             None
         """
@@ -79,8 +79,8 @@ class Edge:
         """ Initialise an edge
 
         Args:
-            nodeFrom (:class:`Networks.PlotGraph.Components.Node`): Node at which the edge starts
-            nodeTo (:class:`Networks.PlotGraph.Components.Node`): Node at which the edge ends
+            nodeFrom (:class:`Node <phievo.Networks.PlotGraph.Components.Node>`): Node at which the edge starts
+            nodeTo (:class:`Node <phievo.Networks.PlotGraph.Components.Node>`): Node at which the edge ends
             label (string): Edge label
         """
         self.nodeFrom = nodeFrom
@@ -361,7 +361,7 @@ class Circle(Node):
 
 class HouseUp(Node):
     """
-    :class:`Networks.PlotGraph.Components.Node` with a pentagon shape (⬟)
+    :class:`Node <phievo.Networks.PlotGraph.Components.Node>` with a pentagon shape (⬟)
     """
 
     def __init__(self, *args, **kwargs):
@@ -399,7 +399,7 @@ class HouseUp(Node):
 
 class HouseDown(Node):
     """
-    :class:`Networks.PlotGraph.Components.Node` with a pentagon shape (⯂).
+    :class:`Node <phievo.Networks.PlotGraph.Components.Node>` with a pentagon shape (⯂).
     """
     def __init__(self, *args, **kwargs):
         """ See Node.
@@ -435,7 +435,7 @@ class HouseDown(Node):
 
 class TriangleUp(Node):
     """
-    :class:`Networks.PlotGraph.Components.Node` with a triangle shape (▲).
+    :class:`Node <phievo.Networks.PlotGraph.Components.Node>` with a triangle shape (▲).
     """
     def __init__(self,*args, **kwargs):
         super(TriangleUp, self).__init__(*args, **kwargs)
@@ -468,7 +468,7 @@ class TriangleUp(Node):
 
 class TriangleDown(Node):
     """
-    :class:`Networks.PlotGraph.Components.Node` with a triangle shape (▼).
+    :class:`Node <phievo.Networks.PlotGraph.Components.Node>` with a triangle shape (▼).
     """
     def __init__(self,*args, **kwargs):
         """ See Node.__init__
@@ -504,7 +504,7 @@ class TriangleDown(Node):
 
 class Square(Node):
     """
-    :class:`Networks.PlotGraph.Components.Node` with a square shape (◼).
+    :class:`Node <phievo.Networks.PlotGraph.Components.Node>` with a square shape (◼).
     """
     def __init__(self,*args, **kwargs):
         """ See Node.__init__
@@ -540,7 +540,7 @@ class Square(Node):
 
 class RoundedRectangle(Node):
     """
-    :class:`Networks.PlotGraph.Components.Node` with a RoundedRectangle shape (▢).
+    :class:`Node <phievo.Networks.PlotGraph.Components.Node>` with a RoundedRectangle shape (▢).
     """
     def __init__(self,*args, **kwargs):
         """ See Node.__init__

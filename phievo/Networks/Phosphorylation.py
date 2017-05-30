@@ -1,12 +1,9 @@
 """
 Definition of Phosphorylation interaction
 
-/!\ WARNING: IF USING THIS CLASS PUT config.multiple_phospho to 0, otherwise you might have bugs (for now)
+! WARNING: IF USING THIS CLASS PUT config.multiple_phospho to 0, otherwise you might have bugs (for now)
 TODO: in New Phosphorylation, test on n_phospho; if it is 1 (or higher than something)
 then remove Phosphorylable. Also update n_phospho accordingly when phosphorylated
-
-Creation: unknown
-Last edition: 2016-10-26
 """
 from phievo import __silent__,__verbose__
 if __verbose__:
@@ -66,8 +63,7 @@ def check_existing_Phosphorylation(self,signature):
     Args:
         signature (list): The signature of the phospho in the form [Kinase,Input]
 
-    Return:
-        bool: if this phosphorylation exist
+    Return: True if this phosphorylation exist
     """
     if 'Phosphorylation' in self.list_types:#goes through the list of interactions
         for inter in self.list_types['Phosphorylation']:
@@ -87,15 +83,15 @@ def new_Phosphorylation(self,kinase,species,rate,threshold,hill,dephospho):
     """Create a new Phosphorylation, its associated product and add them to the network.
 
     Args:
-        kinase (Species): -
-        species (Species): -
+        kinase (:class:`Species <phievo.Networks.classes_eds2.Species>`)
+        species (:class:`Species <phievo.Networks.classes_eds2.Species>`)
         rate (float): the association rate
         threshold (float): the Michaelis-Menten constant
         hill (float): the hill coefficient of the reaction
         dephospho (float): the dephosphorylation rate of the product
 
     Return:
-        list: of the form [Phosphorylation,phosphorylated_Species]
+        list of the form [:class:`Phosphorylation <phievo.Networks.Phosphorylation.Phosphorylation>` , :class:`Species <phievo.Networks.classes_eds2.Species>`]
         or None if an error occured
     """
     phospho=Phosphorylation(rate,threshold,hill,dephospho)#creates the interaction
@@ -130,11 +126,11 @@ def new_random_Phosphorylation(self, kinase, species):
     """Creates a Phosphorylation of species by kinase with random parameters
 
     Args:
-        kinase (Species): the kinase came first
-        species (Species): -
+        kinase (:class:`Species <phievo.Networks.classes_eds2.Species>`): the kinase
+        species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the species to Phosphorylate
 
     Return:
-        list: of the form [Phosphorylation,phosphorylated_Species]
+        list of the form [:class:`Phosphorylation <phievo.Networks.Phosphorylation.Phosphorylation>` , :class:`Species <phievo.Networks.classes_eds2.Species>`]
         or None if an error occured
     """
     r = mutation.sample_dictionary_ranges('Phosphorylation.rate',self.Random)
@@ -146,9 +142,8 @@ def new_random_Phosphorylation(self, kinase, species):
 def random_Phosphorylation(self):
     """Creates a new Phosphorylation among all possibles
 
-
     Return:
-        list: of the form [Phosphorylation,phosphorylated_Species]
+        list of the form [:class:`Phosphorylation <phievo.Networks.Phosphorylation.Phosphorylation>` , :class:`Species <phievo.Networks.classes_eds2.Species>`]
         or None if an error occured
     """
     if 'Kinase' in self.list_types and 'Phosphorylable' in self.list_types:
@@ -186,7 +181,7 @@ def Phospho_deriv_inC(net):
     """gives the string corresponding to Phosphorylation for integration
 
     Return:
-        str: a single string for all Phosphorylations in the network
+        A single string for all Phosphorylations in the network
     """
     func="\n/**************Phosphorylation*****************/\n float total;\n"
     if ('Phosphorylation' in net.list_types):
