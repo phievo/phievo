@@ -171,6 +171,8 @@ def all_params2C(net, prmt, print_buf, Cseed=0):
         hdr.append("#define  CONCENTRATION_SCALE %f" % prmt['langevin_noise'])
     else:
         hdr.append("#define  CONCENTRATION_SCALE 1.0")
+    if 'generation' in prmt: hdr.append("#define GENERATION %i" % prmt['generation'])
+    
     # optional generic parameters for specific C subroutines as dict or list.
     # define NFREE_PRMT is flag in Ccode that free_prmt as list is being used
     if 'free_prmt' in prmt:

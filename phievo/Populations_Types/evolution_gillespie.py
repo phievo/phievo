@@ -312,6 +312,7 @@ class Population(object):
         prmt["restart"]["kgeneration"] = 0
 
         for t_gen in range(start_gen,prmt['ngeneration']):
+            prmt['generation'] = t_gen
             net_stat = pop_stat.NetworkStat(stat_dict)
             gen_stat = pop_stat.GenusStat()
             # mutate a fraction of networks in population (those least fit)
