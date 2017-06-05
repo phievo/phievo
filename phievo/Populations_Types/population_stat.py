@@ -5,13 +5,13 @@ networks in a population.
 
 class AnyStat(object):
     """Flexible interface to accumulate and print various statistics
-    
+
     To add a new statistic have to change all functions consistently
-    
+
     Attributes:
         label (str): to tag the statistic you want to construct
         data (dict): gather the useful information
-    
+
     Main Methods:
         add_value: add a value to the statistic
         stat2string: normalize things and return a string descriptor
@@ -27,10 +27,10 @@ class AnyStat(object):
 
     def add_value(self, val):
         """Add a value to the statistic
-        
+
         Args:
             val (float): the value to be added
-            
+
         Returns:
             None: in place modification
         """
@@ -53,11 +53,11 @@ class AnyStat(object):
 
 class NetworkStat(object):
     """Composition of various statistic about a Network population
-    
+
     Attributes:
         cmd_label (dict): {label : command to a Network instance}
         stat_box (dict): {label : corresponding Anystat instance}
-    
+
     Main Methods:
         add_net: add a Network to the whole statistic
         output: return the string description
@@ -68,15 +68,13 @@ class NetworkStat(object):
 
     def add_net(self, net):
         """Extract the information from net and add them to stat_box statistics
-        
+
         Args:
             net (Network):
         
-        Returns:
-            None: in place modification
         """
         net.write_id()
-        
+
         for lbl, cmd in self.cmd_label.items():
             try:
                 val = cmd(net)
@@ -92,12 +90,12 @@ class NetworkStat(object):
 
 def isdifferent(a, b, abs_err, rel_err):
     """Estimate if a and b are similar or not up to absolute and relative errors
-    
+
     Args:
         a,b (float or list): the object to compare
         abs_err (float): absolute difference allowed
         rel_err (float): relative difference allowed
-    
+
     Returns:
         bool: if a and b are very close
     """
@@ -110,10 +108,10 @@ def isdifferent(a, b, abs_err, rel_err):
             return False
     except TypeError:
         return False
-    
+
 class GenusStat(object):
     """Compute statistic about a population of evolving networks
-    
+
     Attributes:
         abs_err,rel_err (float): error margins to decide when fitness changes are significant
         f_incr,f_decr,f_same (int): number of Networks whom fitness have increase/decrease/unchange
@@ -121,7 +119,7 @@ class GenusStat(object):
     """
     abs_err = 1.e-2
     rel_err = 1.e-3
-    
+
     def __init__(self):
         self.f_incr = 0
         self.f_decr = 0
@@ -141,7 +139,7 @@ class GenusStat(object):
                 dlt = sum(net.dlt_fitness)
             except TypeError:
                 dlt = net.dlt_fitness
-            
+
             err = GenusStat.abs_err + GenusStat.rel_err*abs(dlt)
             if dlt > err:
                 self.f_incr += 1

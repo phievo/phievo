@@ -162,6 +162,7 @@ def all_params2C(net, prmt, print_buf, Cseed=0):
 
     # various sizes/lengths mostly from prmt dict
     hdr.append("#define SIZE %i" % len(net.list_types['Species']))
+    hdr.append("#define NINTER %i" % len(net.list_types["Interaction"]))
     hdr.append("#define NSTEP %i" % prmt['nstep'])
     hdr.append("#define NCELLTOT %i" % prmt['ncelltot'])
     hdr.append("#define NNEIGHBOR %i" % prmt['nneighbor'])

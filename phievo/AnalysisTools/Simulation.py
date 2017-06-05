@@ -12,6 +12,7 @@ import numpy as np
 import importlib.util
 from phievo.Networks import mutation,classes_eds2
 from phievo import  initialization_code
+import phievo
 
 class Simulation:
     """
@@ -32,6 +33,8 @@ class Simulation:
         model_files = os.listdir(self.root)
         (model_dir , self.inits , init_file) =tuple(initialization_code.check_model_dir(self.root))
         self.inits.prmt["workplace_dir"] = os.path.join(self.inits.model_dir,"Workplace")
+        setattr(phievo.Networks.mutation,"dictionary_ranges",self.inits.dictionary_ranges)
+
         self.deriv2 = initialization_code.init_networks(self.inits)
         self.plotdata = initialization_code.import_module(self.inits.pfile['plotdata'])
         if mode in ["default"]:

@@ -276,6 +276,8 @@ class Mutable_Network(classes_eds2.Network):
         try:
             getattr(self,'random_'+Interaction_Type)()
         except Exception:
+            print(display_error)
+            #import pdb;pdb.set_trace()
             display_error("Error when creating randomize Interaction "+Interaction_Type)
 
     def remove_Interaction(self,Type):
@@ -412,6 +414,7 @@ class Mutable_Network(classes_eds2.Network):
 
         update_dict(self,dictionary,'random_remove_output()','Output')
         update_dict(self,dictionary,'random_change_output()','Output')
+
 
         for name in list_create:
             key ='random_Interaction(\''+name+'\')' #find the name of the command

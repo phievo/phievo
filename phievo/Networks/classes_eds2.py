@@ -472,7 +472,6 @@ class Network(object):
         remove_output_when_duplicate (bool): if you want to remove Output tag when duplicating genes
         activator_required (bool): if an activator is required to get any gene product
         fixed_activity_for_TF (bool): if a TF either an activator or repressor (if False, they can do both)
-
     Main functions:
         add_* methods just add objects to the graph
         new_* create and add objects (usually by calling add_* method)
