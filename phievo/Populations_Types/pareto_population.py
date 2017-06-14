@@ -166,7 +166,7 @@ class pareto_Population(Population):
         """
         fp = open(f_pop,'w')
         for i0,ind in enumerate(self.genus):
-            print(i0,ind.data_evolution[0],ind.data_evolution[1],ind.prank,sep='\t',file=fp)
+            print(i0,ind.data_evolution,ind.prank,sep='\t',file=fp)
         fp.close()
 
         fp = open(f_best,'w')
