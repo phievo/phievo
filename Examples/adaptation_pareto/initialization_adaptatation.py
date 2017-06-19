@@ -170,6 +170,6 @@ def fitness_treatment(population):
      #  population.genus[nnetwork].fitness-=0.001*random.random()
    for ind in population:
       try:
-         ind.fitness = [fit + 0.001*random.random() for fit in ind.fitness]
+         ind.fitness = [fit  for fit in ind.fitness]#[fit + 0.001*random.random() for fit in ind.fitness]
       except Exception:
          ind.fitness = [None,None]
