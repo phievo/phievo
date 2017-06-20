@@ -113,7 +113,7 @@ class Population(object):
     """
     Define a population as a list of networks called Population.
     Genus and a principal method evolution.
-    object means it is a newstyle class ! See the web for distinction between new and olds style class, important for inheritance
+    object means it is a newstyle class ! See the `web <https://wiki.python.org/moin/NewClassVsClassicClass>`_ for distinction between new and olds style class, important for inheritance
 
     Attributes:
         best_fitness (float): keep trace of the best fitness in the population
