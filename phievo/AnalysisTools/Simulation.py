@@ -107,6 +107,19 @@ class Simulation:
         """
         return self.seeds[seed].get_backup_net(generation,index)
 
+    def get_backup_pop(self,seed,generation):
+        """
+        Cf get_backup_net. Get the complete population of networks for a generation that
+        was backuped.
+
+        Args:
+            seed : index of the seed
+            generation : index of the generation (must be a stored generation)
+        Return:
+            List of the networks present in the population at the selected generation
+        """
+        return self.seeds[seed].get_backup_pop(generation)
+
     def stored_generation_indexes(self,seed):
         """
         Return the list of the stored generation indexes
@@ -327,6 +340,20 @@ class Seed:
         with shelve.open(self.restart_path) as data:
             dummy,nets = data[str(generation)]
         return(nets[index])
+
+    def get_backup_pop(self,generation):
+        """
+        Cf get_backup_net. Get the complete population of networks for a generation that
+        was backuped.
+
+        Args:
+            generation : index of the generation (must be a stored generation)
+        Return:
+            List of the networks present in the population at the selected generation
+        """
+        with shelve.open(self.restart_path) as data:
+            dummy,nets = data[str(generation)]
+        return nets
 
     def stored_generation_indexes(self):
         """
