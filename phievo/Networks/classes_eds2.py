@@ -234,9 +234,8 @@ class Species(Node):
         """
         Node.__init__(self)
         self.types=['Species']
-
-        #Now we add the various tags
-        for index in listtypes:
+        
+        for index in listtypes: #add the various tags
             if index == 'Species': continue # present by default
             if index[0] == 'Input': self.removable=False
             if index[0] in self.Tags_Species:
@@ -290,7 +289,6 @@ class Species(Node):
 
     def def_label(self):
         """Function to write labels for graphical representation
-
         """
         self.label=""
         for k in self.types:
@@ -300,6 +298,8 @@ class Species(Node):
                     self.label += ", "+str(getattr(self,item))
             else:
                 print("Error in label definition : no Tags "+k)
+                return False
+        return True
 
     def clean_type(self,Type):
         """Removes a type and corresponding attributes from a species"""
