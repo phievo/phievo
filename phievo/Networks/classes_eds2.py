@@ -103,9 +103,12 @@ class Node(object):
         index = index.split('[')[-1]
         try:
             return int(index)
-        except Exception:
-            display_error('Node.int_id() failed to extract integer index from id={}'.format(self.id))
-            return None
+        except ValueError:
+            if self.isinstance('Node'):
+                return None
+            else:
+                display_error('Node.int_id() failed to extract integer index from id={}'.format(self.id))
+                return None
 
     def outputs_to_delete(self,net):
         """Indicates a list of objects to delete when removing the node from the network
@@ -363,8 +366,6 @@ class Species(Node):
                 display_error('Error in Species.add_type tag={0} require attributes {1} input as [Type, a1,..]'.format(Type[0],self.Tags_Species[Type[0]]))
         return 1
 
-
-
 class TModule(Node):
     """
 
@@ -480,6 +481,7 @@ class Network(object):
         """The constructor of the Network, default settings
         See Network for complete doc
         """
+        print('plouf')
         self.versionnx=NX.__version__
         if (int(self.versionnx[0])<1):
             self.graph = NX.XDiGraph(selfloops=True,multiedges=True)
