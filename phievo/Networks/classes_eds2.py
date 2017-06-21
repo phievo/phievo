@@ -925,22 +925,3 @@ class Network(object):
             term=term+"L.fixed_activity_for_TF=%i\n"%self.fixed_activity_for_TF
         return term+listarrows
 
-####################################
-### Printing function definition ###
-####################################
-
-def str2Network(net_str):
-    """Return the network object described by net_str
-
-    Args:
-        net_str (str): A description of a network as produced by print_Network
-
-    Return: the corresponding network
-    """
-    exec_dict = {}
-    exec_str = 'from phievo.Networks.classes_eds2 import *\nfrom phievo.Networks.mutation import *\nfrom phievo.Networks.interaction import *\nfrom phievo.Networks.mutation import Mutable_Network\n' + ''.join( net_str )
-    exec(exec_str, exec_dict) # the network will be L from best net file
-    net = exec_dict['L']   # L is the name of network used in best net file
-    net.write_id()
-    return net
-
