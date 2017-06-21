@@ -321,7 +321,6 @@ class Species(Node):
         else:
             raise ValueError("parameters must be a list of the same length as Tag_Species. Make sure you gave the correct number of parameters.")
 
-
     def add_type(self,Type):
         """add Type and its corresponding parameters
 
@@ -336,26 +335,20 @@ class Species(Node):
             1 if everything is done properly
             None if an error occur during the process
         """
-        if not isinstance(Type,list): #catch the case where Type is not a list
-            print("Error in Species.add_type : "+str(Type)+" is not a list")
-            return None
-
-        if Type[0] in self.types: #catch the case where Type is already present
-            print("Warning in Species.add_type : Species already of Type "+Type[0]+"; doing nothing")
-            return None
-
-        if not Type[0] in self.Tags_Species: #catch the case where Type is unknown
-            print("Error in Species.add_type : no Type with name= "+Type[0])
-            print("Allowed Types are:", list(self.Tags_Species.keys()))
-            return None
+        if not isinstance(Type,list):
+            raise TypeError("Error in Species.add_type : "+str(Type)+" is not a list")
+        if Type[0] in self.types:
+            raise Warning("in Species.add_type : Species already of Type {} doing nothing".format(Type[0]))
+        if not Type[0] in self.Tags_Species:
+            raise ValueError("Error in Species.add_type : no Type with name= {}".format(Type[0]))
 
         self.types.append(Type[0])
         for i,item in enumerate(self.Tags_Species[Type[0]]):
             try: #updates the attributes corresponding to the types
-                setattr(self,item,str(Type[i+1]))
+                setattr(self,item,Type[i+1])
             except Exception:
                 display_error('Error in Species.add_type tag={0} require attributes {1} input as [Type, a1,..]'.format(Type[0],self.Tags_Species[Type[0]]))
-        return 1
+        return True
 
 class TModule(Node):
     """
