@@ -399,7 +399,7 @@ def compare_node(x):
     """Used to order nodes in arbitrary but deterministic order when needed"""
     return x.order
 
-def check_consistency(list_types,list_nodes):
+def check_consistency(lTypes,lNodes):
     """Check the consistency between a list of types and a list of nodes
 
     Typically used when constructing an interaction to check the
@@ -407,31 +407,20 @@ def check_consistency(list_types,list_nodes):
     is a corresponding node in list_nodes.
 
     Args:
-        list_types: the desired type of each node
-        list_nodes: the list of nodes
+        lTypes: the desired type of each node
+        lNodes: the list of nodes
 
     Return:
         Boolean indicating if the consistency is OK
     """
-    if not (len(list_types)==len(list_nodes)): return False
-    if (len(list_types)<=1):
-        try:
-            return list_nodes[0].isinstance(list_types[0])
-        except Exception:
-            display_error("Problem in check_consistency at the end of recursion")
-            return False
-    else:
-        for current_type in list_types:
-            for k,current_node in enumerate(list_nodes):
-                if current_node.isinstance(current_type):
-                    #copy of the list of types without the first occurence of current_type
-                    list_types_short = copy.deepcopy(list_types)
-                    list_types_short.remove(current_type)
-                    #copy of the list of nodes without the node to remove
-                    list_nodes_short = [list_nodes[l] for l in range(len(list_nodes)) if l!=k]
-                    # consistency is checked if the rest of the lists are consistent
-                    if check_consistency(list_types_short,list_nodes_short): return True
-        return False #if ends the loop, that means that there is no type consistency
+    if len(lTypes) != len(lNodes): return False
+    # cut return M without line i and column j
+    cut = lambda M,i,j: [[M[x][y] for x in range(len(M)) if x != i]
+                                  for y in range(len(M[0])) if y != j]
+    # test if there exist a permutation p such that M[x][p(x)] is always True
+    test = lambda M: (M[0][0] if len(M) == 1 else 
+                     sum(M[0][i] and test(cut(M,0,i)) for i in range(len(M))))
+    return test([[nod.isinstance(typ) for nod in lNodes] for typ in lTypes])
 
 ################################
 ### Network class definition ###
