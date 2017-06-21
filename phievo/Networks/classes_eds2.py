@@ -235,15 +235,6 @@ class Species(Node):
         Node.__init__(self)
         self.types=['Species']
 
-        #Forbidden mutliple types
-        #for simplicity, we do not want that a Ligand is Complexable or is a Receptor
-        if 'Ligand' in listtypes and 'Complexable' in listtypes:
-            print("Warning : a ligand with a Complexable Tag was created. I remove the Complexable tag")
-            listtypes.remove('Complexable')
-        if 'Ligand' in listtypes and 'Receptor' in listtypes:
-            print("Warning : a ligand with a Receptor Tag was created. I remove the Receptor tag")
-            listtypes.remove('Complexable')
-
         #Now we add the various tags
         for index in listtypes:
             if index == 'Species': continue # present by default
@@ -481,7 +472,6 @@ class Network(object):
         """The constructor of the Network, default settings
         See Network for complete doc
         """
-        print('plouf')
         self.versionnx=NX.__version__
         if (int(self.versionnx[0])<1):
             self.graph = NX.XDiGraph(selfloops=True,multiedges=True)
