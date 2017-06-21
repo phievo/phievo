@@ -172,7 +172,7 @@ class pareto_Population(Population):
         fp = open(f_best,'w')
         for i in range(0,self.npopulation):
             if self.genus[i].prank < 2:
-                netnow = classes_eds2.print_Network(self.genus[i])
+                netnow = self.genus[i].__str__()
                 fp.write(netnow)
         fp.close()
 

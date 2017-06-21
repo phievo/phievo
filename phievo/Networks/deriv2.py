@@ -196,7 +196,6 @@ def all_params2C(net, prmt, print_buf, Cseed=0):
     # Ligand + Diffusible species
     tracklig = track_changing_variable(net, 'Ligand')
     trackdiff = track_changing_variable(net, 'Diffusible')
-    #print print_Network(net)
     hdr.append("#define	NOUTPUT %i" % len(trackout))
     hdr.append("#define	NINPUT %i" % len(trackin))
     hdr.append("#define	NLIGAND %i" % len(tracklig))

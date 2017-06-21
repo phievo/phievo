@@ -351,9 +351,7 @@ class Species(Node):
         return True
 
 class TModule(Node):
-    """
-
-    A TModule regulate the production of a Species, it generally binds
+    """A TModule regulate the production of a Species, it generally binds
     upstream to a CorePromoter (direct production) or a TFHill
     (regulation) and downstream to another TFHill which point to the
     product Species.
@@ -372,7 +370,7 @@ class TModule(Node):
         return "{0.id} TModule: rate = {0.rate:.2f}, basal = {0.basal:.2f}".format(self)
 
     def string_param(self):
-    	return "Rate=%f"%self.rate
+        return "Rate=%f"%self.rate
 
 class Interaction(Node):
     """Interaction class derived from Node, defines interaction between Species or TModule"""
@@ -931,18 +929,6 @@ class Network(object):
 ### Printing function definition ###
 ####################################
 
-def print_Network(net):
-    """Return a string defining the network net as a python file
-
-    delegate to Network.__repr__
-
-    Args:
-        net (Network): the network you want to write
-
-    Return: the network description
-    """
-    return net.__repr__()
-
 def str2Network(net_str):
     """Return the network object described by net_str
 
@@ -958,7 +944,3 @@ def str2Network(net_str):
     net.write_id()
     return net
 
-if __name__ == "__main__":
-    # traditionnal canned test
-    X = Network()
-    X.store_to_pickle('dummy.ntk')
