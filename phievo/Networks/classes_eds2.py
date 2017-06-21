@@ -502,8 +502,8 @@ class Network(object):
         return '### Species ###\n'+Species+'\n\n### Interactions ###\n'+Interactions+'\n'
 
     def __repr__(self):
-        """Copy the __str__ method"""
-        return self.__str__()
+        """Short object representation"""
+        return '<Network object at {0}>'.format(hex(id(self)))
 
     def add_Node(self, node):
         """add_node to graph unless already present
