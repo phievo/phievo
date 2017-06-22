@@ -452,11 +452,8 @@ class Network(object):
         """The constructor of the Network, default settings
         See Network for complete doc
         """
-        self.versionnx=NX.__version__
-        if (int(self.versionnx[0])<1):
-            self.graph = NX.XDiGraph(selfloops=True,multiedges=True)
-        else:
-            self.graph = NX.MultiDiGraph(selfloops=True,multiedges=True)
+        self.graph = NX.MultiDiGraph(selfloops=True,multiedges=True)
+        self.nodes = self.graph.nodes #proxy
         self.order_node=0
         self.list_types = dict(Output = [], Input = []) # to filled later with __build_list_types__()
         self.hash_topology = 0
@@ -871,7 +868,6 @@ class Network(object):
 
         Args:
             filename (str): the directory where the object is saved
-
         """
         with open(filename,'wb') as my_file:
             pickle.dump(self,my_file)
