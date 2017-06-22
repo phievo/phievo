@@ -53,7 +53,6 @@ class Node(object):
     Superclass for all nodes object
     """
     id = 'None' # inherited by all derived classes and instances
-
     def __init__(self):
         self.label='Generic Node'
         self.id= 'None'
