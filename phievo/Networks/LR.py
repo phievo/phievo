@@ -121,10 +121,10 @@ def random_LR(self):
         list: of the form [lr interaction,complex created]
         or None if an error occured
     """
-    if 'Ligand' in self.list_types and 'Receptor' in self.list_types:
+    if 'Ligand' in self.dict_types and 'Receptor' in self.dict_types:
         #Evaluate all possible LR interactions
-        possible_LR = [(lig,rec) for lig in self.list_types['Ligand']
-                                 for rec in self.list_types['Receptor']
+        possible_LR = [(lig,rec) for lig in self.dict_types['Ligand']
+                                 for rec in self.dict_types['Receptor']
                                  if not self.check_existing_binary([lig,rec],'LR Interaction')]
         n_pLR=len(possible_LR)
         if not (n_pLR==self.number_LR()):
@@ -155,8 +155,8 @@ def compute_LR(net):
     func="\n/**************LR interactions*****************/\n"
     func+="void LRinC(double s[],double ds[],double ligands[]){\n"
     func = func + "    double increment=0;\n    double rate=0;\n"
-    if ('LR' in net.list_types):
-        for index in net.list_types['LR']:
+    if ('LR' in net.dict_types):
+        for index in net.dict_types['LR']:
             C=net.graph.successors(index)[0]#finds the product of LR interaction
             [P1,P2]=net.graph.predecessors(index) #find the components
             L,R = (P1,P2) if P1.isinstance('Ligand') else (P2,P1) #determine the ligand and the receptor

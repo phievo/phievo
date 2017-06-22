@@ -290,8 +290,8 @@ class Mutable_Network(classes_eds2.Network):
             boolean indicating if something is effectively removed
         """
         self.write_id()
-        if Type in self.list_types:
-            condemn = self.Random.choice(self.list_types[Type])
+        if Type in self.dict_types:
+            condemn = self.Random.choice(self.dict_types[Type])
             if not (isinstance(condemn,classes_eds2.Interaction)):
                 print("Try to remove something else than an interaction :"+Type)
                 return False
@@ -309,21 +309,21 @@ class Mutable_Network(classes_eds2.Network):
 
         Outputs are always index 0,1,2...; not possible to have 0,1,3 for instance
         """
-        if 'Output' in self.list_types:
-            to_remove=self.Random.choice(self.list_types['Output'])
+        if 'Output' in self.dict_types:
+            to_remove=self.Random.choice(self.dict_types['Output'])
             to_remove.clean_type('Output') #cleans previous output
-            self.list_types['Output'].remove(to_remove)
+            self.dict_types['Output'].remove(to_remove)
             #recomputes the index of outputs
-            for index,species in enumerate(self.list_types['Output']):
+            for index,species in enumerate(self.dict_types['Output']):
                 species.n_put = index
 
     def random_add_output(self):
         """Randomly adds an output tag to a random species"""
-        noutput = len(self.list_types.get('Output',[]))
+        noutput = len(self.dict_types.get('Output',[]))
         Type = self.Random.choice(list_types_output)
 
         test_output = lambda S: not S.isinstance('Input') and not S.isinstance('Output')
-        list_possible_outputs = [species for species in self.list_types.get(Type,[]) if test_output(species)]
+        list_possible_outputs = [species for species in self.dict_types.get(Type,[]) if test_output(species)]
 
         if list_possible_outputs:
             species = self.Random.choice(list_possible_outputs)
@@ -349,14 +349,14 @@ class Mutable_Network(classes_eds2.Network):
         Return:
             boolean indicating if a duplication has been finally done
         """
-        possible_duplicate = [self.graph.successors(interaction)[0] for interaction in self.list_types['CorePromoter']]
+        possible_duplicate = [self.graph.successors(interaction)[0] for interaction in self.dict_types['CorePromoter']]
         possible_duplicate.sort(key = classes_eds2.compare_node) #to be deterministic
 
         if possible_duplicate:
             species= self.Random.choice(possible_duplicate)
             [D_module,D_promoter,D_species] = self.duplicate_species_and_interactions(species)
             if species.isinstance('Output'):
-                D_species.add_type(['Output',len(self.list_types['Output'])])
+                D_species.add_type(['Output',len(self.dict_types['Output'])])
             self.write_id()
             return True
         else:
@@ -374,7 +374,7 @@ class Mutable_Network(classes_eds2.Network):
             boolean if something is mutated
         """
         self.write_id()
-        possible_mutated = self.list_types.get(Type,[])
+        possible_mutated = self.dict_types.get(Type,[])
         if possible_mutated:
             self.Random.choice(possible_mutated).rand_modify(self.Random)
             return True
@@ -396,11 +396,11 @@ class Mutable_Network(classes_eds2.Network):
 
         def update_dict(self,dictionary,key,name):
             """Subroutine for build_mutations
-            Multiply dictionary[key] with the length of self.list_types[name]
+            Multiply dictionary[key] with the length of self.dict_types[name]
             if non zero or delete the key otherwise
             """
-            if (name in self.list_types):
-                dictionary[key] *= len(self.list_types[name]) #update the corresponding mutation rate
+            if (name in self.dict_types):
+                dictionary[key] *= len(self.dict_types[name]) #update the corresponding mutation rate
             else: #delete corresponding key if does not exist
                 del dictionary[key]
 
@@ -424,8 +424,7 @@ class Mutable_Network(classes_eds2.Network):
 
         key='random_duplicate()'
         if key in dictionary:
-            if 'CorePromoter' in self.list_types:
-                #l=len(self.list_types['CorePromoter'])
+            if 'CorePromoter' in self.dict_types:
                 dictionary[key]*=1 #compute the corresponding mutation rate
             else:
                 del dictionary[key]
@@ -446,9 +445,7 @@ class Mutable_Network(classes_eds2.Network):
         list_commands.sort() #sort to keep something deterministic
         a0=0
         for keys in list_commands:
-            #print keys,dictionary[keys]
             a0=a0+dictionary[keys] #compute sum of the rates
-        #print a0
         r=self.Random.random()
         tau=-1.0/a0*log(r) #computes the next time of mutation
 

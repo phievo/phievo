@@ -19,7 +19,7 @@ class TestNetwork(unittest.TestCase):
         self.assertIn(self.spc,self.net.nodes())
 
     def test_number_nodes(self):
-        self.net.list_types = dict(a=[1,1],b=[]) #dummy list_types
+        self.net.dict_types = dict(a=[1,1],b=[]) #dummy list_types
         self.assertEqual(self.net.number_nodes('a'),2)
         self.assertEqual(self.net.number_nodes('b'),0)
         self.assertEqual(self.net.number_nodes('c'),0)

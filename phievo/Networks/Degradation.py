@@ -103,8 +103,8 @@ def check_existing_Degradation(self,i1,i2):
     Return:
         True if i1 is known to degrade i2
     """
-    if 'Degradation' in self.list_types: #goes through the list of interactions
-        for reaction in self.list_types['Degradation']:
+    if 'Degradation' in self.dict_types: #goes through the list of interactions
+        for reaction in self.dict_types['Degradation']:
             test = self.graph.predecessors(reaction)+self.graph.successors(reaction)
             if test == [i1,i2]:
                 return True
@@ -112,8 +112,8 @@ def check_existing_Degradation(self,i1,i2):
 
 def list_possible_Degradation(self):
     """Return the list of all possible new degradations"""
-    input1_list = self.list_types['Species']
-    input2_list = self.list_types['Degradable']
+    input1_list = self.dict_types['Species']
+    input2_list = self.dict_types['Degradable']
     list_possible = []
     for i1 in input1_list:
         for i2 in input2_list:
@@ -154,7 +154,7 @@ def random_Degradation(self):
         list: of the form [Degradation]
         or None if an error occured
     """
-    if 'Degradable' in self.list_types:
+    if 'Degradable' in self.dict_types:
         #First generate a list of all possible couples of Inputs for non existing Degradation
         list_possible = self.list_possible_Degradation()
 
@@ -180,9 +180,9 @@ def Degradation_deriv_inC(net):
 
     Return:A single string for all degradation in the network
     """
-    if ('Degradation' in net.list_types):
+    if ('Degradation' in net.dict_types):
         func="\n/**************Degradation interactions*****************/\n"
-        for reaction in net.list_types['Degradation']:
+        for reaction in net.dict_types['Degradation']:
             Input1 = net.graph.predecessors(reaction)[0]
             Input2 = net.graph.successors(reaction)[0]
             #defines interaction rate

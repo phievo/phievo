@@ -210,11 +210,11 @@ def net_test_plot(compile_and_integrate, net, prmt, namefolder, generation, my_n
     compile_and_integrate(net, my_prmt, nnetwork, 1, net.Cseed)
     for i in range(my_ntries):
         subprocess.run(["mv","Buffer%d"%i,namefolder])
-    size = len(net.list_types['Species'])
+    size = len(net.dict_types['Species'])
     ncelltot = prmt['ncelltot']
     nstep = prmt['nstep']
     list_output = []
-    for output in net.list_types['Output']:
+    for output in net.dict_types['Output']:
         list_output.append(output.int_id())
 
     if 'discrete' in prmt:
@@ -234,7 +234,7 @@ def net_test_plot(compile_and_integrate, net, prmt, namefolder, generation, my_n
 
 def plot_linear(compile_and_integrate, net, k, prmt, nnetwork, namefolder):
     compile_and_integrate(net, prmt, nnetwork, 1)
-    size = len(net.list_types['Species'])
+    size = len(net.dict_types['Species'])
     ncell = prmt['ncelltot']
     nstep = prmt['nstep']
 

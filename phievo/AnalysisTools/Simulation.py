@@ -159,7 +159,7 @@ class Simulation:
         self.inits.prmt["ntries"] = trial
         prmt = dict(self.inits.prmt)
         N_cell = prmt["ncelltot"]
-        N_species = len(net.list_types['Species'])
+        N_species = len(net.dict_types['Species'])
         self.buffer_data = {"time":np.arange(0,prmt["dt"]*(prmt["nstep"]),prmt["dt"])}
         prmt["ntries"] = trial
         treatment_fitness = self.deriv2.compile_and_integrate(net,prmt,1000,True)
@@ -174,8 +174,8 @@ class Simulation:
 
         self.buffer_data["net"] = net
         get_species = re.compile("s\[(\d+)\]")
-        self.buffer_data["outputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Output"]]
-        self.buffer_data["inputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Input"]]
+        self.buffer_data["outputs"] = [int(get_species.search(species.id).group(1)) for species in net.dict_types["Output"]]
+        self.buffer_data["inputs"] = [int(get_species.search(species.id).group(1)) for species in net.dict_types["Input"]]
 
         if return_treatment_fitness:
             return treatment_fitness
@@ -204,7 +204,7 @@ class Simulation:
         """
         net = self.buffer_data["net"]
         nstep = self.inits.prmt['nstep']
-        size = len(net.list_types['Species'])
+        size = len(net.dict_types['Species'])
 
         try:
             self.plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep,list_species=list_species)
@@ -227,7 +227,7 @@ class Simulation:
         """
         net = self.buffer_data["net"]
         nstep = self.inits.prmt['nstep']
-        size = len(net.list_types['Species'])
+        size = len(net.dict_types['Species'])
         ncelltot = self.inits.prmt['ncelltot']
         try:
             self.plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time)

@@ -40,8 +40,8 @@ prmt = {}
 
 # dictionary of line labels and commands to define statistics extracted from networks see Class NetworkStat
 stat_dict = {}
-stat_dict['Node'] = lambda net: net.list_types['Node']
-stat_dict['Species'] = lambda net: net.list_types['Species']
+stat_dict['Node'] = lambda net: net.dict_types['Node']
+stat_dict['Species'] = lambda net: net.dict_types['Species']
 
 count_interactions = ['TFHill', 'PPI', 'Phosphorylation']
 count_keys = list(mutation.dictionary_mutation.keys())
@@ -49,7 +49,7 @@ for i in count_interactions:
     rates0 = [mutation.dictionary_mutation[kk]==0 for kk in count_keys if kk.find(i) >= 0]
     if len(rates0) > 0:
         continue
-    stat_dict[i] = 'list_types[{0}]'.format(i)
+    stat_dict[i] = 'dict_types[{0}]'.format(i)
 
 #######################
 ### Dummy Functions ###
@@ -197,8 +197,8 @@ class Population(object):
         with shelve.open(self.data_file) as data:
             add(data,'generation',t_gen)
             add(data,'fitness',net.fitness)
-            add(data,'n_interactions',len(net.list_types.get('Interaction',[])))
-            add(data,'n_species',len(net.list_types.get('Species',[])))
+            add(data,'n_interactions',len(net.dict_types.get('Interaction',[])))
+            add(data,'n_species',len(net.dict_types.get('Species',[])))
 
         with open(self.bests_file.format(t_gen),'wb') as freezer:
             pickle.dump(net,freezer)

@@ -239,7 +239,7 @@ def random_enhancer(self,Type='TModule'):
     basal = mutation.sample_dictionary_ranges('TModule.basal',self.Random)
     delay=int(mutation.sample_dictionary_ranges('CorePromoter.delay',self.Random))
     parameters=mutation.random_parameters(Type,self.Random)
-    species = list(self.list_types['Species'])
+    species = list(self.dict_types['Species'])
     species = species[int(self.Random.random()*len(species))]
 
     return self.new_enhancer(species,rate, delay, parameters,basal)

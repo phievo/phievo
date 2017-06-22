@@ -437,7 +437,7 @@ class Network(object):
     Attributes:
         graph (networkx.MultiDiGraph): the network properly speaking
         order_node (int): index to keep track of the order of the nodes
-        list_types (dict): a dictionary indicating the Nodes of a given type (types are the keys)
+        dict_types (dict): a dictionary indicating the Nodes of a given type (types are the keys)
         hash_topology (int): to index the topologies (see __hash_net_topology__)
         title (str): for graphing network and to hold misc info
         Cseed (int): random seed for the integration in C
@@ -455,7 +455,7 @@ class Network(object):
         self.graph = NX.MultiDiGraph(selfloops=True,multiedges=True)
         self.nodes = self.graph.nodes #proxy
         self.order_node=0
-        self.list_types = dict(Output = [], Input = []) # to filled later with __build_list_types__()
+        self.dict_types = dict(Output = [], Input = []) # to filled later with __build_dict_types__()
         self.hash_topology = 0
         self.title = ""
         self.Cseed=0
@@ -489,7 +489,7 @@ class Network(object):
             node.order=self.order_node
             self.order_node+=1
             self.graph.add_node(node)
-            self.__build_list_types__()
+            self.__build_dict_types__()
             return True
 
     def new_Species(self,types):
@@ -511,9 +511,9 @@ class Network(object):
 
         Args:
             Type (str): the type you are looking for
-        Return: The number of Nodes of types Type in list_types
+        Return: The number of Nodes of types Type in dict_types
         """
-        return len(self.list_types[Type]) if Type in self.list_types else 0
+        return len(self.dict_types[Type]) if Type in self.dict_types else 0
 
     def catal_data(self,interaction):
         """Find the reactants, catalysors, products for a catalytic interaction
@@ -549,8 +549,8 @@ class Network(object):
         Return: bool
         """
         list.sort(key=compare_node)
-        if Type in self.list_types: #goes through the list of interactions
-            for inter in self.list_types[Type]:
+        if Type in self.dict_types: #goes through the list of interactions
+            for inter in self.dict_types[Type]:
                 inputs=self.graph.predecessors(inter)#check the inputs
                 inputs.sort(key=compare_node)
                 if (list==inputs):#if inputs are the same, the interaction already exists
@@ -566,8 +566,8 @@ class Network(object):
         Return: bool
         """
         list.sort(key=compare_node)
-        if Type in self.list_types:#goes through the list of interactions
-            for inter in self.list_types[Type]:
+        if Type in self.dict_types:#goes through the list of interactions
+            for inter in self.dict_types[Type]:
                 inputs=self.graph.predecessors(inter)#check the inputs
                 inputs.append(self.graph.successors(inter)[0])#adds the first successor
                 inputs.sort(key=compare_node)
@@ -586,9 +586,9 @@ class Network(object):
             for index,species in enumerate(liszt):
                 species.n_put = index
 
-        self.__build_list_types__()
-        label_them(self.list_types['Output'])
-        label_them(self.list_types['Input'])
+        self.__build_dict_types__()
+        label_them(self.dict_types['Output'])
+        label_them(self.dict_types['Input'])
 
 ###### Duplication tools ######
     def duplicate_downstream_interactions(self,species,D_species,module,D_module):
@@ -655,33 +655,32 @@ class Network(object):
         return [D_module,D_promoter,D_species]
 
 ###### Indexation tools ######
-    def __build_list_types__(self):
-        """Update the list_type dictionary of the network
+    def __build_dict_types__(self):
+        """Update the dict_types dictionary of the network
 
         Note that it include all types (Node, Species and all Species type),
         one object can thus appear in several lists.
 
         """
-        self.list_types=dict(Node=self.graph.nodes())
+        self.dict_types=dict(Node=self.graph.nodes())
         for index in self.graph.nodes():
             names = index.list_types()
             for name in names:
-                self.list_types.setdefault(name,[]).append(index)
+                self.dict_types.setdefault(name,[]).append(index)
             if isinstance(index,Interaction):
-                self.list_types.setdefault('Interaction',[]).append(index)
-        for key in self.list_types:
-            self.list_types[key].sort(key=compare_node) #sort the lists
+                self.dict_types.setdefault('Interaction',[]).append(index)
+        for key in self.dict_types:
+            self.dict_types[key].sort(key=compare_node) #sort the lists
 
     def __write_id__(self):
         """Write the ids for the network
 
         Update the id of all Nodes with a form n[int] for nodes
         and s[int] for species.
-
         """
-        for index,node in enumerate(self.list_types['Node']):
+        for index,node in enumerate(self.dict_types['Node']):
             node.id = "n[%i]"%index
-        for index,species in enumerate(self.list_types['Species']):
+        for index,species in enumerate(self.dict_types['Species']):
             species.id = "s[%i]"%index
             species.def_label()
             species.label += " Node #%i"%species.order
@@ -691,12 +690,12 @@ class Network(object):
 
         Run over nodes ordered by net.order and build hash hey from Node.label
         and Species.types (it ignore all numerical parameters)
-        PRIVATE METHOD, called by __build_list_types__() which must be current
+        PRIVATE METHOD, called by __build_dict_types__() which must be current
 
         Return: a number comprise between 0 and sys.maxint
         """
         hh = 1
-        for index in self.list_types['Node']:
+        for index in self.dict_types['Node']:
             if isinstance(index, Species):
                 kk = ''.join(sorted(index.types))
                 hh *= hash(kk) % sys.maxsize
@@ -709,7 +708,7 @@ class Network(object):
 
         Return: a number comprise between 0 and sys.maxint
         """
-        self.__build_list_types__()
+        self.__build_dict_types__()
         self.__hash_net_topology__()
         self.__write_id__()
 
@@ -737,10 +736,7 @@ class Network(object):
             node (:class:`Node <phievo.Networks.classes_eds2.Node>`): the node to be deleted
 
         """
-        if (int(self.versionnx[0])<1):
-            self.graph.delete_node(node)
-        else:
-            self.graph.remove_node(node)
+        self.graph.remove_node(node)
 
     def remove_Node(self,Node,verbose=debugging_node_removal):
         """remove node from the network graph
@@ -795,12 +791,12 @@ class Network(object):
         remove_Node function that kills species and other phys objects that are not defined
         in absence of interaction
         """
-        self.__build_list_types__()
+        self.__build_dict_types__()
         modification,nloop = True,0
         while modification and nloop<1000:
             modification=False
             nloop+=1
-            for inter in self.list_types.get('Interaction',[]):
+            for inter in self.dict_types.get('Interaction',[]):
                 if self.graph.has_node(inter):
                     listOut=self.graph.successors(inter)
                     listIn=self.graph.predecessors(inter)

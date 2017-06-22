@@ -87,7 +87,7 @@ def propagate_activity_TFHill(self):
     """
     self.write_id()
     if self.fixed_activity_for_TF:
-        for tfh in self.list_types['TFHill']:
+        for tfh in self.dict_types['TFHill']:
             tf=self.graph.predecessors(tfh)
             tfh.activity=tf[0].activity
 
@@ -175,10 +175,10 @@ def random_TFHill(self):
     Return:
         :class:`TFHill <phievo.Networks.TFHill.TFHill>`: return the new interaction or None if an error occured
     """
-    if 'TF' in self.list_types and 'TModule' in self.list_types:
+    if 'TF' in self.dict_types and 'TModule' in self.dict_types:
         #Evaluate all possible TFHill
-        possible_TFHill=[(tf,module) for module in self.list_types['TModule']
-                                     for tf in self.list_types['TF']
+        possible_TFHill=[(tf,module) for module in self.dict_types['TModule']
+                                     for tf in self.dict_types['TF']
                                      if not self.check_existing_link([tf,module],'TFHill')]
         n_pTFH=len(possible_TFHill)
         if not (n_pTFH==self.number_TFHill()):
@@ -255,8 +255,8 @@ def transcription_deriv_inC(net):
     func="\n/**************Transcription rates*****************/\n"
     func=func+" \t int k,memory=-1;\n"
     net.write_id()
-    if ('TModule' in net.list_types):
-        for index in net.list_types['TModule']:
+    if ('TModule' in net.dict_types):
+        for index in net.dict_types['TModule']:
             if isinstance(index,classes_eds2.TModule):
                 trans=net.graph.successors(index)    #find the CorePromoter
                 output=net.graph.successors(trans[0])    #find the transcribed protein

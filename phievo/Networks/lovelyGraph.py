@@ -89,15 +89,15 @@ def pretty_graph(net,extended=True):
             returns a :class:`PlotGraph graph <phievo.Networks.PlotGraph.Graph.Graph>`
 
         """
-        net.__build_list_types__()
-        size=len(net.list_types['Species'])
+        net.__build_dict_types__()
+        size=len(net.dict_types['Species'])
         colors=palette.color_generate(size)
         graph = PlotGraph.Graph()
         # create pydot nodes for all species nodes in net and store in dictionary
         map_species = {}
 
         ## Add the nodes to the graph
-        for nn in net.list_types['Node']:
+        for nn in net.dict_types['Node']:
                 if not nn.isinstance('Species'):
                         continue
                 name = produce_species_name(nn)
@@ -107,7 +107,7 @@ def pretty_graph(net,extended=True):
                 graph.add_node(name,**node_attributes)
 
 
-        for nn in net.list_types['Node']:
+        for nn in net.dict_types['Node']:
                 if isinstance(nn, TModule):
                         succ = net.graph.successors(net.graph.successors(nn)[0])[0]
                         succ_name = produce_species_name(succ)

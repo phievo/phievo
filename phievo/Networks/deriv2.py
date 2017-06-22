@@ -77,17 +77,17 @@ def track_variable(net, name):
     Return:
         list of the id species list ordered by growing n_put
     """
-    if name not in net.list_types:
+    if name not in net.dict_types:
         return []
-    track = {s.n_put:s.int_id() for s in net.list_types[name]}
+    track = {s.n_put:s.int_id() for s in net.dict_types[name]}
     # verify that the n_put attributes on the IO variables are numbered consecutively from 0
     track_list = []
-    for ii in range(len(net.list_types[name])):
+    for ii in range(len(net.dict_types[name])):
         try:
             track_list.append(track[ii])
         except Exception:
             display_error("mapping IO variable number of id in deriv2.track_variable() failed for IO="+str(name))
-            for s in net.list_types[name]:
+            for s in net.dict_types[name]:
                 s.print_node()
             return
     return track_list
@@ -105,7 +105,7 @@ def track_changing_variable(net, name):
     Return:
         list of the id species list ordered by growing n_put
     """
-    return [s.int_id() for s in net.list_types.get(name,[])]
+    return [s.int_id() for s in net.dict_types.get(name,[])]
 
 ########## Writing Functions ##########
 # Here are the functions which explicitely construct the C-file
@@ -116,9 +116,9 @@ def degrad_deriv_inC(net):
     Return:
         A single string for all degradations in the network
     """
-    if 'Degradable' in net.list_types:
+    if 'Degradable' in net.dict_types:
         func = "\n/**************degradation rates*****************/\n"
-        for species in net.list_types['Degradable']:
+        for species in net.dict_types['Degradable']:
             rate = '{0}*{1}'.format(species.degradation,species.id)
             func += compute_leap([species.id], [], rate)
         return func
@@ -161,8 +161,8 @@ def all_params2C(net, prmt, print_buf, Cseed=0):
     hdr = [] # collect lines of output as list then join, speed issue
 
     # various sizes/lengths mostly from prmt dict
-    hdr.append("#define SIZE %i" % len(net.list_types['Species']))
-    hdr.append("#define NINTER %i" % len(net.list_types["Interaction"]))
+    hdr.append("#define SIZE %i" % len(net.dict_types['Species']))
+    hdr.append("#define NINTER %i" % len(net.dict_types["Interaction"]))
     hdr.append("#define NSTEP %i" % prmt['nstep'])
     hdr.append("#define NCELLTOT %i" % prmt['ncelltot'])
     hdr.append("#define NNEIGHBOR %i" % prmt['nneighbor'])
@@ -219,12 +219,12 @@ def all_params2C(net, prmt, print_buf, Cseed=0):
 
     str_diff = ', '.join([str(nn) for nn in trackdiff])
     hdr.append("static int trackdiff[] = {%s};" % str_diff)
-    str_diff_constant = ', '.join([str(net.list_types['Species'][nn].diffusion) for nn in trackdiff])
+    str_diff_constant = ', '.join([str(net.dict_types['Species'][nn].diffusion) for nn in trackdiff])
     hdr.append(
         "static double diff_constant[] = {%s};" % str_diff_constant)  #table containing diffusion constants of ligands
     list_ext = []
-    if 'Ligand' in net.list_types:
-        for nn in net.list_types['Ligand']:
+    if 'Ligand' in net.dict_types:
+        for nn in net.dict_types['Ligand']:
             if nn.isinstance('Diffusible'):
                 list_ext.append(str(1))
             else:
@@ -292,7 +292,7 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
     cfile_directory = os.path.join(workplace_dir,'built_integrator'+str(nnetwork))
     #import pdb;pdb.set_trace()
     # check for outputs
-    if 'Output' not in network.list_types:
+    if 'Output' not in network.dict_types:
         print("No Output for network %i" % nnetwork)
         return None
     # Write the program in a c file

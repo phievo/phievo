@@ -65,8 +65,8 @@ def check_existing_Phosphorylation(self,signature):
 
     Return: True if this phosphorylation exist
     """
-    if 'Phosphorylation' in self.list_types:#goes through the list of interactions
-        for inter in self.list_types['Phosphorylation']:
+    if 'Phosphorylation' in self.dict_types:#goes through the list of interactions
+        for inter in self.dict_types['Phosphorylation']:
             [catalyst,listIn,listOut] = self.catal_data(inter)
             if (catalyst==signature[0]) and (listIn[0]==signature[1]):
                 return True
@@ -146,21 +146,21 @@ def random_Phosphorylation(self):
         list of the form [:class:`Phosphorylation <phievo.Networks.Phosphorylation.Phosphorylation>` , :class:`Species <phievo.Networks.classes_eds2.Species>`]
         or None if an error occured
     """
-    if 'Kinase' in self.list_types and 'Phosphorylable' in self.list_types:
+    if 'Kinase' in self.dict_types and 'Phosphorylable' in self.dict_types:
         #List all possible phosphorylations
-        possible_Phospho=[(kinase,species) for kinase in self.list_types['Kinase']
-                                           for species in self.list_types['Phosphorylable']
+        possible_Phospho=[(kinase,species) for kinase in self.dict_types['Kinase']
+                                           for species in self.dict_types['Phosphorylable']
                                            if not self.check_existing_Phosphorylation([kinase,species])]
         n_pP=len(possible_Phospho)
         if not (n_pP==self.number_Phosphorylation()):
             print("Potential Bug : Inconsistency in Computation of number of Phosphorylations")
             print(n_pP,self.number_Phosphorylation())
             print(possible_Phospho)
-            print(self.list_types['Kinase'])
-            print(self.list_types['Phosphorylable'])
-            p=self.list_types['Phosphorylable'][0]
+            print(self.dict_types['Kinase'])
+            print(self.dict_types['Phosphorylable'])
+            p=self.dict_types['Phosphorylable'][0]
             p.print_node()
-            print(self.list_types['Phosphorylation'])
+            print(self.dict_types['Phosphorylation'])
         if (n_pP==0):
             print("In random_Phosphorylation : No other posible Phosphorylationss")
             return None
@@ -184,11 +184,11 @@ def Phospho_deriv_inC(net):
         A single string for all Phosphorylations in the network
     """
     func="\n/**************Phosphorylation*****************/\n float total;\n"
-    if ('Phosphorylation' in net.list_types):
+    if ('Phosphorylation' in net.dict_types):
         dict_kinase={}#dictionnary to keep track of multiple phosphorylations by same kinase; each entry is a list; 1st term to put in the denominator, 2nd term is the list of all equations  where the kinase plays a role
-        for node in net.list_types['Kinase']:
+        for node in net.dict_types['Kinase']:
             dict_kinase[node]=["1",""]
-        for reaction in net.list_types['Phosphorylation']:
+        for reaction in net.dict_types['Phosphorylation']:
             [kinase,species,species_P]=net.catal_data(reaction)
             species=species[0]
             species_P=species_P[0]
@@ -203,7 +203,7 @@ def Phospho_deriv_inC(net):
             dict_kinase[kinase][1]=dict_kinase[kinase][1]+deriv2.compute_leap([species_P.id],[species.id],dephosphorate)
             dict_kinase[kinase][1]=dict_kinase[kinase][1]+"\n"
 
-        for kinase in net.list_types['Kinase']:
+        for kinase in net.dict_types['Kinase']:
             if not (dict_kinase[kinase][0]=="1"):
                 func=func+"\ntotal="+dict_kinase[kinase][0]+";\n"+dict_kinase[kinase][1]#writes the rates for each kinase
     return func

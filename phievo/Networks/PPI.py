@@ -165,8 +165,8 @@ def random_PPI(self):
             - `ppi`: :class:`PPI <phievo.Networks.PPI.PPI>`
             - `complex created`: :class:`Species <phievo.Networks.classes_eds2.Species>`
     """
-    if 'Complexable' in self.list_types:
-        list_complexable=self.list_types['Complexable']
+    if 'Complexable' in self.dict_types:
+        list_complexable=self.dict_types['Complexable']
         n=len(list_complexable)
         list_possible_PPI = []
         for ip1 in range(n):
@@ -204,8 +204,8 @@ def PPI_deriv_inC(net):
         str a single string for all :class:`Networks.PPI.PPI` in the network
     """
     func="\n/**************Protein protein interactions*****************/\n"
-    if ('PPI' in net.list_types):
-        for index in net.list_types['PPI']:
+    if ('PPI' in net.dict_types):
+        for index in net.dict_types['PPI']:
             C=net.graph.successors(index)[0]#finds the complex
             #print net.graph.predecessors(index)
             list_Pi=net.graph.predecessors(index) #find the components
