@@ -548,12 +548,10 @@ class Network(object):
         Return: bool
         """
         list.sort(key=compare_node)
-        if Type in self.dict_types: #goes through the list of interactions
-            for inter in self.dict_types[Type]:
-                inputs=self.graph.predecessors(inter)#check the inputs
-                inputs.sort(key=compare_node)
-                if (list==inputs):#if inputs are the same, the interaction already exists
-                    return True
+        for inter in self.dict_types.get(Type,[]):
+            inputs=self.graph.predecessors(inter)
+            inputs.sort(key=compare_node)
+            if list==inputs: return True
         return False
 
     def check_existing_link(self,list,Type):
