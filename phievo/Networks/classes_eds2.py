@@ -563,13 +563,11 @@ class Network(object):
         Return: bool
         """
         list.sort(key=compare_node)
-        if Type in self.dict_types:#goes through the list of interactions
-            for inter in self.dict_types[Type]:
-                inputs=self.graph.predecessors(inter)#check the inputs
-                inputs.append(self.graph.successors(inter)[0])#adds the first successor
-                inputs.sort(key=compare_node)
-                if (list==inputs):#if inputs are the same, the interaction already exists
-                    return True
+        for inter in self.dict_types.get(Type,[]):
+            inputs=self.graph.predecessors(inter)
+            inputs.append(self.graph.successors(inter)[0])#add first successor
+            inputs.sort(key=compare_node)
+            if list==inputs: return True
         return False
 
     def verify_IO_numbers(self):
@@ -577,7 +575,6 @@ class Network(object):
 
         label_them run through the list and give the correct index to all
         the items
-
         """
         def label_them(liszt):
             for index,species in enumerate(liszt):
@@ -825,6 +822,7 @@ class Network(object):
         if verbose: print('Node {0} not found!'.format(id))
         return False
 
+### Other tools ###
     def draw(self,file=None,edgeLegend=False,extended=False,display=True,return_graph=False):
         """Draw the network in a matplotlib framework
 
@@ -837,7 +835,6 @@ class Network(object):
             extended (bool): Display inner modules (ex: TModules)
             display (bool): Display the figure
             return_graph(bool): Returns a graph object rather than a figure
-
 
         Examples:
             my_Network.draw('my_lovely_network.pdf')

@@ -16,6 +16,11 @@ class mock_interaction(phievo.Networks.classes_eds2.Interaction):
 class TestNetwork(unittest.TestCase):
     def setUp(self):
         self.net = phievo.Networks.classes_eds2.Network()
+        self.s1 = self.net.new_Species([['Input',0]])
+        self.s2 = self.net.new_Species([['Input',1]])
+        self.s3 = self.net.new_Species([['Output',0]])
+        self.inter = mock_interaction([self.s1,self.s2],self.s3,self.net)
+        self.inter = mock_interaction([self.s2],self.s3,self.net)
 
     def test_add_Node(self):
         self.species1 = phievo.Networks.classes_eds2.Species([['Degradable',0.1]])
@@ -34,18 +39,20 @@ class TestNetwork(unittest.TestCase):
         self.assertEqual(self.net.number_nodes('c'),0)
 
     def test_check_existing_binary(self):
-        self.s1 = self.net.new_Species([['Input',0]])
-        self.s2 = self.net.new_Species([['Input',1]])
-        self.s3 = self.net.new_Species([['Output',0]])
-        self.inter = mock_interaction([self.s1,self.s2],self.s3,self.net)
-        self.inter = mock_interaction([self.s2],self.s3,self.net)
-        
         ceb = self.net.check_existing_binary
         self.assertTrue(ceb([self.s1,self.s2],'Interaction'))
         self.assertTrue(ceb([self.s1,self.s2],'mock_interaction'))
         self.assertFalse(ceb([self.s1,self.s3],'mock_interaction'))
         self.assertFalse(ceb([self.s1],'mock_interaction'))
         self.assertTrue(ceb([self.s2],'Interaction'))
+
+    def test_check_existing_link(self):
+        cel = self.net.check_existing_link
+        self.assertTrue(cel([self.s1,self.s2,self.s3],'mock_interaction'))
+        self.assertTrue(cel([self.s2,self.s3],'mock_interaction'))
+        self.assertFalse(cel([self.s1,self.s2],'mock_interaction'))
+        self.assertFalse(cel([self.s1,self.s3],'mock_interaction'))
+        self.assertFalse(cel([self.s1,self.s3],'King_of_the_britton'))
         
 
 if __name__ == '__main__':
