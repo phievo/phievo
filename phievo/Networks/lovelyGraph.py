@@ -146,14 +146,14 @@ def pretty_graph(net,extended=True):
 
                         elif isinstance(nn,Phosphorylation):
                                 namePhospho = nn.label
-                                [catalyst,listIn,listOut]=net.catal_data(nn)
+                                [cataList,listIn,listOut]=net.catal_data(nn)
                                 param = dict(**global_edge_attribute['Phospho'])
                                 param["label"] = produce_Phospho_name(nn)
                                 graph.add_edge(produce_species_name(listIn[0]),produce_species_name(listOut[0]), **param)
                                 param["arrowstyle"] = "-|>"
 
                                 param["label"] = produce_Phospho_name(nn,cat=True)
-                                graph.add_edge(produce_species_name(catalyst),produce_Phospho_name(nn),**param)
+                                graph.add_edge(produce_species_name(cataList[0]),produce_Phospho_name(nn),**param)
 
                         elif isinstance(nn,PPI):
                                 namePPI = produce_PPI_name(nn)
@@ -176,25 +176,25 @@ def pretty_graph(net,extended=True):
 
                         elif nn.label == "Simple_Phosphorylation":
                                 namePhospho = nn.label
-                                [catalyst,listIn,listOut]=net.catal_data(nn)
+                                [listCata,listIn,listOut]=net.catal_data(nn)
                                 param = dict(**global_edge_attribute['Phospho'])
                                 param["color"] = "#B42B3C"
                                 param["label"] = produce_Phospho_name(nn)
                                 graph.add_edge(produce_species_name(listIn[0]),produce_species_name(listOut[0]), **param)
                                 param["arrowstyle"] = "-|>"
                                 param["label"] = produce_Phospho_name(nn,cat=True)
-                                graph.add_edge(produce_species_name(catalyst),produce_Phospho_name(nn),**param)
+                                graph.add_edge(produce_species_name(listCata[0]),produce_Phospho_name(nn),**param)
 
                         elif nn.label == "Simple_Dephosphorylation":
                                 namePhospho = nn.label
-                                [catalyst,listIn,listOut]=net.catal_data(nn)
+                                [listCata,listIn,listOut]=net.catal_data(nn)
                                 param = dict(**global_edge_attribute['Phospho'])
                                 param["color"] = "#2B39B4"
                                 param["label"] = produce_Phospho_name(nn)
                                 graph.add_edge(produce_species_name(listIn[0]),produce_species_name(listOut[0]), **param)
                                 param["arrowstyle"] = "-|>"
                                 param["label"] = produce_Phospho_name(nn,cat=True)
-                                graph.add_edge(produce_species_name(catalyst),produce_Phospho_name(nn),**param)
+                                graph.add_edge(produce_species_name(listCata[0]),produce_Phospho_name(nn),**param)
 
                         elif nn.label == "KPR_Binding":
                                 binding_name = 'LR'

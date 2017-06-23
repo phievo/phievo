@@ -524,18 +524,15 @@ class Network(object):
             list of the form [catalyst,reactants,products]
         """
         listIn=self.graph.predecessors(interaction)
-        if (len(listIn)==1): #special case of autocatalysis
-            listIn.append(listIn[0])
         listOut=self.graph.successors(interaction)
-        for x in listIn:
-            if x in listOut:
-                catalyst=x #what if their is two catalysts ???
-        if 'catalyst' in locals():
-            listIn.remove(catalyst)
-            listOut.remove(catalyst)
-            return [catalyst,listIn,listOut]
-        else:
-            return [[],listIn,listOut]
+        listCata = [spc for spc in listIn if spc in listOut]
+        #special case of autocatalysis
+        if len(listIn)==1 and listIn[0] in listOut:
+            listIn.append(listIn[0])
+        for spc in listCata:
+            listIn.remove(spc)
+            listOut.remove(spc)
+        return [listCata,listIn,listOut]
 
     def check_existing_binary(self,list,Type):
         """Check if a specific binary interaction of type Type already exists

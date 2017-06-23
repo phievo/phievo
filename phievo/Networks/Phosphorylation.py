@@ -67,8 +67,8 @@ def check_existing_Phosphorylation(self,signature):
     """
     if 'Phosphorylation' in self.dict_types:#goes through the list of interactions
         for inter in self.dict_types['Phosphorylation']:
-            [catalyst,listIn,listOut] = self.catal_data(inter)
-            if (catalyst==signature[0]) and (listIn[0]==signature[1]):
+            [listCata,listIn,listOut] = self.catal_data(inter)
+            if (listCata[0]==signature[0]) and (listIn[0]==signature[1]):
                 return True
     return False
 
@@ -189,7 +189,8 @@ def Phospho_deriv_inC(net):
         for node in net.dict_types['Kinase']:
             dict_kinase[node]=["1",""]
         for reaction in net.dict_types['Phosphorylation']:
-            [kinase,species,species_P]=net.catal_data(reaction)
+            [cataList,species,species_P]=net.catal_data(reaction)
+            kinase = cataList[0]
             species=species[0]
             species_P=species_P[0]
             term="POW(%s/%f,%f)"%(species.id , reaction.threshold , reaction.hill) #computes the numerator corresponding to this specific phophorylation
