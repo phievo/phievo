@@ -5,13 +5,12 @@ import unittest
 import phievo
 
 class mock_interaction(phievo.Networks.classes_eds2.Interaction):
-    def __init__(self,list_input,output,net):
-        
+    def __init__(self,list_input,list_output,net):
         net.add_Node(self)
-        net.add_Node(output)
         for input in list_input:
             net.graph.add_edge(input,self)
-        net.graph.add_edge(self,output)
+        for output in list_output:
+            net.graph.add_edge(self,output)
 
 class TestNetwork(unittest.TestCase):
     def setUp(self):
@@ -19,8 +18,8 @@ class TestNetwork(unittest.TestCase):
         self.s1 = self.net.new_Species([['Input',0]])
         self.s2 = self.net.new_Species([['Input',1]])
         self.s3 = self.net.new_Species([['Output',0]])
-        self.inter = mock_interaction([self.s1,self.s2],self.s3,self.net)
-        self.inter = mock_interaction([self.s2],self.s3,self.net)
+        self.inter1 = mock_interaction([self.s1,self.s2],[self.s3],self.net)
+        self.inter2 = mock_interaction([self.s2],[self.s3],self.net)
 
     def test_add_Node(self):
         self.species1 = phievo.Networks.classes_eds2.Species([['Degradable',0.1]])
@@ -37,6 +36,23 @@ class TestNetwork(unittest.TestCase):
         self.assertEqual(self.net.number_nodes('a'),2)
         self.assertEqual(self.net.number_nodes('b'),0)
         self.assertEqual(self.net.number_nodes('c'),0)
+
+    def test_catal_data(self):
+        cd = self.net.catal_data
+        self.inter3 = mock_interaction([self.s1,self.s2],[self.s3,self.s2],self.net)
+        self.inter4 = mock_interaction([self.s1],[self.s1,self.s2],self.net)
+        A,B,C = cd(self.inter3)
+        self.assertEqual(A,self.s2)
+        self.assertEqual(B,[self.s1])
+        self.assertEqual(C,[self.s3])
+        A,B,C = cd(self.inter4)
+        self.assertEqual(A,self.s1)
+        self.assertEqual(B,[self.s1])
+        self.assertEqual(C,[self.s2])
+        A,B,C = cd(self.inter1)
+        self.assertEqual(A,[])
+        self.assertEqual(set(B),{self.s1,self.s2})
+        self.assertEqual(C,[self.s3])
 
     def test_check_existing_binary(self):
         ceb = self.net.check_existing_binary
