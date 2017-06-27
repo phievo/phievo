@@ -7,6 +7,7 @@ import phievo
 class mock_interaction(phievo.Networks.classes_eds2.Interaction):
     def __init__(self,list_input,list_output,net):
         net.add_Node(self)
+        self.removable  = True
         for input in list_input:
             net.graph.add_edge(input,self)
         for output in list_output:
@@ -69,7 +70,36 @@ class TestNetwork(unittest.TestCase):
         self.assertFalse(cel([self.s1,self.s2],'mock_interaction'))
         self.assertFalse(cel([self.s1,self.s3],'mock_interaction'))
         self.assertFalse(cel([self.s1,self.s3],'King_of_the_britton'))
+
+    def test_built_dict_types(self):
+        self.assertTrue(self.s1 in self.net.dict_types['Input'])
+        self.assertTrue(self.s2 in self.net.dict_types['Input'])
+        self.assertTrue(self.s3 in self.net.dict_types['Output'])
+        self.assertTrue(self.s1 in self.net.dict_types['Species'])
+        self.assertTrue(self.inter1 in self.net.dict_types['Interaction'])
+        self.assertTrue(self.inter2 in self.net.dict_types['Interaction'])
+        self.assertTrue(self.inter2 in self.net.dict_types['mock_interaction'])
+
+        self.assertFalse(self.inter2 in self.net.dict_types['Species'])
+        self.assertFalse(self.s1 in self.net.dict_types['Interaction'])
+
+    def test_write_id(self):
+        """This test the __write_id__ private method"""
+        self.net.__write_id__()
+        self.assertEqual(self.s1.id,'s[0]')
+        self.assertEqual(self.s2.id,'s[1]')
+        self.assertEqual(self.s3.id,'s[2]')
+        self.assertEqual(self.inter1.id,'n[3]')
+        self.assertEqual(self.inter2.id,'n[4]')
+        self.assertEqual(self.s1.label,", Species, Input, 0 Node #0")
+
+    def test_remove_Node(self):
+        self.net.remove_Node(self.inter2)
+        self.assertFalse(self.inter2 in self.net.nodes())
+        self.assertEqual(len(self.net.nodes()),4)
         
+        self.net.remove_Node(self.s1)
+        self.assertTrue(self.s1 in self.net.nodes())
 
 if __name__ == '__main__':
     unittest.main()

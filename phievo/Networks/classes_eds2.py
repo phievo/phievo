@@ -654,14 +654,13 @@ class Network(object):
 
         """
         self.dict_types=dict(Node=self.graph.nodes())
-        for index in self.graph.nodes():
-            names = index.list_types()
+        for node in self.graph.nodes():
+            names = node.list_types()
+            if isinstance(node,Interaction): names.append('Interaction')
             for name in names:
-                self.dict_types.setdefault(name,[]).append(index)
-            if isinstance(index,Interaction):
-                self.dict_types.setdefault('Interaction',[]).append(index)
+                self.dict_types.setdefault(name,[]).append(node)
         for key in self.dict_types:
-            self.dict_types[key].sort(key=compare_node) #sort the lists
+            self.dict_types[key].sort(key=compare_node)
 
     def __write_id__(self):
         """Write the ids for the network
@@ -719,17 +718,7 @@ class Network(object):
         """
         return node.isremovable(self,list_nodes_loop)
 
-    def version_remove_Node(self,node):
-        """Remove a node form self.graph
-        Used to handle the diff. version of networkx
-
-        Args:
-            node (:class:`Node <phievo.Networks.classes_eds2.Node>`): the node to be deleted
-
-        """
-        self.graph.remove_node(node)
-
-    def remove_Node(self,Node,verbose=debugging_node_removal):
+    def remove_Node(self,Node):
         """remove node from the network graph
 
         In case of interactions, also remove any phys objects (eg species,
@@ -744,28 +733,10 @@ class Network(object):
         Return: Boolean indicating the completion of the process
         """
         list_nodes_loop = []
-        if (self.graph.has_node(Node)) and (self.check_Node(Node,list_nodes_loop)):
-            if verbose:
-                print("\n\n\n")
-                print("===================================")
-                print("===== We are in remove_Node =======")
-                print("===================================")
-                print("\nWe are removing:")
-                for property, value in vars(Node).items():
-                    print(property, ": ", value)
-                print("\nAs well as all its output. I.e.:")
-
-            for phys_obj in Node.outputs_to_delete(self): #remove the products of the interaction
-                if verbose:
-                    for property, value in vars(phys_obj).items():
-                        print(property, ": ", value)
-                self.version_remove_Node(phys_obj)
-            self.version_remove_Node(Node) #remove the node
-            if verbose:
-                print("===================================")
-                print("===== We leave remove_Node ========")
-                print("===================================")
-                print("\n\n\n")
+        if Node in self.nodes() and self.check_Node(Node,list_nodes_loop):
+            for childrens in Node.outputs_to_delete(self):
+                self.graph.remove_node(childrens)
+            self.graph.remove_node(Node)
             return True
         return False
 
