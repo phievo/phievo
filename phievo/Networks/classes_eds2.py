@@ -41,7 +41,6 @@ import pickle
 import os
 
 ### Global parameters
-debugging_node_removal = False
 list_unremovable=['Input'] #list of attributes that are unremovable : a species with these types can not be removed durong the evolution process
 
 #############################
@@ -121,7 +120,7 @@ class Node(object):
         """
         return []
 
-    def isremovable(self,net,list_nodes_loop,verbose=debugging_node_removal):
+    def isremovable(self,net,list_nodes_loop,verbose=False):
         """Check if a Node can be removed from the network
 
         Args:
@@ -740,7 +739,7 @@ class Network(object):
             return True
         return False
 
-    def clean_Nodes(self,verbose=debugging_node_removal):
+    def clean_Nodes(self,verbose=False):
         """remove nodes from the network until all nodes pass the check_grammar test
 
         Args:
@@ -755,20 +754,15 @@ class Network(object):
         """
         self.__build_dict_types__()
         modification,nloop = True,0
-        while modification and nloop<1000:
+        while modification:
             modification=False
             nloop+=1
+            if nloop > 1000: raise RuntimeError('Maximum recursion reach in clean_Nodes')
             for inter in self.dict_types.get('Interaction',[]):
                 if self.graph.has_node(inter):
                     listOut=self.graph.successors(inter)
                     listIn=self.graph.predecessors(inter)
                     if not inter.check_grammar(listIn, listOut):
-                        if verbose:
-                            print("We have some inconsistent grammar with node:")
-                            for property, value in vars(inter).items():
-                                print(property, ": ", value)
-                        for l in inter.outputs_to_delete(self):
-                            self.remove_Node(l)
                         self.remove_Node(inter)
                         modification=True
 
