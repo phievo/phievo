@@ -48,26 +48,27 @@ cfile['init_history'] = 'init_history.c'
 cfile['input'] =  'input.c'
 
 pfile = {}
+
 ####################################
 ### Mutation rates for evolution ###
 ####################################
 dictionary_mutation={}
 
 # Rates for nodes to add
-dictionary_mutation['random_gene()']=0.005
-dictionary_mutation['random_gene(\'TF\')']=0.005
-dictionary_mutation['random_gene(\'Kinase\')']=0.005
+dictionary_mutation['random_gene()']=0.01
+dictionary_mutation['random_gene(\'TF\')']=0.01
+dictionary_mutation['random_gene(\'Kinase\')']=0.00
 dictionary_mutation['random_gene(\'Ligand\')']=0.00
 dictionary_mutation['random_gene(\'Receptor\')']=0.00
-dictionary_mutation['random_Interaction(\'TFHill\')']=0.002
-dictionary_mutation['random_Interaction(\'PPI\')']=0.002
+dictionary_mutation['random_Interaction(\'TFHill\')']=0.005
+dictionary_mutation['random_Interaction(\'PPI\')']=0.005
 dictionary_mutation['random_Interaction(\'Phosphorylation\')']=0.000
 dictionary_mutation['random_Interaction(\'Degradation\')']=0.00
 
 # Rates for nodes to remove
-dictionary_mutation['remove_Interaction(\'TFHill\')']=0.01
-dictionary_mutation['remove_Interaction(\'PPI\')']=0.02
-dictionary_mutation['remove_Interaction(\'CorePromoter\')']=0.02
+dictionary_mutation['remove_Interaction(\'TFHill\')']=0.015
+dictionary_mutation['remove_Interaction(\'PPI\')']=0.015
+dictionary_mutation['remove_Interaction(\'CorePromoter\')']=0.015
 dictionary_mutation['remove_Interaction(\'Phosphorylation\')']=0.00
 dictionary_mutation['remove_Interaction(\'Degradation\')']=0.00
 
@@ -83,7 +84,7 @@ dictionary_mutation['mutate_Node(\'Degradation\')']=0.1
 #rates to change output tags.  See list_types_output array below
 dictionary_mutation['random_add_output()']=0.0
 dictionary_mutation['random_remove_output()']=0.0
-dictionary_mutation['random_change_output()']=0.1
+dictionary_mutation['random_change_output()']=0.0 #NO OUTPUT CHANGE
 
 #############################################################################
 # parameters in various modules, created as one dict, so that can then be passed as argument
@@ -93,7 +94,7 @@ prmt = {}
 prmt['nstep'] = 5000         #number of time steps
 prmt['ncelltot'] = 1            #number of cells in an organism
 prmt['nneighbor'] = 3 # must be >0, whatever geometry requires, even for ncelltot=1
-prmt['ntries'] = 10   # number of initial conditions tried in C programs
+prmt['ntries'] = 2   # number of initial conditions tried in C programs
 prmt['dt'] = 0.05     # time step
 
 # Generic parameters, transmitted to C as list or dictionary.
@@ -106,16 +107,17 @@ prmt['dt'] = 0.05     # time step
 
 # Needed in evolution_gill to define evol algorithm and create initial network
 prmt['npopulation'] = 100
-prmt['ngeneration'] = 501
+prmt['ngeneration'] = 1001
 prmt['tgeneration'] = 1.0       #initial generation time (for gillespie), reset during evolution
 prmt['noutput']=1    # to define initial network
 prmt['ninput']=1
+prmt['freq_plot'] = 10  #plot time course every generation%freq_plot = 0
 prmt['freq_stat'] = 5     # print stats every freq_stat generations
 prmt['frac_mutate'] = 0.5 #fraction of networks to mutate
 prmt['redo'] = 1   # rerun the networks that do not change to compute fitness for different IC
 
 # used in run_evolution,
-prmt['nseed'] = 5   # number of times entire evol procedure repeated, see main program.
+prmt['nseed'] = 25   # number of times entire evol procedure repeated, see main program.
 prmt['firstseed'] = 0  #first seed
 
 # multipro_level used in evolution_gillespie.  =2 if using parallel processing(pypar) =1 for threading =0 for serial processing
@@ -127,23 +129,29 @@ prmt['langevin_noise']=0
 #####################
 ### PARETO PARAM. ###
 #####################
-prmt['pareto']=0 # a flag, set to 1 to run pareto
-prmt['npareto_functions']= 2 # number of functions to use for pareto optimization.
+prmt['pareto']=0 # a flag, set to 1 to run pareto  
+prmt['npareto_functions']= 1 # number of functions to use for pareto optimization.  
 prmt['rshare']= 0.0
 
 
 
-## prmt['restart']['kgeneration'] tells phievo to save a complete generation
-## at a given frequency in a restart_file. The algorithm can relaunched at
-## backuped generation by turning  prmt['restart']['activated'] = True and
-## setting the generation and the seed. If the two latters are not set, the
-## algorithm restart from the highest generation  in the highest seed.
+# To restart from a Restart_* file created in Seed* directories:
+#    Move the Restart file into a new model directory (see run_evolution -m option)
+#    Adjust the entries below as desired and run_evolution module.
+#    Note option to either exactly reproduce prior evolution simulation or just initialize with some
+# prior population and then do indepedent evolution
+
+# The parameters for restart related functions, grouped into subdictionary, used in evolution_gillespie.py
+# The flag to restart from file is file name, None skips restart file and uses new instances of init functions
+# If restart the numbering of generations continuous with that of restart file.
+# To redo a saved population with different random number, use ['same_seed'] = False
+# Note the 'freq' parameter below, if ~= npopulation then Restart file size ~1/2 Bests file
 prmt['restart'] = {}
 prmt['restart']['activated'] = False #indicate if you want to restart or not
+prmt['restart']['dir'] =  "Exponential/Seed0" # the directory of the population you want to restart from
+prmt['restart']['kgeneration'] = 50  # restart from After this generation number (see loop in Population.evolution)
 prmt['restart']['freq'] = 50  # save population every freq generations
-#prmt['restart']['seed'] =  0 # the directory of the population you want to restart from
-#prmt['restart']['kgeneration'] = 50  # restart from After this generation number
-#prmt['restart']['same_seed'] = True # Backup the random generator to the same seed
+prmt['restart']['same_seed'] = True  # get seed of random() from restart file to reproduce prior data.
 
 
 list_unremovable=['Input']
@@ -161,30 +169,27 @@ from phievo.Networks import mutation
 # Will overwrite default variants in evol_gillespie if supplied below
 
 def init_network():
-   seed=int(random.random()*100000)
-   g=random.Random(seed)
-   L=mutation.Mutable_Network(g)
-   L.fixed_activity_for_TF = 0
+    seed=int(random.random()*100000)
+    g=random.Random(seed)
+    L=mutation.Mutable_Network(g)
+    L.fixed_activity_for_TF = 0
 
-   parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random) ]]
-   parameters.append(['TF',1])
-   parameters.append(['Input',0])
-   parameters.append(['Complexable'])
-   parameters.append(['Kinase'])
-   TF1=L.new_Species(parameters)
+    parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random) ]]
+    parameters.append(['Input',0])
+    parameters.append(['Complexable'])
+    TF1=L.new_Species(parameters)
 
-   parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random) ]]
-   parameters.append(['TF',1])
-   parameters.append(['Input',1])
-   parameters.append(['Complexable'])
-   parameters.append(['Kinase'])
-   TF2=L.new_Species(parameters)
+    parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random) ]]
+    parameters.append(['Input',1])
+    parameters.append(['Complexable'])
+    TF2=L.new_Species(parameters)
 
-   for k in range(1):
-       [tm, prom, o1] = L.random_gene('TF')
-       o1.add_type(['Output',k])
-   L.write_id()
-   return L
+    [tm, prom, o1] = L.random_gene('TF')
+    o1.add_type(['Output',0])
+    
+    L.write_id()
+    
+    return L
 
 def fitness_treatment(population):
     # Function to slightly change the fitness of the networks
@@ -193,3 +198,4 @@ def fitness_treatment(population):
             ind.fitness += 0.001*random.random()
         except Exception:
             ind.fitness = None
+

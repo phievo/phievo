@@ -1,7 +1,6 @@
  /*
-Defines the fitness function for the exponential evolution
-Create the 10 march 2016 from the Adaptation fitness
-Last Edited the 21 march 2016
+Defines the fitness function for a logical gate fitness
+Last Edited the 06 feb. 2017
 Coder : M. Hemery
 */
 
@@ -17,47 +16,24 @@ void nogood(int ntry){
 }
 
 void fitness(double history[][NSTEP][NCELLTOT], int trackout[],int ntry){
-    int t, prod, bin;
+    int t, prod;
+    double conc;
     int input0 = trackin[0];
     int input1 = trackin[1];
     int output = trackout[0];
-    
-    double data[2][20];
-    double dataprod[2];
-    double databin[20];
-    
-    for (bin=0; bin<20; bin++){
-        data[0][bin] = 0;
-        data[1][bin] = 0;
-        databin[bin] = 0;
-    }
-    dataprod[0] = 0;
-    dataprod[1] = 0;
+    double score = 0;
+    double best = 0;
     
     // Collect direct data
     for (t=0; t<NSTEP; t++){
-        prod = ((int) history[input0][t][0]+1)%2 * history[input1][t][0];
-        bin = (int) history[output][t][0]*10;
-        if(bin>=20){bin = 19;}
-        data[prod][bin] += 1;
-        dataprod[prod] += 1;
-        databin[bin] += 1;
+        prod = (int) (history[input0][t][0] * history[input1][t][0]);
+        conc = history[output][t][0];
+        if(conc>1.){conc = 1.;}
+        score += (1.75*prod - .75)*conc;
+        best += prod;
     }
     
-    // Compute mutual information
-    double MI = 0;
-    double Ppb,Pb,Pp;
-    for (bin=0; bin<20; bin++){
-        for (prod=0; prod<2; prod++){
-            if (data[prod][bin] > 0){
-                Ppb = (double) data[prod][bin]/(double)NSTEP;
-                Pp = (double) dataprod[prod]/(double)NSTEP;
-                Pb = (double) databin[bin]/(double)NSTEP;
-                MI += (double)  Ppb*log(Ppb/(Pp*Pb));
-            }
-        }
-    }
-    result[ntry][0] = MI;
+    result[ntry][0] = score/best;
 }
 
 void treatment_fitness( double history2[][NSTEP][NCELLTOT], int trackout[]){
@@ -70,6 +46,6 @@ void treatment_fitness( double history2[][NSTEP][NCELLTOT], int trackout[]){
     for (k=0; k<NTRIES; k++){
         mean += result[k][0];
     }
-    mean /= NTRIES*.5623;
+    mean /= NTRIES;
     printf("%f",-mean);
 }
