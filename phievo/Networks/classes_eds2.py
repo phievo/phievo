@@ -120,7 +120,7 @@ class Node(object):
         """
         return []
 
-    def isremovable(self,net,list_nodes_loop,verbose=False):
+    def isremovable(self,net,list_nodes_loop=[],verbose=False):
         """Check if a Node can be removed from the network
 
         Args:
@@ -674,21 +674,6 @@ class Network(object):
         self.__write_id__()
 
 ###### Removal tools ######
-    def check_Node(self,node,list_nodes_loop):
-        """Check if a Node can be removed from the network
-
-        Delegate to Node.isremovable
-        check if node is not an input/output or a node uniquely
-        and directly upstream of a nonremovable species
-        (eg part of output gene)
-
-        Args:
-            node (:class:`Node <phievo.Networks.classes_eds2.Node>`): the node to be checked
-            list_node_loops (list): to handle non tree like network
-        Return: Boolean indicates if node can be safely removed
-        """
-        return node.isremovable(self,list_nodes_loop)
-
     def remove_Node(self,Node):
         """remove node from the network graph
 
@@ -703,8 +688,7 @@ class Network(object):
 
         Return: Boolean indicating the completion of the process
         """
-        list_nodes_loop = []
-        if Node in self.nodes() and self.check_Node(Node,list_nodes_loop):
+        if Node in self.nodes() and Node.isremovable(self):
             for childrens in Node.outputs_to_delete(self):
                 self.graph.remove_node(childrens)
             self.graph.remove_node(Node)
