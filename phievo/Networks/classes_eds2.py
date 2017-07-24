@@ -126,56 +126,28 @@ class Node(object):
         Args:
             net (Network): the network self belongs to
             list_nodes_loop (list): to handle non tree like network
-            debug (bool): Flag to activate a prolix version
+            verbose (bool): deprecated service !
         Return:
             Boolean removable or not
         """
-
-        if self in list_nodes_loop:
-            # We face a cycle within the network.
-            # Break out of this by saying that we can remove the whole thing.
-            return True
+        # Break cycles by saying that we can remove the whole thing.
+        if self in list_nodes_loop: return True
 
         list_nodes_loop.append(self)
-        Bool=self.removable
+        
+        # Check this node
+        removable = self.removable
         for type in list_unremovable:
-            Bool=Bool*(1-self.isinstance(type))
-
-        if verbose:
-            print("\nAs of now the node:")
-            for property, value in vars(self).items():
-                print(property, ": ", value)
-            print("Can be removed? %d" %Bool)
-
-        list=self.outputs_to_delete(net)
-
-        if verbose:
-            if not list:
-                print("No outputs to remove, should be ok.")
-        if Bool:
-            if verbose:
-                if list:
-                    print("\nNeed to check if its outputs can be deleted though.")
-            for Species in list:
-                if verbose:
-                    print("Outputs to delete (from isremovable interaction):")
-                    for property, value in vars(Species).items():
-                        print(property, ": ", value)
-                node_removal_bool = Species.isremovable(net,list_nodes_loop)
-                Bool=Bool*node_removal_bool
-
-                if verbose:
-                    print("\nSo, is it possible to delete the output:")
-                    for property, value in vars(Species).items():
-                        print(property, ": ", value)
-                    print("\nof:")
-                    for property, value in vars(self).items():
-                        print(property, ": ", value)
-                    print("\n??? Answer: %d" %node_removal_bool)
-
-        if Bool:
-            list_nodes_loop.remove(self)
-        return Bool
+            if self.isinstance(type): removable = False
+        
+        # Check other affected nodes
+        if removable:
+            for Species in self.outputs_to_delete(net):
+                if not Species.isremovable(net,list_nodes_loop):
+                    removable = False
+            list_nodes_loop.remove(self) 
+        
+        return removable
 
     def string_param(self):
         """Returns a function with parameters for the nodes
