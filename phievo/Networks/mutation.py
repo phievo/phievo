@@ -116,9 +116,8 @@ def random_parameters(Type,random_generator,multiple_phospho=True):
         list a list of random parameters that can create a new Species
         or None if an error occured
     """
-    if not Type in classes_eds2.Species.Tags_Species: #look directly at the class attribute
-        print("Try to create a  not allowed random species of type "+Type)
-        return None
+    if not Type in classes_eds2.Species.Tags_Species:
+        raise TypeError("Try to create a  not allowed random species of type "+Type)
 
     list=[['Degradable', sample_dictionary_ranges('Species.degradation',random_generator) ],['Phosphorylable']]
 
@@ -156,56 +155,42 @@ def rand_modify(self,random_generator):
     """
     name=self.__class__.__name__ #take the name of the class
     if not self.mutable: return None #do nothing
-
-    for k in self.__dict__: #take all the attributes of a class
-        entry=name+"."+k  #builds the key to check
-        if entry in dictionary_ranges:
-            if 'relative_variation' in dictionary_ranges:
-                # in that case, we suppose that each parameter is basically max_value*exp(-Energy) where max_value is the maximum authorized
-                # value of the parameter; we then modify randomly the energy, a bias might be included to increase probability of "killing" interactions
-                previous = getattr(self,k)
-
-                # takes the range of variation
-                modif=dictionary_ranges['relative_variation']
-                # takes the upper boundary of the authorized interval
-                interval=dictionary_ranges[entry]
-                if isinstance(interval,float) or isinstance(interval,int):
-                    interval=[0,dictionary_ranges[entry]]
-                min_param=interval[0]
-                if (min_param==0):
-                    min_param=0.01 #minimum value to have a maximum energy, otherwise the range of energies is infinite
-                E_I=log(interval[1]/min_param) #range of possible energies
-                if (previous>0):
-                   current_E=log(interval[1]/previous) #current energy
-                else:
-                    current_E=E_I
-                if 'bias' in dictionary_ranges:
-                    bias=dictionary_ranges['bias']
-                else:
-                    bias=0
-                if (k=='threshold'):
-                    bias=-bias#one wants to bias thresholds to increase them
-                if (k=='hill') or (k=='diffusion') or (k=='delay'):
-                    bias=0#no bias for these parameters
-
-                #computes randomly the new energy; the bigger the energy, the smaller the parameter
-                new_energy=current_E+(2*(random_generator.random()-0.5)+bias)*E_I*modif
-
-                next=interval[1]*exp(-new_energy)
-                #print entry,previous,interval[1],next
-                if isinstance(interval[1],int):
-                    next=int(next)
-                if (interval[1]==0):
-                    next=0
-
-                setattr(self,k,next)
-
-                if (next>interval[1]): setattr(self,k,interval[1])
-                if (next<interval[0]): setattr(self,k,interval[0])
-            else:
-                setattr(self,k,sample_dictionary_ranges(entry,random_generator))
+    
+    to_change = [k for k in self.__dict__ if name+"."+k in dictionary_ranges]
+    for k in to_change:
+        entry=name+"."+k
+        if 'relative_variation' not in dictionary_ranges:
+            setattr(self,k,sample_dictionary_ranges(entry,random_generator))
         else:
-            pass
+            # in that case, we suppose that each parameter is basically max_value*exp(-Energy) where max_value is the maximum authorized
+            # value of the parameter; we then modify randomly the energy, a bias might be included to increase probability of "killing" interactions
+            previous = getattr(self,k)
+
+            # takes the range of variation
+            modif = dictionary_ranges['relative_variation']
+            # takes the upper boundary of the authorized interval
+            interval=dictionary_ranges[entry]
+            if not isinstance(interval,collections.Sequence):
+                interval=[0,dictionary_ranges[entry]]
+            if interval[1]==0:
+                setattr(self,k,0)
+                return None
+            
+            E_I = log(interval[1]/max(1e-4,interval[0])) #range of possible energies
+            current_E = log(interval[1]/previous) if previous > 0 else E_I
+            
+            if k in ['threshold']:
+                bias = -dictionary_ranges.get('bias',0) #one wants to bias thresholds to increase them
+            elif k in ['hill','diffusion','delay']:
+                bias = 0 #no bias for these parameters
+            else:
+                bias = dictionary_ranges.get('bias',0)
+            
+            new_energy = current_E + (2*random_generator.random()-1.+bias) * E_I * modif
+            
+            next = max(interval[0],interval[1] * min(1.,exp(-new_energy)))
+            if isinstance(interval[1],int): next=int(next)
+            setattr(self,k,next)
 
 # update classes_eds2.Node
 setattr(classes_eds2.Node,'rand_modify',rand_modify)
@@ -273,9 +258,7 @@ class Mutable_Network(classes_eds2.Network):
         try:
             getattr(self,'random_'+Interaction_Type)()
         except Exception:
-            print(display_error)
-            #import pdb;pdb.set_trace()
-            display_error("Error when creating randomize Interaction "+Interaction_Type)
+            raise TypeError("Error when creating randomize Interaction "+Interaction_Type)
 
     def remove_Interaction(self,Type):
         """Randomly removes a Node of a given Type
