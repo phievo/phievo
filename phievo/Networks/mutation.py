@@ -72,6 +72,7 @@ def build_lists(mutation_dict):
             list_remove.append(index.rsplit('\'')[1])
         if 'random_Interaction' in index:
             list_create.append(index.rsplit('\'')[1])
+    return list_mutate, list_remove, list_create
 
 def sample_dictionary_ranges(key,random_generator):
     """Draw a random value for a parameter of type key
@@ -90,8 +91,7 @@ def sample_dictionary_ranges(key,random_generator):
         or None if an error occured
     """
     if key not in dictionary_ranges:
-        print('in sample_dictionary_ranges(), invalid key=', key,'for dictionary_ranges')
-        return None
+        raise KeyError('in sample_dictionary_ranges(), invalid key=', key,'for dictionary_ranges')
 
     interval = dictionary_ranges[key]
     rrand = random_generator.random()
@@ -99,11 +99,8 @@ def sample_dictionary_ranges(key,random_generator):
         dice = interval[0] + rrand*(interval[1] - interval[0])
     else: #when it is a number
         dice = rrand * interval
-
-    if key == 'CorePromoter.delay':
-        return int(dice)
-    else:
-        return dice
+    if key == 'CorePromoter.delay': dice = int(dice)
+    return dice
 
 def random_parameters(Type,random_generator,multiple_phospho=True):
     """Create a set of new random parameters for a Species instance of type Type
