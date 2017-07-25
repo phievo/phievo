@@ -701,7 +701,7 @@ class Network(object):
         Args:
             verbose (bool): Flag to activate the prolix mode
 
-        Return: Boolean indicating the completion of the process
+        Return: Int indicating the number of deleted nodes
 
         Delete any node with incorrect grammar until all remaining nodes pass test
         Currently implemented to check grammar on interaction nodes only, thus need
@@ -709,7 +709,7 @@ class Network(object):
         in absence of interaction
         """
         self.__build_dict_types__()
-        modification,nloop = True,0
+        modification,nloop,n_deleted = True,0,0
         while modification:
             modification=False
             nloop+=1
@@ -719,8 +719,9 @@ class Network(object):
                     listOut=self.graph.successors(inter)
                     listIn=self.graph.predecessors(inter)
                     if not inter.check_grammar(listIn, listOut):
-                        self.remove_Node(inter)
+                        n_deleted += self.remove_Node(inter)
                         modification=True
+        return n_deleted
 
     def delete_clean(self,id,verbose=False):
         """Remove a node according to its id and clean the network
@@ -729,7 +730,7 @@ class Network(object):
         """
         for node in self.graph.nodes():
             if node.int_id() == id:
-                bRemove = self.remove_Node(node,verbose)
+                bRemove = self.remove_Node(node)
                 if not bRemove:
                     if verbose: print('Error while removing the node')
                     return False

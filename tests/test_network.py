@@ -6,6 +6,7 @@ import phievo
 
 class mock_interaction(phievo.Networks.classes_eds2.Interaction):
     def __init__(self,list_input,list_output,net):
+        super().__init__()
         net.add_Node(self)
         self.removable  = True
         for input in list_input:
@@ -100,6 +101,27 @@ class TestNetwork(unittest.TestCase):
         
         self.net.remove_Node(self.s1)
         self.assertTrue(self.s1 in self.net.nodes())
+
+    def test_clean_Nodes(self):
+        # Add element for the check_grammar test
+        self.inter1.input = ['Input','Input']
+        self.inter1.output = ['Output']
+        self.inter2.input = ['Input']
+        self.inter2.output = ['Output']
+        self.assertEqual(self.net.clean_Nodes(),0)
+        
+        self.inter2.output = ['Kinase']
+        self.assertEqual(self.net.clean_Nodes(),1)
+    
+    def test_delete_clean(self):
+        # No test, rely on remove_Node and clean_Nodes
+        pass
+    
+    def test_duplicate_downstream_interactions(self):
+        pass
+    
+    def test_duplicate_species_and_interactions(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main()
