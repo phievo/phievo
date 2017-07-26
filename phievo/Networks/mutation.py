@@ -273,13 +273,13 @@ class Mutable_Network(classes_eds2.Network):
         if Type in self.dict_types:
             condemn = self.Random.choice(self.dict_types[Type])
             if not (isinstance(condemn,classes_eds2.Interaction)):
-                print("Try to remove something else than an interaction :"+Type)
+                raise TypeError("Try to remove something else than an interaction :"+Type)
                 return False
             Bool=self.remove_Node(condemn)
             self.clean_Nodes()
             return Bool
         else:
-            print("Nothing to remove")
+            #print("Nothing to remove")
             return False
 
 ########## Tools to manage the Output Tags ##########

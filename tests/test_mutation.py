@@ -11,6 +11,8 @@ class mock_interaction(phievo.Networks.classes_eds2.Interaction):
         super().__init__()
         net.add_Node(self)
         self.removable  = True
+        self.input = len(list_input)*['Species']
+        self.output = len(list_output)*['Species']
         for input in list_input:
             net.graph.add_edge(input,self)
         for output in list_output:
@@ -95,7 +97,12 @@ class TestMutableNetwork(unittest.TestCase):
     
     def test_remove_Interaction(self):
         self.net.write_id()
-        print(self.net.dict_types)
+        self.assertTrue(self.net.remove_Interaction('mock_interaction'))
+        self.assertEqual(len(self.net.dict_types['Interaction']),1)
+        self.assertFalse(
+        self.net.remove_Interaction('Shruberry'))
+        with self.assertRaises(TypeError):
+            self.net.remove_Interaction('Species')
 
 if __name__ == '__main__':
     unittest.main()
