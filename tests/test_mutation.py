@@ -115,6 +115,33 @@ class TestMutableNetwork(unittest.TestCase):
         self.assertTrue(self.net.random_add_output())
         self.assertTrue('Output' in self.s4.types)
         self.assertFalse(self.net.random_add_output())
+
+    def test_random_duplicate(self):
+        pass
+    
+    def test_mutate_Node(self):
+        # Rely on already tested function
+        pass
+    
+    def test_build_mutations(self):
+        dict_mutation = {"mutate_Node('Species')":.1,
+                         "mutate_Node('PPI')":.1,
+                         "remove_Interaction('TFHill')":.2,
+                         "remove_Interaction('PPI')":.2,
+                         "random_Interaction('Species')":.05,
+                         "random_Interaction('TFHill')":.05,
+                         "random_remove_output()":1.0,
+                         "random_change_output()":1.0}
+        self.net.number_Species = lambda :len(self.net.dict_types['Species'])
+        self.net.number_TFHill = lambda :0
+        mut.dictionary_mutation = dict_mutation
+        mut.build_lists(dict_mutation)
         
+        new_dict = {"mutate_Node('Species')":.1*3,
+                    "random_Interaction('Species')":.05*3,
+                    "random_remove_output()":1.0,
+                    "random_change_output()":1.0}
+        self.assertEqual(self.net.build_mutations(),new_dict)
+
 if __name__ == '__main__':
     unittest.main()

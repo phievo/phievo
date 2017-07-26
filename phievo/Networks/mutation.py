@@ -64,6 +64,7 @@ def build_lists(mutation_dict):
         mutation_dict (dict): the dictionary listing the various operation (typically inits.dictionary_mutations)
     """
     global list_mutate, list_remove, list_create
+    list_mutate, list_remove, list_create = [],[],[]
     # when a term is found, we used split on ', the type should be the second term
     for index in mutation_dict:
         if 'mutate_Node' in index:
@@ -365,7 +366,6 @@ class Mutable_Network(classes_eds2.Network):
             self.Random.choice(possible_mutated).rand_modify(self.Random)
             return True
         else:
-            print("Nothing to mutate "+Type)
             return False
 
     def build_mutations(self):
@@ -385,33 +385,29 @@ class Mutable_Network(classes_eds2.Network):
             Multiply dictionary[key] with the length of self.dict_types[name]
             if non zero or delete the key otherwise
             """
-            if (name in self.dict_types):
+            if name in self.dict_types:
                 dictionary[key] *= len(self.dict_types[name]) #update the corresponding mutation rate
             else: #delete corresponding key if does not exist
                 del dictionary[key]
-
+        
         for name in list_remove:
             key='remove_Interaction(\''+name+'\')'
             update_dict(self,dictionary,key,name)
-
         for name in list_mutate:
             key='mutate_Node(\''+name+'\')'
             update_dict(self,dictionary,key,name)
-
+        for name in list_create:
+            key ='random_Interaction(\''+name+'\')'
+            l = getattr(self,'number_'+name)()
+            if l: dictionary[key] *= l #compute the mutation rate
+            else: del dictionary[key]
         update_dict(self,dictionary,'random_remove_output()','Output')
         update_dict(self,dictionary,'random_change_output()','Output')
-
-
-        for name in list_create:
-            key ='random_Interaction(\''+name+'\')' #find the name of the command
-            l = getattr(self,'number_'+name)()
-            dictionary[key] *= l #compute the corresponding mutation rate
-            if (l==0): del dictionary[key]
-
+        
         key='random_duplicate()'
         if key in dictionary:
             if 'CorePromoter' in self.dict_types:
-                dictionary[key]*=1 #compute the corresponding mutation rate
+                dictionary[key]*=1 #compute the mutation rate
             else:
                 del dictionary[key]
 
