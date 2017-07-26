@@ -109,6 +109,12 @@ class TestMutableNetwork(unittest.TestCase):
         self.assertTrue(self.net.random_remove_output())
         self.assertFalse('Output' in self.s3.types)
         self.assertFalse(self.net.random_remove_output())
+    
+    def test_random_add_output(self):
+        self.s4 = self.net.new_Species([['Kinase']])
+        self.assertTrue(self.net.random_add_output())
+        self.assertTrue('Output' in self.s4.types)
+        self.assertFalse(self.net.random_add_output())
         
 if __name__ == '__main__':
     unittest.main()

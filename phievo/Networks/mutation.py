@@ -303,11 +303,14 @@ class Mutable_Network(classes_eds2.Network):
     def random_add_output(self):
         """Randomly adds an output tag to a random species"""
         noutput = len(self.dict_types.get('Output',[]))
-        Type = self.Random.choice(list_types_output)
-
-        test_output = lambda S: not S.isinstance('Input') and not S.isinstance('Output')
-        list_possible_outputs = [species for species in self.dict_types.get(Type,[]) if test_output(species)]
-
+        
+        list_possible_outputs = []
+        for S in self.dict_types.get('Species',[]):
+            tIn = not S.isinstance('Input')
+            tOut = not S.isinstance('Output')
+            tType = bool([ty for ty in S.types if ty in list_types_output])
+            if tIn and tOut and tType: list_possible_outputs.append(S)
+        
         if list_possible_outputs:
             species = self.Random.choice(list_possible_outputs)
             species.add_type(['Output',noutput])
