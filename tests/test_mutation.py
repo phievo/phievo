@@ -86,6 +86,7 @@ class TestMutableNetwork(unittest.TestCase):
         self.s3 = self.net.new_Species([['Output',0]])
         self.inter1 = mock_interaction([self.s1,self.s2],[self.s3],self.net)
         self.inter2 = mock_interaction([self.s2],[self.s3],self.net)
+        self.net.write_id()
 
     def test_random_Species(self):
         s4 = self.net.random_Species('Species')
@@ -104,5 +105,10 @@ class TestMutableNetwork(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.net.remove_Interaction('Species')
 
+    def test_random_remove_output(self):
+        self.assertTrue(self.net.random_remove_output())
+        self.assertFalse('Output' in self.s3.types)
+        self.assertFalse(self.net.random_remove_output())
+        
 if __name__ == '__main__':
     unittest.main()

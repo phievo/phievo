@@ -289,13 +289,16 @@ class Mutable_Network(classes_eds2.Network):
 
         Outputs are always index 0,1,2...; not possible to have 0,1,3 for instance
         """
-        if 'Output' in self.dict_types:
+        if self.dict_types.get('Output',[]):
             to_remove=self.Random.choice(self.dict_types['Output'])
             to_remove.clean_type('Output') #cleans previous output
             self.dict_types['Output'].remove(to_remove)
             #recomputes the index of outputs
             for index,species in enumerate(self.dict_types['Output']):
                 species.n_put = index
+            return True
+        else:
+            return False
 
     def random_add_output(self):
         """Randomly adds an output tag to a random species"""
