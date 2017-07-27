@@ -3,6 +3,7 @@ Test module for the mutation module
 """
 import unittest
 import phievo
+from math import log
 from collections import Counter #to test unordered lists
 mut = phievo.Networks.mutation #shortcut for the test module
 
@@ -143,5 +144,29 @@ class TestMutableNetwork(unittest.TestCase):
                     "random_change_output()":1.0}
         self.assertEqual(self.net.build_mutations(),new_dict)
 
+    def test_compute_next_mutation(self):
+        # Modify the set up to run the test
+        dict_mutation = {"mutate_Node('Species')":.1,
+                         "mutate_Node('PPI')":.1,
+                         "remove_Interaction('TFHill')":.2,
+                         "remove_Interaction('PPI')":.2,
+                         "random_Interaction('Species')":.05,
+                         "random_Interaction('TFHill')":.05,
+                         "random_remove_output()":1.0,
+                         "random_change_output()":1.0}
+        mut.dictionary_mutation = dict_mutation
+        self.net.number_Species = lambda :len(self.net.dict_types['Species'])
+        self.net.number_TFHill = lambda :0
+        
+        self.net.Random = mock_rg(.5)
+        t,com = self.net.compute_next_mutation()
+        self.assertAlmostEqual(t,-log(.5)/2.45)
+        self.assertEqual(com,"random_change_output()")
+        
+        self.net.Random = mock_rg(.1)
+        t,com = self.net.compute_next_mutation()
+        self.assertAlmostEqual(t,-log(.1)/2.45)
+        self.assertEqual(com,"mutate_Node('Species')")
+        
 if __name__ == '__main__':
     unittest.main()

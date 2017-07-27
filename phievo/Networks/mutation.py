@@ -420,24 +420,15 @@ class Mutable_Network(classes_eds2.Network):
             float time to next mutation
 
         given a network, computes the time of the next mutation and the command to execute to perform the mutation
-        for the gillispie algorithm
+        for the gillespie algorithm
         """
         dictionary=self.build_mutations()
-        list_commands=list(dictionary.keys())
-        list_commands.sort() #sort to keep something deterministic
-        a0=0
-        for keys in list_commands:
-            a0=a0+dictionary[keys] #compute sum of the rates
-        r=self.Random.random()
-        tau=-1.0/a0*log(r) #computes the next time of mutation
-
-        mutation=self.Random.random()*a0 #quantity to compute the next mutation
-        a1=0
-        index_keys=0
-        while mutation>a1:
-            a1=a1+dictionary[list_commands[index_keys]]
-            index_keys+=1# we go out of the loop when mutation<=a1, it means that we have gone too far of one key
-        return [tau,list_commands[index_keys-1]]
+        a0 = sum(dictionary.values())
+        tau = -log(self.Random.random())/a0 # next time of mutation
+        mutation = self.Random.random()*a0 # random next mutation
+        for command,rate in sorted(dictionary.items()):
+            mutation -= rate
+            if mutation <= 0: return tau,command
 
 ################## mutation/integration tools for one network #####################
 
