@@ -428,7 +428,7 @@ class Mutable_Network(classes_eds2.Network):
         mutation = self.Random.random()*a0 # random next mutation
         for command,rate in sorted(dictionary.items()):
             mutation -= rate
-            if mutation <= 0: return tau,command
+            if mutation <= 0: return [tau,command]
 
 ################## mutation/integration tools for one network #####################
 

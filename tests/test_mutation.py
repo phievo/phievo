@@ -159,7 +159,9 @@ class TestMutableNetwork(unittest.TestCase):
         self.net.number_TFHill = lambda :0
         
         self.net.Random = mock_rg(.5)
-        t,com = self.net.compute_next_mutation()
+        res = self.net.compute_next_mutation()
+        self.assertIs(type(res),list)
+        t,com = res
         self.assertAlmostEqual(t,-log(.5)/2.45)
         self.assertEqual(com,"random_change_output()")
         
