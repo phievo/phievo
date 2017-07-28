@@ -18,13 +18,14 @@ class mock_interaction(phievo.Networks.classes_eds2.Interaction):
             net.graph.add_edge(self,output)
 
 class Test_Routine_Functions(unittest.TestCase):
-    def setUp():
+    def setUp(self):
         self.net = phievo.Networks.mutation.Mutable_Network()
         self.s1 = self.net.new_Species([['Input',0]])
         self.s2 = self.net.new_Species([['Input',1]])
         self.s3 = self.net.new_Species([['Output',0]])
         self.inter1 = mock_interaction([self.s1,self.s2],[self.s3],self.net)
         self.inter2 = mock_interaction([self.s2],[self.s3],self.net)
+        self.net.write_id()
         
     def test_compute_leap(self):
         res = d2.compute_leap(['S1'],['S2','S3'],'RATE')
@@ -43,6 +44,13 @@ class Test_Routine_Functions(unittest.TestCase):
         hope = ['rate=RATE;', 'increment=compute_noisy_increment(rate);', 'dS1-=increment;']
         self.assertEqual(res,hope)
         d2.noise_flag = False
+    
+    def test_track_variable(self):
+        self.assertEqual(d2.track_variable(self.net,'Input'),[0,1])
+        self.assertEqual(d2.track_variable(self.net,'Output'),[2])
+        self.s1.n_put,self.s2.n_put = 1,0
+        self.assertEqual(d2.track_variable(self.net,'Input'),[1,0])
+        self.assertEqual(d2.track_variable(self.net,'mock_interaction'),[3,4])
 
 if __name__ == '__main__':
     unittest.main()

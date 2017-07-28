@@ -66,9 +66,7 @@ def compute_leap(list_input_id, list_output_id, rate):
 def track_variable(net, name):
     """Return a list of the indices of the species with type name
 
-    This is way of keeping track of fixed IO variables.
-    Use this function only if the output or input are fixed in the
-    algorithm, otherwise, use track_changing_variable
+    List is ordered by n_put if available, by id otherwise.
 
     Args:
         net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): -
@@ -77,35 +75,14 @@ def track_variable(net, name):
     Return:
         list of the id species list ordered by growing n_put
     """
-    if name not in net.dict_types:
-        return []
-    track = {s.n_put:s.int_id() for s in net.dict_types[name]}
-    # verify that the n_put attributes on the IO variables are numbered consecutively from 0
-    track_list = []
-    for ii in range(len(net.dict_types[name])):
-        try:
-            track_list.append(track[ii])
-        except Exception:
-            display_error("mapping IO variable number of id in deriv2.track_variable() failed for IO="+str(name))
-            for s in net.dict_types[name]:
-                s.print_node()
-            return
-    return track_list
+    if name not in net.dict_types: return []
+    try:
+        track = {s.n_put:s.int_id() for s in net.dict_types[name]}
+        return [track[n_put] for n_put in sorted(track)]
+    except AttributeError:
+        return sorted([s.int_id() for s in net.dict_types[name]])
 
-def track_changing_variable(net, name):
-    """Return a list of the indices of the species with type name
-
-    Use this function when Output or Input may be added
-    (we do not care about their order)
-
-    Args:
-        net (:class:`Mutable_Network <phievo.Networks.mutation.Mutable_Network>`): -
-        name (str): a Species tag, usually 'Input' or 'Output'
-
-    Return:
-        list of the id species list ordered by growing n_put
-    """
-    return [s.int_id() for s in net.dict_types.get(name,[])]
+track_changing_variable = track_variable
 
 ########## Writing Functions ##########
 # Here are the functions which explicitely construct the C-file
