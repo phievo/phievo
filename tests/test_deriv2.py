@@ -52,5 +52,22 @@ class Test_Routine_Functions(unittest.TestCase):
         self.assertEqual(d2.track_variable(self.net,'Input'),[1,0])
         self.assertEqual(d2.track_variable(self.net,'mock_interaction'),[3,4])
 
+class Test_Writing_Functions(unittest.TestCase):
+    def setUp(self):
+        self.net = phievo.Networks.mutation.Mutable_Network()
+        self.s1 = self.net.new_Species([['Input',0]])
+        self.s2 = self.net.new_Species([['Input',1]])
+        self.s3 = self.net.new_Species([['Output',0]])
+        self.inter1 = mock_interaction([self.s1,self.s2],[self.s3],self.net)
+        self.inter2 = mock_interaction([self.s2],[self.s3],self.net)
+        self.net.write_id()
+
+    def test_degrad_deriv_inC(self):
+        self.assertEqual(d2.degrad_deriv_inC(self.net),'\n')
+        self.s3.add_type(['Degradable',0.5]); self.net.write_id()
+        res = [line.strip() for line in d2.degrad_deriv_inC(self.net).split()]
+        hope = ["rate=0.5*s[2];","increment=rate;","ds[2]-=increment;"]
+        self.assertEqual(res[1:],hope)
+
 if __name__ == '__main__':
     unittest.main()

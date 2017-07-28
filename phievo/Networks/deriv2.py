@@ -94,7 +94,7 @@ def degrad_deriv_inC(net):
         A single string for all degradations in the network
     """
     if 'Degradable' in net.dict_types:
-        func = "\n/**************degradation rates*****************/\n"
+        func = "\n/**************degradation_rates*****************/\n"
         for species in net.dict_types['Degradable']:
             rate = '{0}*{1}'.format(species.degradation,species.id)
             func += compute_leap([species.id], [], rate)
