@@ -164,9 +164,10 @@ class Population(object):
         # no restart, generate randomized list of networks from init file or routines supplied here.
         self.genus=[]
         for i in range(self.npopulation):
-
             L = init_network()
             L.write_id()
+            L.identifier = i
+            L.last_mutation=[None]
             self.genus.append(L)
 
     def __getitem__(self,index):
@@ -280,6 +281,7 @@ class Population(object):
             None: in place modification
         """
         self.n_mutations=0
+
         for nnetwork in range(initial,first_mutated):
             self.genus_mutate_and_integrate(prmt,nnetwork,mutation=False)
         for nnetwork in range(first_mutated,last_mutated):
@@ -291,7 +293,7 @@ class Population(object):
     def evolution(self,prmt):
         """
         Main method to evolve population
-        
+
         Return:
             None
         """
@@ -312,6 +314,7 @@ class Population(object):
         # MAIN EVOLUTIONARY LOOP
         start_gen = max(self.generation0,prmt["restart"]["kgeneration"])
         prmt["restart"]["kgeneration"] = 0
+        max_network_identifier = max(net.identifier for net in self.genus)
 
         for t_gen in range(start_gen,prmt['ngeneration']):
             prmt['generation'] = t_gen
@@ -322,7 +325,20 @@ class Population(object):
                 self.pop_mutate_and_integrate(0,first_mutated,self.npopulation,prmt,net_stat)
             else: #only mutation
                 self.pop_mutate_and_integrate(first_mutated,first_mutated,self.npopulation,prmt,net_stat)
+
             print("Total number of mutations in the population :%i"%self.n_mutations)
+            try:
+                for i,net in enumerate(self.genus):
+                    if net.last_mutation:
+                        max_network_identifier+=1
+                        net.identifier = max_network_identifier
+                    elif net.backup_mutations==[]:
+                        net.last_mutation=net.backup_mutations
+                        del net.backup_mutations
+            except AttributeError:
+                import pdb;pdb.set_trace()
+
+
 
             # Adjust the tgeneration time to have roughly one mutation per individual in pop
             if (self.n_mutations>0):
@@ -335,6 +351,7 @@ class Population(object):
             gen_stat.process_sorted_genus(self)
 
             # print info after mutation step so built_integrator*.c consistent with Bests file
+
             seed = int(re.search("Seed(\d+)",prmt["workplace_dir"]).group(1)) # extract seed from worplace_dir name
             test_STOP_file(prmt["stop_file"],dict(seed=seed,generation=t_gen,fitness=self.genus[0].fitness))
             header = "\nAfter generation {0:d} Best fitness={1}".format(t_gen,self.genus[0].fitness)
@@ -371,7 +388,5 @@ class Population(object):
 
             # save an exact copy of genus and relevant parameters for continuing loop
             if( t_gen%prmt['restart']['freq'] == 0):
-
-                self.save_restart_file( t_gen, header, self.tgeneration )
-
+                self.save_restart_file( t_gen, header, self.tgeneration)
             sys.stdout.flush()

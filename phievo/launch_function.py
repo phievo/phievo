@@ -177,7 +177,7 @@ def launch_seed(seed,inits,init_file):
             from phievo.Populations_Types.pareto_population import pareto_Population
             population = pareto_Population(namefolder, inits.prmt['npareto_functions'], inits.prmt['rshare'])
         else:
-            from phievo.Populations_Types.pareto_population import Population
+            from phievo.Populations_Types.evolution_gillespie import Population
             population = Population(namefolder)
 
     # Finaly launch the genetic algorithm
