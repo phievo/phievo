@@ -335,8 +335,10 @@ class Species(Node):
         """
         if not isinstance(Type,list):
             raise TypeError("Error in Species.add_type : "+str(Type)+" is not a list")
-        if Type[0] in self.types:
-            raise Warning("in Species.add_type : Species already of Type {} doing nothing".format(Type[0]))
+
+        # if Type[0] in self.types:
+        #     raise Warning("in Species.add_type : Species already of Type {} doing nothing".format(Type[0]))
+
         if not Type[0] in self.Tags_Species:
             raise ValueError("Error in Species.add_type : no Type with name= {}".format(Type[0]))
 
@@ -617,7 +619,6 @@ class Network(object):
             D_promoter (:class:`CorePromoter <phievo.Networks.CorePromoter.CorePromoter>`): the duplicate CorePromoter
             D_species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the duplicate Species
         """
-        print("Duplicate")
         #one first starts to duplicate the gene
         [D_module,D_promoter,D_species,module] = self.duplicate_gene(species)
         ###duplicate the DOWNSTREAM interactions#####
