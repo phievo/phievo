@@ -339,7 +339,6 @@ class Seed:
         """
         with shelve.open(self.restart_path) as data:
             dummy,nets = data[str(generation)]
-        import pdb;pdb.set_trace()
         return(nets[index])
 
     def get_backup_pop(self,generation):
