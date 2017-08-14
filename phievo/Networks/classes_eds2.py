@@ -232,7 +232,7 @@ class Species(Node):
         """
         Node.__init__(self)
         self.types=['Species']
-        
+
         for index in listtypes: #add the various tags
             if index == 'Species': continue # present by default
             if index[0] == 'Input': self.removable=False
@@ -335,8 +335,10 @@ class Species(Node):
         """
         if not isinstance(Type,list):
             raise TypeError("Error in Species.add_type : "+str(Type)+" is not a list")
-        if Type[0] in self.types:
-            raise Warning("in Species.add_type : Species already of Type {} doing nothing".format(Type[0]))
+
+        # if Type[0] in self.types:
+        #     raise Warning("in Species.add_type : Species already of Type {} doing nothing".format(Type[0]))
+
         if not Type[0] in self.Tags_Species:
             raise ValueError("Error in Species.add_type : no Type with name= {}".format(Type[0]))
 
@@ -416,7 +418,7 @@ def check_consistency(lTypes,lNodes):
     cut = lambda M,i,j: [[M[x][y] for x in range(len(M)) if x != i]
                                   for y in range(len(M[0])) if y != j]
     # test if there exist a permutation p such that M[x][p(x)] is always True
-    test = lambda M: (M[0][0] if len(M) == 1 else 
+    test = lambda M: (M[0][0] if len(M) == 1 else
                      sum(M[0][i] and test(cut(M,0,i)) for i in range(len(M))))
     return test([[nod.isinstance(typ) for nod in lNodes] for typ in lTypes])
 
@@ -617,7 +619,6 @@ class Network(object):
             D_promoter (:class:`CorePromoter <phievo.Networks.CorePromoter.CorePromoter>`): the duplicate CorePromoter
             D_species (:class:`Species <phievo.Networks.classes_eds2.Species>`): the duplicate Species
         """
-        print("Duplicate")
         #one first starts to duplicate the gene
         [D_module,D_promoter,D_species,module] = self.duplicate_gene(species)
         if D_species.isinstance('Output') and self.remove_output_when_duplicate:
@@ -824,4 +825,3 @@ class Network(object):
         with open(filename,'wb') as my_file:
             pickle.dump(self,my_file)
         print("Network save at: {}".format(filename))
-

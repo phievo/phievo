@@ -480,24 +480,20 @@ class Mutable_Network(classes_eds2.Network):
                 - result (list): output of treatment_fitness (see compile_and_integrate)
         """
         n_mutations,age = 0,0
-        self.backup_mutations = self.last_mutation
-        self.last_mutation = []
-        flag = self.identifier==25
         if mutation:
-            if flag: print("Enter loop")
+            self.last_mutation = []
+            backup = self.last_mutation
             while True:
                 tau,next_mutation = self.compute_next_mutation()
                 age += tau
                 if age > tgeneration: break #exit the loop when enough time has passed
                 exec("self."+next_mutation)
                 self.last_mutation.append(next_mutation)
-                if flag:print(next_mutation)
                 n_mutations+=1
+            if n_mutations==0:
+                self.last_mutation=backup
             age -= tgeneration
             self.data_next_mutation[0:2] = [age,next_mutation]  #keeps track of the time and type of the next mutation
-        if self.last_mutation:
-            del self.backup_mutations
-        if flag and len(self.last_mutation)>0: print("Mutations still there")
         self.Cseed = self.compute_Cseed()
         result = compile_and_integrate(self,prmt,nnetwork,0,self.Cseed)
         return [n_mutations,nnetwork,self,result]

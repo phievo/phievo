@@ -166,8 +166,6 @@ class Population(object):
         for i in range(self.npopulation):
             L = init_network()
             L.write_id()
-            L.identifier = i
-            L.last_mutation=[None]
             self.genus.append(L)
 
     def __getitem__(self,index):
@@ -263,6 +261,8 @@ class Population(object):
             Network: The resulting network after mutation
         """
         [n_mutations,nnetwork,mutated_net,result]=self.genus[nnetwork].mutate_and_integrate(prmt,nnetwork,self.tgeneration,mutation)
+        if n_mutations:
+            mutated_net.flag_mutation = True
         self.update_fitness(nnetwork,result)
         self.n_mutations+=n_mutations
         return [n_mutations,nnetwork,mutated_net]
@@ -281,14 +281,41 @@ class Population(object):
             None: in place modification
         """
         self.n_mutations=0
-
         for nnetwork in range(initial,first_mutated):
-            self.genus_mutate_and_integrate(prmt,nnetwork,mutation=False)
+                self.genus_mutate_and_integrate(prmt,nnetwork,mutation=False)
         for nnetwork in range(first_mutated,last_mutated):
             self.genus_mutate_and_integrate(prmt,nnetwork,mutation=True)
         for nnetwork in range(initial,last_mutated):
             net_stat.add_net(self.genus[nnetwork])
         return None
+
+    def initialize_identifier(self):
+        """
+        Set an unique index to every network of the initial population an set the max_network_identifier
+        value. If the run restarts an existing simulation, only max_network_identifier is computed.
+        """
+        if prmt["restart"]["activated"]:
+            self.max_network_identifier = max([net.identifier for net in self.genus])
+            for net in self.genus:
+                net.flag_mutation = False
+        else:
+            for i,net in enumerate(self.genus):
+                net.identifier = i
+                net.flag_mutation = False
+            self.max_network_identifier = len(self.genus)-1
+
+    def increment_identifier(self,network):
+        """
+        Test whether the network was mutated. If so the network identifier
+        is updated with a new index.
+        """
+        if network.flag_mutation:
+
+            self.max_network_identifier+=1
+            network.parent = network.identifier
+            network.identifier = self.max_network_identifier
+            network.flag_mutation = False
+
 
     def evolution(self,prmt):
         """
@@ -301,6 +328,7 @@ class Population(object):
         net_stat = pop_stat.NetworkStat(stat_dict)
         gen_stat = pop_stat.GenusStat()
 
+        self.initialize_identifier()
         #initialize attributs for each network needed in loop over generations
         if self.same_seed:
             print('Best fitness prior to mutations=', self.genus[0].fitness)
@@ -310,42 +338,29 @@ class Population(object):
                 self.genus[nnetwork].data_next_mutation=self.genus[nnetwork].compute_next_mutation()
             self.pop_sort()
             print('Best/worst fitness prior to mutation=', self.genus[0].fitness, self.genus[-1].fitness)
-
         # MAIN EVOLUTIONARY LOOP
         start_gen = max(self.generation0,prmt["restart"]["kgeneration"])
         prmt["restart"]["kgeneration"] = 0
-        max_network_identifier = max(net.identifier for net in self.genus)
+
 
         for t_gen in range(start_gen,prmt['ngeneration']):
             prmt['generation'] = t_gen
             net_stat = pop_stat.NetworkStat(stat_dict)
             gen_stat = pop_stat.GenusStat()
+            for net in self.genus:
+                setattr(net,"gen",t_gen)
             # mutate a fraction of networks in population (those least fit)
             if (prmt['redo']==1): # in this case, recompute the fitness of non-mutated ind.
                 self.pop_mutate_and_integrate(0,first_mutated,self.npopulation,prmt,net_stat)
             else: #only mutation
                 self.pop_mutate_and_integrate(first_mutated,first_mutated,self.npopulation,prmt,net_stat)
-
             print("Total number of mutations in the population :%i"%self.n_mutations)
-            try:
-                for i,net in enumerate(self.genus):
-                    if net.last_mutation:
-                        max_network_identifier+=1
-                        net.identifier = max_network_identifier
-                    elif net.backup_mutations==[]:
-                        net.last_mutation=net.backup_mutations
-                        del net.backup_mutations
-            except AttributeError:
-                import pdb;pdb.set_trace()
-
-
 
             # Adjust the tgeneration time to have roughly one mutation per individual in pop
             if (self.n_mutations>0):
                 self.tgeneration=self.tgeneration*self.npopulation*prmt['frac_mutate']/self.n_mutations
             else:
                 self.tgeneration=2*self.tgeneration
-
             fitness_treatment(self)
             self.pop_sort()
             gen_stat.process_sorted_genus(self)
@@ -374,6 +389,7 @@ class Population(object):
                 pass
             # Selection step, replace less fit networks by the fitter ones.
             for nnetwork in range( self.npopulation//2 ):
+                self.increment_identifier(self.genus[nnetwork])
                 self.genus[-1-nnetwork]=copy.deepcopy(self.genus[nnetwork]) # duplicates best half
 
             for individual in self.genus:
