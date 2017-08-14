@@ -355,8 +355,6 @@ class Mutable_Network(classes_eds2.Network):
         if possible_duplicate:
             species= self.Random.choice(possible_duplicate)
             [D_module,D_promoter,D_species] = self.duplicate_species_and_interactions(species)
-            if species.isinstance('Output'):
-                D_species.add_type(['Output',len(self.dict_types['Output'])])
             self.write_id()
             return True
         else:

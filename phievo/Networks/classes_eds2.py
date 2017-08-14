@@ -232,7 +232,7 @@ class Species(Node):
         """
         Node.__init__(self)
         self.types=['Species']
-        
+
         for index in listtypes: #add the various tags
             if index == 'Species': continue # present by default
             if index[0] == 'Input': self.removable=False
@@ -416,7 +416,7 @@ def check_consistency(lTypes,lNodes):
     cut = lambda M,i,j: [[M[x][y] for x in range(len(M)) if x != i]
                                   for y in range(len(M[0])) if y != j]
     # test if there exist a permutation p such that M[x][p(x)] is always True
-    test = lambda M: (M[0][0] if len(M) == 1 else 
+    test = lambda M: (M[0][0] if len(M) == 1 else
                      sum(M[0][i] and test(cut(M,0,i)) for i in range(len(M))))
     return test([[nod.isinstance(typ) for nod in lNodes] for typ in lTypes])
 
@@ -457,7 +457,7 @@ class Network(object):
         self.hash_topology = 0
         self.title = ""
         self.Cseed=0
-        self.remove_output_when_duplicate=False
+        self.remove_output_when_duplicate=True
         self.activator_required=False
         self.fixed_activity_for_TF= True
 
@@ -620,10 +620,6 @@ class Network(object):
         print("Duplicate")
         #one first starts to duplicate the gene
         [D_module,D_promoter,D_species,module] = self.duplicate_gene(species)
-        if D_species.isinstance('Output') and self.remove_output_when_duplicate:
-            D_species.clean_type('Output') #clean output tag
-        if D_species.isinstance('Input'):
-            D_species.clean_type('Input') #clean input tag
 
         ###duplicate the DOWNSTREAM interactions#####
         self.duplicate_downstream_interactions(species,D_species,module,D_module)
@@ -824,4 +820,3 @@ class Network(object):
         with open(filename,'wb') as my_file:
             pickle.dump(self,my_file)
         print("Network save at: {}".format(filename))
-

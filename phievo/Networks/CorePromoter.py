@@ -142,8 +142,10 @@ def duplicate_gene(self,species):
         D_species=copy.deepcopy(species)
         D_species.mutable=1
         D_species.removable=True
-        if self.remove_output_when_duplicate:
+        if D_species.isinstance('Output') and self.remove_output_when_duplicate:
             D_species.clean_type('Output') #Remove Output Types
+        if D_species.isinstance('Input'):
+            D_species.clean_type('Input')
         self.add_Node(D_species)
 
         #CorePromoter copy
