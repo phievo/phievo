@@ -291,7 +291,7 @@ class Population(object):
     def evolution(self,prmt):
         """
         Main method to evolve population
-        
+
         Return:
             None
         """

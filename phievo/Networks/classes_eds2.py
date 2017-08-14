@@ -620,7 +620,6 @@ class Network(object):
         print("Duplicate")
         #one first starts to duplicate the gene
         [D_module,D_promoter,D_species,module] = self.duplicate_gene(species)
-
         ###duplicate the DOWNSTREAM interactions#####
         self.duplicate_downstream_interactions(species,D_species,module,D_module)
 

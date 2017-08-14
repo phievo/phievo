@@ -147,7 +147,6 @@ def duplicate_gene(self,species):
         if D_species.isinstance('Input'):
             D_species.clean_type('Input')
         self.add_Node(D_species)
-
         #CorePromoter copy
         listIn=self.graph.predecessors(species)
         listIn.sort(key=classes_eds2.compare_node)#to be deterministic
