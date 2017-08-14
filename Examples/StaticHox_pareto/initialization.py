@@ -81,7 +81,6 @@ dictionary_mutation['mutate_Node(\'Phosphorylation\')']=0.0
 dictionary_mutation['random_add_output()']=0.0
 dictionary_mutation['random_remove_output()']=0.0
 dictionary_mutation['random_change_output()']=0.1
-
 dictionary_mutation['random_duplicate()']=0.02
 
 #############################################################################
@@ -112,20 +111,15 @@ prmt['ninput']=1
 prmt['freq_stat'] = 5     # print stats every freq_stat generations
 prmt['frac_mutate'] = 0.5 #fraction of networks to mutate
 prmt['redo'] = 1   # rerun the networks that do not change to compute fitness for different IC
-
 # used in run_evolution,
 prmt['nseed'] = 70   # number of times entire evol procedure repeated, see main program.
 prmt['firstseed'] = 1  #first seed
-
 # multipro_level used in evolution_gillespie.  if using parallel processing(pypar) =1 for threading =0 for serial processing
-
 prmt['multipro_level']=1
-
 prmt['pareto']=1
 prmt['npareto_functions']=2
 prmt['rshare']=0
 prmt['plot']=0
-
 
 ## prmt['restart']['kgeneration'] tells phievo to save a complete generation
 ## at a given frequency in a restart_file. The algorithm can relaunched at
@@ -161,7 +155,7 @@ def init_network():
    seed=int(random.random()*100000)
    g=random.Random(seed)
    L=mutation.Mutable_Network(g)
-
+   L.remove_output_when_duplicate = False
    parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random) ]]
    parameters.append(['TF',1])
    parameters.append(['Input',0])
