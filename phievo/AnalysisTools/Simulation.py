@@ -475,12 +475,11 @@ class Seed_Pareto(Seed):
 
 class Genealogy:
     def __init__(self,seed):
-        generations = seed.stored_generation_indexes()
-        generations = [1,4]
-        #import pdb;pdb.set_trace()
-        assert generations == list(range(min(generations),max(generations)+1)),"\n\tA Genealogy object cannot be created from a seed where not all the generations were stored.\n\tMake sure prmt['restart']['freq'] = 1 in the init file."
+        self.generations = seed.stored_generation_indexes()
+        assert self.generations == list(range(min(self.generations),max(self.generations)+1)),"\n\tA Genealogy object cannot be created from a seed where not all the generations were stored.\n\tMake sure prmt['restart']['freq'] = 1 in the init file."
         self.root = seed.root
         self.restart_path = seed.restart_path
+        self.seed = seed
 
     def sort_networks(self,verbose=False,write_pickle=True):
         """
@@ -493,33 +492,34 @@ class Genealogy:
             dictionary. A key is associated to each network
         """
         networks = {}
+        with shelve.open(self.restart_path) as data:            
+            for gen in self.generations:
+                dummy,population = data[str(gen)]
+                
+                for i,net in enumerate(population):
+                    net_id = net.identifier
+                    try:
+                        networks[net_id]
+                    except KeyError:                        
+                        networks[net_id] = dict(
+                            ind = net_id,
+                            gen = gen,
+                            par = net.parent,
+                            fit = net.fitness,
+                            pos = i,
+                        )
+                if verbose and (gen%100==0):
+                    print("Generation\t{}/{} done.".format(gen,self.generations[-1]))
+            
+        if write_pickle:
+            with open(os.path.join(self.path,"networks_info.pkl"),"wb") as pkl_networks:
+                pickle.dump(file=pkl_networks,obj=networks)
+        self.networks = networks
+        return networks
 
-
-
-        # generations = {}
-        # dat = data[str(1)]
-        # max_label_ind = 0
-        #
-        # n_gen = len(data.dict)
-        # if verbose:print("Number of generations:",n_gen)
-        # keys = np.array(data.dict.keys())[np.argsort(np.array(data.dict.keys(),dtype=int))]
-        # networks = {}
-        # if n_gen>100:
-        #     gen_print_step = int(n_gen/100)
-        # else:
-        #     gen_print_step=n_gen
-        # for key in keys:
-        #     if int(key)%gen_print_step==0 and verbose:print("(",int(key),"/",n_gen,")")
-        #     vec_dat = data[str(int(key))]
-        #     for pos,dat in enumerate(vec_dat):
-        #         net_new = dat["net_new"]
-        #         assert net_new.label_ind not in networks
-        #         networks[net_new.label_ind] = dict(ind=net_new.label_ind,gen=int(key),pos=pos,par=net_new.parent)
-        # if verbose:print("Listed networks")
-        # if write_pickle:
-        #     with open("networks_temp.pkl","wb") as pkl_networks:
-        #         pickle.dump(file=pkl_networks,obj=networks)
-
+    def load_sort_networks(self):
+        with open(os.path.join(self.path,"networks_info.pkl"),"wb") as pkl_networks:
+             self.networks = pickle.load(file=pkl_networks)
         return networks
 
 def pareto_plane(fitness_dico,fitnesses):
