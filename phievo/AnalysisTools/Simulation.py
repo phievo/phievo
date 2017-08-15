@@ -44,16 +44,17 @@ class Simulation:
             if self.inits.prmt["pareto"]:
                 self.type = "pareto"
                 nbFunctions = self.inits.prmt["npareto_functions"]
-                self.seeds = {seed:Seed_Pareto(self.root+"Seed%d"%seed,nbFunctions=nbFunctions) for seed in seeds}
+                self.seeds = {seed:Seed_Pareto(os.path.join(self.root,"Seed%d"%seed),nbFunctions=nbFunctions) for seed in seeds}
             else:
                 self.type = "default"
-                self.seeds = {seed:Seed(self.root+"Seed%d"%seed) for seed in seeds}
+                self.seeds = {seed:Seed(os.path.join(self.root,"Seed%d"%seed)) for seed in seeds}
 
         try:
             palette.update_default_colormap(self.inits.prmt["palette"]["colormap"])
         except KeyError:
             pass
         self.buffer_data = None
+
 
 
     def show_fitness(self,seed,smoothen=0,**kwargs):
@@ -235,6 +236,8 @@ class Simulation:
             print("Make sure you have run the function run_dynamics with the correct number of trials.")
             raise
 
+    def get_genealogy(self,seed):
+        return Genealogy(self.seeds[seed])
 
 class Seed:
     """
@@ -470,9 +473,54 @@ class Seed_Pareto(Seed):
         fig = MF.plot_multiGen_front2D(generation_fitness,generation_indexes if with_indexes else None)
         return fig
 
+class Genealogy:
+    def __init__(self,seed):
+        generations = seed.stored_generation_indexes()
+        generations = [1,4]
+        #import pdb;pdb.set_trace()
+        assert generations == list(range(min(generations),max(generations)+1)),"\n\tA Genealogy object cannot be created from a seed where not all the generations were stored.\n\tMake sure prmt['restart']['freq'] = 1 in the init file."
+        self.root = seed.root
+        self.restart_path = seed.restart_path
+
+    def sort_networks(self,verbose=False,write_pickle=True):
+        """
+        Order the networks, by the label_ind in a dictionary.
+
+        Args:
+            verbose: print information during sorting
+            write_pickle: backup the sorting information in a pickle file
+        Return:
+            dictionary. A key is associated to each network
+        """
+        networks = {}
 
 
 
+        # generations = {}
+        # dat = data[str(1)]
+        # max_label_ind = 0
+        #
+        # n_gen = len(data.dict)
+        # if verbose:print("Number of generations:",n_gen)
+        # keys = np.array(data.dict.keys())[np.argsort(np.array(data.dict.keys(),dtype=int))]
+        # networks = {}
+        # if n_gen>100:
+        #     gen_print_step = int(n_gen/100)
+        # else:
+        #     gen_print_step=n_gen
+        # for key in keys:
+        #     if int(key)%gen_print_step==0 and verbose:print("(",int(key),"/",n_gen,")")
+        #     vec_dat = data[str(int(key))]
+        #     for pos,dat in enumerate(vec_dat):
+        #         net_new = dat["net_new"]
+        #         assert net_new.label_ind not in networks
+        #         networks[net_new.label_ind] = dict(ind=net_new.label_ind,gen=int(key),pos=pos,par=net_new.parent)
+        # if verbose:print("Listed networks")
+        # if write_pickle:
+        #     with open("networks_temp.pkl","wb") as pkl_networks:
+        #         pickle.dump(file=pkl_networks,obj=networks)
+
+        return networks
 
 def pareto_plane(fitness_dico,fitnesses):
     """2d plotting subroutine of pareto_scatter"""
