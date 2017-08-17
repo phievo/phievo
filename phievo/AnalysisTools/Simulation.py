@@ -674,10 +674,70 @@ class Genealogy:
             fig_time_course.savefig(fig_name("timecourse",i))        
             del fig_profile,fig_time_course
 
-    def scatter_accross_generations(self,generation):        
+            
+    def scatter_pareto_accross_generations(self,generation):
+        from phievo.AnalysisTools import plotly_graph
+        plotly_graph.py.init_notebook_mode(connected=True)
         generation_identifiers = [net.identifier for net in self.seed.get_backup_pop(generation)]
-        lineages = [self.search_ancestors(self.networks[net_ind]) for net_ind in generation_identifiers]
-        print(generation_identifiers)
+        generation_info = [self.networks[net_ind] for net_ind in generation_identifiers]
+        
+        data_to_plot = []
+        steps = []
+        
+        while True:
+            fit0 = [net_inf["fit"][0] for net_inf in generation_info]
+            fit1 = [net_inf["fit"][1] for net_inf in generation_info]
+            networks_info = ["#{} parent:#{} fitness:{}".format(net_inf["ind"],net_inf["par"],net_inf["fit"].__str__()) for net_inf in generation_info]
+            generation_dict = dict(
+                visible = True,
+                name = "Generation {}".format(generation),
+                mode = "markers",
+                x = fit0,
+                y = fit1,                
+            )
+            
+            data_to_plot.append(generation_dict)
+            steps.append(dict(method="restyle",args=["visible",[False]*(generation+1)]))
+            steps[-1]["args"][1][generation] = True
+            if generation == 0:
+                break
+            for net_pos in range(len(generation_info)):
+                net_inf = generation_info[net_pos]
+                if net_inf["ind"] == generation:
+                    generation_info[net_pos] = self.networks[net_inf["par"]]
+                    assert generation_info[net_pos], "\n\tscatter_pareto_accross_generations found no parent for network #{}(generation {}).".format(net_inf["ind"],generation)
+            generation -= 1
+
+            
+        # sliders = [dict(
+        #     active = 0,
+        #     currentvalue = {"prefix": "Generation: "},
+        #     pad = {"t": 50},
+        #     steps = steps
+        # )]
+            
+        # layout = dict(
+        #     sliders=sliders,
+        # )
+
+        # fig = dict(data=data_to_plot, layout=layout)
+        
+        figure = {'data': [{'x': data_to_plot[0]["x"], 'y': data_to_plot[0]["y"]}],
+          'layout': {'xaxis': {'autorange': True},
+                     'yaxis': {'autorange': True},
+                     'title': 'Start Title',
+                     'updatemenus': [{'type': 'buttons',
+                                      'buttons': [{'label': 'Play',
+                                                   'method': 'animate',
+                                                   'args': [None]}]}]
+                    },
+                  'frames': [{'data': [dat]} for dat in data_to_plot]
+        }
+        
+
+        plotly_graph.py.plot(figure, filename='pareto accross generations')
+        
+        
 def pareto_plane(fitness_dico,fitnesses):
     """2d plotting subroutine of pareto_scatter"""
     ax = plt.gca()#(111, projection='polar')
