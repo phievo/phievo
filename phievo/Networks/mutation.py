@@ -160,7 +160,7 @@ def rand_modify(self,random_generator):
     name=self.__class__.__name__ #take the name of the class
     if not self.mutable: return None #do nothing
 
-    for k in self.__dict__: #take all the attributes of a class
+    for k in sorted(self.__dict__): #take all the attributes of a class in a reproducible way
         entry=name+"."+k  #builds the key to check
         if entry in dictionary_ranges:
             if 'relative_variation' in dictionary_ranges:
