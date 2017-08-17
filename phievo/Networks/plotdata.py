@@ -21,7 +21,7 @@ where P_i_Cell_j is the concentration of protein i in cell j at the time step Ti
 """
 ylimmax = 1.2
 
-def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_output=[], npoints=500):
+def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_output=[], npoints=500,no_popup=False):
     """ Plot the concentrations of all proteins in one cell vs time
 	ncell = which cell [0.,,)
 	size = number of proteins
@@ -74,10 +74,11 @@ def Plot_Data(Name, ncell, size, nstep, list_species=[],list_time=[], list_outpu
     ax.set_xlabel('Time, Cell=' + str(ncell), fontsize=20, fontweight='bold')
     ax.set_ylabel('Concentration', fontsize=20, fontweight='bold')
     ax.legend(legendkey, loc='best')
-    plt.show()
+    if not no_popup:
+        plt.show()
     return fig
 
-def Plot_Profile(Name, ncelltot, size, nline, position='best', list_species=[],list_AP=[], list_output=[]):
+def Plot_Profile(Name, ncelltot, size, nline, position='best', list_species=[],list_AP=[], list_output=[],no_popup=False):
     """ Plot profile of all proteins at time nline, size is the number of variables (proteins) in the cell, ncelltot the total number of cells in the embryo"""
 
     result = numpy.zeros((size, ncelltot),dtype=float)  # creates a table result to store data, results[i,j] will contain the concentration of protein i in cell j at time defined by nline
@@ -128,7 +129,8 @@ def Plot_Profile(Name, ncelltot, size, nline, position='best', list_species=[],l
     #plt.legend(loc=0)
     ax.legend(legendkey)
     #ax.set_yscale('log')
-    plt.show()
+    if not no_popup:
+        plt.show()
     return fig
 
 

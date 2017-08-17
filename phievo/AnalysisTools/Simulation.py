@@ -191,7 +191,7 @@ class Simulation:
 
 
 
-    def Plot_TimeCourse(self,trial_index,cell=0,list_species=[]):
+    def Plot_TimeCourse(self,trial_index,cell=0,list_species=[],no_popup=False):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and the cell and plot the gene time series
@@ -200,6 +200,8 @@ class Simulation:
             trial_index: index of the trial you. Refere to run_dynamics to know how
             many trials there are.
             cell: Index of the cell to plot
+            no_popup: False by default. Option used to forbid matplotlib popup windows
+                     Useful when saving figures to a file.
         Return:
             figure
         """
@@ -208,13 +210,13 @@ class Simulation:
         size = len(net.dict_types['Species'])
 
         try:
-            fig = self.plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep,list_species=list_species)
+            fig = self.plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep,list_species=list_species,no_popup=True)
         except FileNotFoundError:
             print("Make sure you have run the function run_dynamics with the correct number of trials.")
             raise
         return fig
 
-    def Plot_Profile(self,trial_index,time=0):
+    def Plot_Profile(self,trial_index,time=0,no_popup=False):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and plot the gene profile along the cells at
@@ -224,6 +226,8 @@ class Simulation:
             trial_index: index of the trial you. Refere to run_dynamics to know how
             many trials there are.
             time: Index of the time to select
+            no_popup: False by default. Option used to forbid matplotlib popup windows
+                     Useful when saving figures to a file.
         Return:
             figure
         """
@@ -232,7 +236,7 @@ class Simulation:
         size = len(net.dict_types['Species'])
         ncelltot = self.inits.prmt['ncelltot']
         try:
-            fig = self.plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time)
+            fig = self.plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time,no_popup=True)
         except FileNotFoundError:
             print("Make sure you have run the function run_dynamics with the correct number of trials.")
             raise
@@ -559,7 +563,7 @@ class Genealogy:
             fit0 = [net_inf["fit"][0] for net_inf in extra_networks_info]
             fit1 = [net_inf["fit"][1] for net_inf in extra_networks_info]
 
-            trace = plotly_graph.go.Scatter(x=fit0,y=fit1,mode = 'lines+markers',name="Extra networks",
+            trace = plotly_graph.go.Scatter(x=fit0,y=fit1,mode = 'markers',name="Extra networks",
                                             marker= dict(size=1,color= "black",symbol="square"),
                                             hoverinfo="text",
                                             legendgroup = "Extra networks",
@@ -653,31 +657,27 @@ class Genealogy:
             data_to_plot += list(dict_highlighted.values())
         plotly_graph.py.plot(data_to_plot)
         
-    def plot_compare_two_networks(self,sim,net1_ind,net2_ind):
-        net1 = self.get_network_from_identifier(net1_ind)
-        net2 = self.get_network_from_identifier(net2_ind)
+    def plot_compare_multiple_networks(self,sim,indexes,cell=0):
+        """
+        Print a svg figure of the cell profile,time series and the network layout in
+        the seed folder.
+        """
         fig_format = "svg"
-        
-        fig_name = lambda xx : os.path.join(self.root,xx+"."+fig_format)
+        fig_name = lambda xx,ind: os.path.join(self.root,"{}{}.{}".format(xx,ind,fig_format))
+        for i,net_ind in enumerate(indexes):
+            net = self.get_network_from_identifier(net_ind)
+            net.draw(fig_name("net",i))
+            res = sim.run_dynamics(net)
+            fig_profile=sim.Plot_Profile(0,time=2999,no_popup=True)
+            fig_profile.savefig(fig_name("profile",i))
+            fig_time_course=sim.Plot_TimeCourse(0,cell=cell,no_popup=True)
+            fig_time_course.savefig(fig_name("timecourse",i))        
+            del fig_profile,fig_time_course
 
-        net1.draw(fig_name("net1"))
-        res = sim.run_dynamics(net1)
-        fig_profile1=sim.Plot_Profile(0,time=2999)
-        fig_profile1.savefig(fig_name("profile1"))
-        fig_time_course1=sim.Plot_TimeCourse(0,cell=8)
-        fig_time_course1.savefig(fig_name("timecourse1"))
-        
-        del fig_profile1,fig_time_course1
-
-        net2.draw(fig_name("net2"))
-        res = sim.run_dynamics(net2)
-        fig_profile2=sim.Plot_Profile(0,time=2999)
-        fig_profile2.savefig(fig_name("profile2"))
-        fig_time_course2=sim.Plot_TimeCourse(0,cell=8)
-        fig_time_course2.savefig(fig_name("timecourse2"))
-
-        del fig_profile2,fig_time_course2
-
+    def scatter_accross_generations(self,generation):        
+        generation_identifiers = [net.identifier for net in self.seed.get_backup_pop(generation)]
+        lineages = [self.search_ancestors(self.networks[net_ind]) for net_ind in generation_identifiers]
+        print(generation_identifiers)
 def pareto_plane(fitness_dico,fitnesses):
     """2d plotting subroutine of pareto_scatter"""
     ax = plt.gca()#(111, projection='polar')

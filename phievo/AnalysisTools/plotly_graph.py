@@ -54,20 +54,20 @@ def custom_plot(self,X,Y):
     return fig
 setattr(Seed,"custom_plot",custom_plot)
 
-def plot_multiGen_front2D(generation_fitness,generation_indexes=None):
+def plot_multiGen_front2D(generation_fitness,generation_indexes=None,net_identifier=False):
     """
-        Uses the fitness data for multiple generations to represent the pareto fronts
-        of those multiple generations.
-
-        Args:
-            generation_fitness: nested dictionnaries:
-                                level0 keys: generation
-                                level1 keys: rank of the fitness (1,2,etc.)
-                                index : index of the fitness doublet (they might be
-                                        multiple fitnesses with identical rank).
-            generation_indexes: Same dictionnary structure as generation_fitness.
-                                Contains the index of each network in its population
-
+    Uses the fitness data for multiple generations to represent the pareto fronts
+    of those multiple generations.
+    
+    Args:
+        generation_fitness: nested dictionnaries:
+           level0 keys: generation
+           level1 keys: rank of the fitness (1,2,etc.)
+           index : index of the fitness doublet (they might be
+           multiple fitnesses with identical rank).
+        generation_indexes: Same dictionnary structure as generation_fitness.
+           Contains the index of each network in its population
+        net_identifier: If True, use the network identifier for labelling the points
     """
     NUM_COLORS = len(generation_fitness)
     # https://plot.ly/python/reference/
@@ -92,6 +92,12 @@ def plot_multiGen_front2D(generation_fitness,generation_indexes=None):
                 )
             #ax.scatter(F1,F2,c=color,edgecolor=color,s=50,marker=shape)
             if generation_indexes:
+                
+                str_label = Template("Generation: $gen\nnet: $net\nrank: $rank\nfitness: ($F1 , $F2)")
+                ind_list = generation_indexes[gen][rank]
+                label_dict = { l:dict(gen=gen,net=ind_list[l],rank=rank,F1=F1[l],F2=F2[l]) for l in range(len(ind_list))}
+
+                trace["text"]= [str_label.substitute(label_dict[l]) for l in range(len(ind_list))]
                 str_label = Template("Generation: $gen\nnetwork: $net\nrank: $rank\nfitness: ($F1 , $F2)")
                 ind_list = generation_indexes[gen][rank]
                 label_dict = { l:dict(gen=gen,net=ind_list[l],rank=rank,F1=F1[l],F2=F2[l]) for l in range(len(ind_list))}
