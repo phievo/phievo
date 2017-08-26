@@ -564,7 +564,7 @@ class Genealogy:
             fit1 = [net_inf["fit"][1] for net_inf in extra_networks_info]
 
             trace = plotly_graph.go.Scatter(x=fit0,y=fit1,mode = 'markers',name="Extra networks",
-                                            marker= dict(size=1,color= "black",symbol="square"),
+                                            marker= dict(size=9,color= "black",symbol="square"),
                                             hoverinfo="text",
                                             legendgroup = "Extra networks",
                                             text=["net #{}\nmutation:{}".format(net_inf["ind"]," - ".join(net_inf["las"] if net_inf["las"] else [])) for net_inf in extra_networks_info]
@@ -572,7 +572,7 @@ class Genealogy:
             fig.data.append(trace)
             plotly_graph.py.plot(fig)
 
-    def plot_mutation_fitness_deviation(self,only_one_mutation=True):
+    def plot_mutation_fitness_deviation(self,only_one_mutation=True,networks=None,ploted_ratio=1):
         """
         Plot the deviation of fitness in the fitness space caused by a generation's mutation.
         
@@ -582,9 +582,13 @@ class Genealogy:
         """
         from phievo.AnalysisTools import plotly_graph
         dict_data = {}
-        networks = self.networks
+        if networks:
+            if type(networks)==list:
+                networks = {net["ind"]:net  for net in networks}
+        else:
+            networks = self.networks
+            
         for net_ind,net_inf in networks.items():
-
             if net_inf["las"] is None or (only_one_mutation and len(net_inf["las"])!=1):
                 continue
             label = "-".join(net_inf["las"])
@@ -599,17 +603,25 @@ class Genealogy:
 
         plot_list = []
         colors = palette.color_generate(len(dict_data))
+
         for mut_ind,mut_name in enumerate(dict_data.keys()):
             mutation = dict_data[mut_name]
             x_val = [mut["diff"][0] for mut in mutation]
             y_val = [mut["diff"][1] for mut in mutation]
             hover_info = [mut["label"] for mut in mutation]
+            L = len(x_val)
+            if ploted_ratio!=1:
+                selected_indexes = np.random.choice(range(L),int(L*ploted_ratio),replace=False)
+                x_val = np.array(x_val)[selected_indexes]
+                y_val = np.array(y_val)[selected_indexes]
+                hover_info = np.array(hover_info)[selected_indexes]
             trace = plotly_graph.go.Scatter(x = x_val,y=y_val,mode = 'markers',name=mutation,
-                               marker= dict(size=14,color=colors[mut_ind]),
-                               hoverinfo="text",
-                               text=hover_info,
+                                            marker= dict(size=14,color=colors[mut_ind]),
+                                            hoverinfo="text",
+                                            text=hover_info,
             )
             plot_list.append(trace)
+            
         plotly_graph.py.plot(plot_list)
 
     def get_network_from_identifier(self,net_ind):
@@ -662,20 +674,37 @@ class Genealogy:
         Print a svg figure of the cell profile,time series and the network layout in
         the seed folder.
         """
+        
         fig_format = "svg"
+        for filename in glob.glob(os.path.join(self.root,"*svg")):
+            os.remove(filename)
         fig_name = lambda xx,ind: os.path.join(self.root,"{}{}.{}".format(xx,ind,fig_format))
         for i,net_ind in enumerate(indexes):
             net = self.get_network_from_identifier(net_ind)
-            net.draw(fig_name("net",i))
+            net.draw(fig_name("net",net.identifier))
             res = sim.run_dynamics(net)
             fig_profile=sim.Plot_Profile(0,time=2999,no_popup=True)
-            fig_profile.savefig(fig_name("profile",i))
+            fig_profile.savefig(fig_name("profile",net.identifier))
             fig_time_course=sim.Plot_TimeCourse(0,cell=cell,no_popup=True)
-            fig_time_course.savefig(fig_name("timecourse",i))        
+            fig_time_course.savefig(fig_name("timecourse",net.identifier))        
             del fig_profile,fig_time_course
 
-            
-    def scatter_pareto_accross_generations(self,generation):
+    def compare_ss_wrt_parent(self,sim,child,parent):
+        from phievo.AnalysisTools import plotly_graph
+        child =  self.get_network_from_identifier(child)
+        parent = self.get_network_from_identifier(parent)
+        res = sim.run_dynamics(child)
+        child_profile = sim.Plot_Profile(0,time=2999,no_popup=True)
+        res = sim.run_dynamics(parent)
+        parent_profile = sim.Plot_Profile(0,time=2999,no_popup=True)
+        for dat_par,dat_chi in zip(child_profile["data"],parent_profile["data"]):
+            chi_y = np.array(dat_chi["y"])
+            par_y = np.array(dat_par["y"])
+            relative_y =  np.array(chi_y - par_y)/np.where(par_y==np.array(0),1,par_y)
+            dat_chi["y"] = relative_y
+        plotly_graph.py.plot(parent_profile)
+        
+    def scatter_pareto_accross_generations(self,generation,front_to_plot,xrange,yrange,step=1):
         from phievo.AnalysisTools import plotly_graph
         plotly_graph.py.init_notebook_mode(connected=True)
         generation_identifiers = [net.identifier for net in self.seed.get_backup_pop(generation)]
@@ -683,60 +712,115 @@ class Genealogy:
         
         data_to_plot = []
         steps = []
-        
+        full_scatter =dict(
+            name = generation,
+            mode = "markers",
+            x = [],
+            y = [],
+            marker = dict(color="black",size=2),
+        )
+        for gen in front_to_plot:
+            generation_identifiers = [net.identifier for net in self.seed.get_backup_pop(gen)]
+            networks = [self.networks[net_ind] for net_ind in generation_identifiers]
+            fit0 = [net["fit"][0] for net in networks]
+            fit1 = [net["fit"][1] for net in networks]
+            full_scatter["x"]+=fit0
+            full_scatter["y"]+=fit1
+            
         while True:
+            for net_pos in range(len(generation_info)):
+                net_inf = generation_info[net_pos]
+                
+                while net_inf["gen"] > generation:
+                    generation_info[net_pos] = self.networks[net_inf["par"]]
+                    assert generation_info[net_pos]["ind"] == net_inf["par"]                    
+                    assert generation_info[net_pos], "\n\tscatter_pareto_accross_generations found no parent for network #{}(generation {}).".format(net_inf["ind"],generation)
+                    net_inf = self.networks[net_inf["par"]]
+                    
             fit0 = [net_inf["fit"][0] for net_inf in generation_info]
             fit1 = [net_inf["fit"][1] for net_inf in generation_info]
             networks_info = ["#{} parent:#{} fitness:{}".format(net_inf["ind"],net_inf["par"],net_inf["fit"].__str__()) for net_inf in generation_info]
-            generation_dict = dict(
-                visible = True,
-                name = "Generation {}".format(generation),
+            generation_dict =dict(
+                name = generation,
                 mode = "markers",
                 x = fit0,
-                y = fit1,                
+                y = fit1,
+                text=networks_info
             )
-            
+
+            slider_step = {'args': [
+                [generation],
+                {'frame': {'duration': 300, 'redraw': False},
+                 'mode': 'immediate',
+                 'transition': {'duration': 300}}
+            ],
+                           'label': generation,
+                           'method': 'animate'}
             data_to_plot.append(generation_dict)
-            steps.append(dict(method="restyle",args=["visible",[False]*(generation+1)]))
-            steps[-1]["args"][1][generation] = True
-            if generation == 0:
+            steps.append(slider_step)
+            
+            
+            generation -= step
+            if generation < 0:
                 break
-            for net_pos in range(len(generation_info)):
-                net_inf = generation_info[net_pos]
-                if net_inf["ind"] == generation:
-                    generation_info[net_pos] = self.networks[net_inf["par"]]
-                    assert generation_info[net_pos], "\n\tscatter_pareto_accross_generations found no parent for network #{}(generation {}).".format(net_inf["ind"],generation)
-            generation -= 1
-
-            
-        # sliders = [dict(
-        #     active = 0,
-        #     currentvalue = {"prefix": "Generation: "},
-        #     pad = {"t": 50},
-        #     steps = steps
-        # )]
-            
-        # layout = dict(
-        #     sliders=sliders,
-        # )
-
-        # fig = dict(data=data_to_plot, layout=layout)
-        
-        figure = {'data': [{'x': data_to_plot[0]["x"], 'y': data_to_plot[0]["y"]}],
-          'layout': {'xaxis': {'autorange': True},
-                     'yaxis': {'autorange': True},
-                     'title': 'Start Title',
-                     'updatemenus': [{'type': 'buttons',
-                                      'buttons': [{'label': 'Play',
-                                                   'method': 'animate',
-                                                   'args': [None]}]}]
+        figure = {
+            'data': [full_scatter,data_to_plot[0]],
+            'layout': {
+                'xaxis' : {'range': xrange, 'title': 'Fitness 1'},
+                'yaxis' : {'range': yrange, 'title': 'Fitness 2'},
+                'hovermode':'closest',
+                'updatemenus':[
+                    {
+                        'buttons': [
+                            {
+                                'args': [None, {'frame': {'duration': 500, 'redraw': False},
+                                                'fromcurrent': True, 'transition': {'duration': 300, 'easing': 'quadratic-in-out'}}],
+                                'label': 'Play',
+                                'method': 'animate'
+                            },
+                            {
+                                'args': [[None], {'frame': {'duration': 0, 'redraw': False}, 'mode': 'immediate',
+                                                  'transition': {'duration': 0}}],
+                                'label': 'Pause',
+                                'method': 'animate'
+                            }
+                        ],
+                        'direction': 'left',
+                        'pad': {'r': 10, 't': 87},
+                        'showactive': False,
+                        'type': 'buttons',
+                        'x': 0.1,
+                        'xanchor': 'right',
+                        'y': 0,
+                        'yanchor': 'top'
+                    } 
+                ],
+                'sliders':[{
+                    'active': 0,
+                    'yanchor': 'top',
+                    'xanchor': 'left',
+                    'currentvalue': {
+                        'font': {'size': 20},
+                        'prefix': 'Generation:',
+                        'visible': True,
+                        'xanchor': 'right'
                     },
-                  'frames': [{'data': [dat]} for dat in data_to_plot]
+                    'transition': {'duration': 300, 'easing': 'cubic-in-out'},
+                    'pad': {'b': 10, 't': 50},
+                    'len': 0.9,
+                    'x': 0.1,
+                    'y': 0,
+                    'steps': steps[::-1],
+                }]
+            },
+            'frames': [{"data":[full_scatter,dat],"name":dat["name"]}
+                for dat in data_to_plot[::-1]
+            ],
         }
         
-
-        plotly_graph.py.plot(figure, filename='pareto accross generations')
         
+        plotly_graph.py.plot(figure, filename='pareto_accross_generations.html')
+        return figure
         
 def pareto_plane(fitness_dico,fitnesses):
     """2d plotting subroutine of pareto_scatter"""

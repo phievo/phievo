@@ -122,7 +122,7 @@ def plot_multiGen_front2D(generation_fitness,generation_indexes=None,net_identif
 setattr(MF,"plot_multiGen_front2D",plot_multiGen_front2D)
 
 
-def Plot_Profile(self,trial_index,time=0):
+def Plot_Profile(self,trial_index,time=0,no_popup=False):
     """
     Searches in the data last stored in the Simulation buffer for the cell profile
     corresponding to the time point "time" and plot the profile.
@@ -166,11 +166,12 @@ def Plot_Profile(self,trial_index,time=0):
         hovermode='closest',
         )
     fig = go.Figure(data=data, layout=layout)
-    plotfunc(fig)
+    if not no_popup:
+        plotfunc(fig)
     return fig
 setattr(Simulation,"Plot_Profile",Plot_Profile)
 
-def Plot_TimeCourse(self,trial_index,cell=0):
+def Plot_TimeCourse(self,trial_index,cell=0,no_popup=False):
     """
     Searches in the data last stored in the Simulation buffer for the time course
     corresponding to the trial_index and the cell and plot the gene time series
@@ -212,6 +213,8 @@ def Plot_TimeCourse(self,trial_index,cell=0):
         hovermode='closest',
         )
     fig = go.Figure(data=data, layout=layout)
-    plotfunc(fig)
+    
+    if not no_popup:
+        plotfunc(fig)
     return fig
 setattr(Simulation,"Plot_TimeCourse",Plot_TimeCourse)
