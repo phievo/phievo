@@ -5,9 +5,6 @@ import re
 from phievo.AnalysisTools import main_functions as MF
 from phievo.AnalysisTools  import palette
 import matplotlib.pyplot as plt
-from matplotlib import pylab,colors
-import matplotlib.patches as mpatches
-from  matplotlib.lines import Line2D
 import numpy as np
 import importlib.util
 from phievo.Networks import mutation,classes_eds2
@@ -199,6 +196,7 @@ class Simulation:
             trial_index: index of the trial you. Refere to run_dynamics to know how
             many trials there are.
             cell: Index of the cell to plot
+            list_species:
         Return:
             figure
         """
@@ -207,10 +205,11 @@ class Simulation:
         size = len(net.dict_types['Species'])
 
         try:
-            self.plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep,list_species=list_species)
+            fig = self.plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep,list_species=list_species)
         except FileNotFoundError:
             print("Make sure you have run the function run_dynamics with the correct number of trials.")
             raise
+        return fig
 
     def Plot_Profile(self,trial_index,time=0):
         """
@@ -230,10 +229,12 @@ class Simulation:
         size = len(net.dict_types['Species'])
         ncelltot = self.inits.prmt['ncelltot']
         try:
-            self.plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time)
+            fig=self.plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time,list_output=self.buffer_data["outputs"])
         except FileNotFoundError:
             print("Make sure you have run the function run_dynamics with the correct number of trials.")
             raise
+        return fig
+
 
 
 class Seed:
@@ -299,8 +300,7 @@ class Seed:
         Y_val = {y:self.observables[y]() for y in Y}
 
         NUM_COLORS = len(Y)
-        cm = pylab.get_cmap('gist_rainbow')
-        color_l= {Y[i]:colors.rgb2hex(cm(1.*i/NUM_COLORS)) for i in range(NUM_COLORS)}
+        color_l= {Y[i]:col for i,col in enumerate(palette.color_generate(NUM_COLORS))}
         fig = plt.figure()
         ax = fig.gca()
         for label,y_val in Y_val.items():
