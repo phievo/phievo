@@ -84,7 +84,7 @@ def new_Degradation(self,Input1, Input2, rate):
         or None if an error occured
     """
     p=Degradation(rate)
-    if p.check_grammar([Input1,Input2], [Input1]):
+    if p.check_grammar([Input1], [Input2]):
         self.add_Node(p)
         self.graph.add_edge(Input1,p)
         self.graph.add_edge(p,Input2)
