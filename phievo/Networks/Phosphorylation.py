@@ -54,6 +54,23 @@ class Phosphorylation(classes_eds2.Interaction):
         listIn = net.graph.predecessors(self)
         listOut = net.graph.successors(self)
         return [out for out in listOut if out not in listIn] #to avoid the kinase
+    
+    def check_grammar(self,input_list,output_list):
+        """checks the grammar for the interactions (custom for Phosphorylation)
+
+        Args:
+            input_list (list): nodes to be checked
+            output_list (list): nodes to be checked
+
+        Return:
+            Boolean for the consistency of up and downstream grammar
+        """
+        if len(input_list) == 1: #auto-phosphorylation
+            input_check = classes_eds2.check_consistency(['Kinase'],input_list) and classes_eds2.check_consistency(['Phosphorylable'],input_list)
+            output_check = classes_eds2.check_consistency(self.output,output_list)
+            return input_check and output_check
+        else:
+            return classes_eds2.Interaction.check_grammar(self,input_list,output_list)
 
 ########## Attributes attached to Network for Phosphorylations/Dephosphorylations ##########
 

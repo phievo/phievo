@@ -55,10 +55,12 @@ class PPI(classes_eds2.Interaction):
         Return:
             Boolean for the consistency of up and downstream grammar
         """
-        if len(input_list)>2: return False
-        for sp in input_list:
-            if not sp.isinstance('Complexable'): return False
-        return classes_eds2.check_consistency(self.output,output_list)
+        if len(input_list) == 1: #auto-phosphorylation
+            input_check = classes_eds2.check_consistency(['Complexable'],input_list)
+            output_check = classes_eds2.check_consistency(self.output,output_list)
+            return input_check and output_check
+        else:
+            return classes_eds2.Interaction.check_grammar(self,input_list,output_list)
 
 ########## Attributes attached to Network for PPI ##########
 
