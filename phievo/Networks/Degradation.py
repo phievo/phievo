@@ -37,8 +37,8 @@ class Degradation(classes_eds2.Interaction):
         classes_eds2.Node.__init__(self)
         self.rate=rate
         self.label='Degradation'
-        self.input=['Species','Degradable']
-        self.output=['Species']
+        self.input=['Species']
+        self.output=['Degradable']
 
     def __str__(self):
         return "{0.id} Degradation: rate = {0.rate:.2f}".format(self)

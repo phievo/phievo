@@ -773,7 +773,7 @@ class Network(object):
         """
         for node in self.graph.nodes():
             if node.int_id() == id:
-                bRemove = self.remove_Node(node,verbose)
+                bRemove = self.remove_Node(node)
                 if not bRemove:
                     if verbose: print('Error while removing the node')
                     return False
