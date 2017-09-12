@@ -547,7 +547,7 @@ class Genealogy:
         return ancestors
     
     
-    def plot_front_genealogy(self,generations,extra_networks_info=[]):
+    def plot_front_genealogy(self,generations,extra_networks_info=[],filename=""):
         """
         Uses the seed plot_pareto_fronts function to display the pareto fronts.
         In addition, the function allows to plots extra networks in the fitness plan
@@ -570,7 +570,10 @@ class Genealogy:
                                             text=["net #{}\nmutation:{}".format(net_inf["ind"]," - ".join(net_inf["las"] if net_inf["las"] else [])) for net_inf in extra_networks_info]
             )
             fig.data.append(trace)
-            plotly_graph.py.plot(fig)
+            if filename:
+                plotly_graph.py.plot(fig,filename=filename)
+            else:
+                plotly_graph.py.plot(fig)
 
     def plot_mutation_fitness_deviation(self,only_one_mutation=True,networks=None,ploted_ratio=1):
         """
