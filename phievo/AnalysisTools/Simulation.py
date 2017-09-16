@@ -449,7 +449,48 @@ class Seed_Pareto(Seed):
             print('Error, too many fitnesses to plot them all')
         return fitness_dico
 
-    def plot_pareto_fronts(self,generations,with_indexes = False):
+    def pareto_generate_fit_dict(self,generations,max_rank=1):
+        ## Load fitness data for the selected generations and format them to be
+        ## understandable by plot_multiGen_front2D
+        data = MF.load_generation_data(generations,self.root+"Restart_file")
+        
+        fitnesses = {gen:
+                     [
+                         [net.fitness
+                          for ind,net in enumerate(networks) if net.prank==rank+1]
+                      for rank in range(min(max_rank,3))]                      
+                     for gen,networks in data.items()}
+        net_info  = {gen:
+                     [
+                         [dict(gen=gen,net=ind,rank=net.prank,F1=net.fitness[0],F2=net.fitness[1],ind=net.identifier)
+                          for ind,net in enumerate(networks) if net.prank==rank+1]
+                      for rank in range(min(max_rank,3))]                      
+                     for gen,networks in data.items()}
+        return net_info,fitnesses
+    
+    def plot_pareto_fronts(self,generations,max_rank=1,with_indexes=False,legend=False,xlim=[],ylim=[],colors=[],xlabel="F_1",ylabel="F_2",s=50,no_popup=False):
+        
+        net_info,fitnesses = self.pareto_generate_fit_dict(generations,max_rank)
+        if not colors:colors = {gen:col for gen,col in zip(fitnesses.keys(),palette.color_generate(len(fitnesses)))}
+        shapes = ["o","s","^"]
+        
+        fig = plt.figure()
+        ax = fig.gca()
+        for gen,ranks in sorted(fitnesses.items(), key=lambda x:x[1]):
+            for ind,rank in enumerate(ranks):
+                if not rank: continue
+                F1,F2 = zip(*rank)
+                ax.scatter(F1,F2,s=s,color=colors[gen],marker=shapes[ind])
+                
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        if xlim:ax.set_xlim(xlim)
+        if ylim:ax.set_ylim(ylim)
+        if not no_popup: plt.show()
+        return fig
+        
+        
+    def plot_pareto_fronts_bak(self,generations,with_indexes = False):
         """
             Plots the pareto fronts for a selected list of generations.
             Args:
