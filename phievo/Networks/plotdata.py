@@ -175,7 +175,7 @@ def Plot_pMHC(Name, ncelltot, size, ntau, position='best', list_species=[],list_
         ax.set_yscale('log')
         plt.ylim([0.01,100000])
         for i in range(size):
-            style = '--'
+            style = '-'
             #print i
             if i in list_output:
                 style = '-'
