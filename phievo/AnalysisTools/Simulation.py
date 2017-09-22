@@ -216,7 +216,7 @@ class Simulation:
             raise
         return fig
 
-    def Plot_Profile(self,trial_index,time=0,no_popup=False):
+    def Plot_Profile(self,trial_index,time=0,no_popup=False,legend=True):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and plot the gene profile along the cells at
@@ -231,17 +231,39 @@ class Simulation:
         Return:
             figure
         """
-        net = self.buffer_data["net"]
-        nstep = self.inits.prmt['nstep']
-        size = len(net.dict_types['Species'])
-        ncelltot = self.inits.prmt['ncelltot']
-        try:
-            fig = self.plotdata.Plot_Profile(self.root+"Buffer%d"%trial_index, ncelltot,size,time,no_popup=True)
-        except FileNotFoundError:
-            print("Make sure you have run the function run_dynamics with the correct number of trials.")
-            raise
+        data = self.load_Profile_data(trial_index,time)
+        fig = plt.figure()
+        ax = fig.gca()
+        
+        for gene in range(data.shape[1]):
+            ls = "--"
+            label = "Species {}"
+            if gene in self.buffer_data["outputs"]:
+                ls = "-"
+                label = "Output {}"
+            if gene in self.buffer_data["inputs"]:
+                ls = "-"
+                label = "Input {}"
+            ax.plot(data[:,gene],ls=ls,label=label.format(gene))
+        ax.set_xlabel("Cell index")
+        ax.set_ylabel("Concentration")
+        if legend:ax.legend()
         return fig
     
+    def load_Profile_data(self,trial_index,time):
+        """
+        Loads the data from the simulation and generate ready to plot data.
+
+        Args:
+            trial_index: index of the trial you. Refere to run_dynamics to know how
+            many trials there are.
+            time: Index of the time to select
+        """
+        data = []
+        for key,dynamics in sorted(self.buffer_data[trial_index].items()):
+            data.append(dynamics[time,:])
+        return np.array(data)
+        
     def get_genealogy(self,seed):
         return Genealogy(self.seeds[seed])
 
