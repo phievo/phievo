@@ -189,9 +189,25 @@ class Simulation:
         """
         self.buffer_data = None
 
-
-
-    def Plot_TimeCourse(self,trial_index,cell=0,list_species=[],no_popup=False):
+    def PlotData(self,data,xlabel,ylabel,no_popup=False,legend=True,lw=1):
+        fig = plt.figure()
+        ax = fig.gca()
+        for gene in range(data.shape[1]):
+            ls = "--"
+            label = "Species {}"
+            if gene in self.buffer_data["outputs"]:
+                ls = "-"
+                label = "Output {}"
+            if gene in self.buffer_data["inputs"]:
+                ls = "-"
+                label = "Input {}"
+            ax.plot(data[:,gene],ls=ls,label=label.format(gene),lw=lw)
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+        if legend:ax.legend()
+        return fig
+    
+    def Plot_TimeCourse(self,trial_index,cell=0,no_popup=False,legend=True,lw=1):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and the cell and plot the gene time series
@@ -205,18 +221,11 @@ class Simulation:
         Return:
             figure
         """
-        net = self.buffer_data["net"]
-        nstep = self.inits.prmt['nstep']
-        size = len(net.dict_types['Species'])
-
-        try:
-            fig = self.plotdata.Plot_Data(self.root+"Buffer%d"%trial_index,cell, size, nstep,list_species=list_species,no_popup=True)
-        except FileNotFoundError:
-            print("Make sure you have run the function run_dynamics with the correct number of trials.")
-            raise
+        data = self.buffer_data[trial_index][cell]
+        fig = self.PlotData(data,"Time","Concentration",no_popup=no_popup,legend=legend,lw=lw)
         return fig
 
-    def Plot_Profile(self,trial_index,time=0,no_popup=False,legend=True):
+    def Plot_Profile(self,trial_index,time=0,no_popup=False,legend=True,lw=1):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and plot the gene profile along the cells at
@@ -231,25 +240,13 @@ class Simulation:
         Return:
             figure
         """
-        data = self.load_Profile_data(trial_index,time)
-        fig = plt.figure()
-        ax = fig.gca()
-        
-        for gene in range(data.shape[1]):
-            ls = "--"
-            label = "Species {}"
-            if gene in self.buffer_data["outputs"]:
-                ls = "-"
-                label = "Output {}"
-            if gene in self.buffer_data["inputs"]:
-                ls = "-"
-                label = "Input {}"
-            ax.plot(data[:,gene],ls=ls,label=label.format(gene))
-        ax.set_xlabel("Cell index")
-        ax.set_ylabel("Concentration")
-        if legend:ax.legend()
+        data = []
+        for key,dynamics in sorted(self.buffer_data[trial_index].items()):
+            data.append(dynamics[time,:])
+        data = np.array(data)
+        fig = self.PlotData(data,"Cell index","Concentration",no_popup=no_popup,legend=legend,lw=lw)
         return fig
-    
+        
     def load_Profile_data(self,trial_index,time):
         """
         Loads the data from the simulation and generate ready to plot data.
