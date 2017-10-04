@@ -5,7 +5,7 @@ import re
 from phievo.AnalysisTools import main_functions as MF
 from phievo.AnalysisTools  import palette
 import matplotlib.pyplot as plt
-from matplotlib import pylab,colors
+import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches
 from  matplotlib.lines import Line2D
 import numpy as np
@@ -38,16 +38,18 @@ class Simulation:
         self.deriv2 = initialization_code.init_networks(self.inits)
         self.plotdata = initialization_code.import_module(self.inits.pfile['plotdata'])
         if mode in ["default"]:
-            searchSeed  = re.compile("\d+$") ## integer ## at the end of the string "project_root/Seed##"
-            seeds = [int(searchSeed.search(seed).group(0)) for seed in glob.glob(os.path.join(self.root,"Seed*"))]
+            searchSeed  = re.compile("Seed(.+)$") ## integer ## at the end of the string "project_root/Seed##"
+            seeds = [searchSeed.search(seed).group(1)  for seed in glob.glob(os.path.join(self.root,"Seed*"))]
+
             seeds.sort()
+            seeds = [int(ss) for ss in seeds if ss.isdigit()] + [ss for ss in seeds if not ss.isdigit()]          
             if self.inits.prmt["pareto"]:
                 self.type = "pareto"
                 nbFunctions = self.inits.prmt["npareto_functions"]
-                self.seeds = {seed:Seed_Pareto(os.path.join(self.root,"Seed%d"%seed),nbFunctions=nbFunctions) for seed in seeds}
+                self.seeds = {seed:Seed_Pareto(os.path.join(self.root,"Seed{}".format(seed)),nbFunctions=nbFunctions) for seed in seeds}
             else:
                 self.type = "default"
-                self.seeds = {seed:Seed(os.path.join(self.root,"Seed%d"%seed)) for seed in seeds}
+                self.seeds = {seed:Seed(os.path.join(self.root,"Seed{}".format(seed))) for seed in seeds}
 
         try:
             palette.update_default_colormap(self.inits.prmt["palette"]["colormap"])
@@ -189,10 +191,14 @@ class Simulation:
         """
         self.buffer_data = None
 
-    def PlotData(self,data,xlabel,ylabel,no_popup=False,legend=True,lw=1):
+    def PlotData(self,data,xlabel,ylabel,select_networks=[],no_popup=False,legend=True,lw=1,ax=None):
         fig = plt.figure()
-        ax = fig.gca()
-        for gene in range(data.shape[1]):
+        if not ax:ax = fig.gca()
+        Ngene = data.shape[1]
+        colors = palette.color_generate(Ngene)
+        for gene in range(Ngene):
+            if select_networks!=[] and gene not in select_networks:
+                continue
             ls = "--"
             label = "Species {}"
             if gene in self.buffer_data["outputs"]:
@@ -201,13 +207,13 @@ class Simulation:
             if gene in self.buffer_data["inputs"]:
                 ls = "-"
                 label = "Input {}"
-            ax.plot(data[:,gene],ls=ls,label=label.format(gene),lw=lw)
+            ax.plot(data[:,gene],ls=ls,label=label.format(gene),lw=lw,color=colors[gene])
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
         if legend:ax.legend()
         return fig
     
-    def Plot_TimeCourse(self,trial_index,cell=0,no_popup=False,legend=True,lw=1):
+    def Plot_TimeCourse(self,trial_index,cell=0,select_networks=[],no_popup=False,legend=True,lw=1,ax=None):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and the cell and plot the gene time series
@@ -222,10 +228,10 @@ class Simulation:
             figure
         """
         data = self.buffer_data[trial_index][cell]
-        fig = self.PlotData(data,"Time","Concentration",no_popup=no_popup,legend=legend,lw=lw)
+        fig = self.PlotData(data,"Time","Concentration",select_networks=select_networks,no_popup=no_popup,legend=legend,lw=lw,ax=ax)
         return fig
 
-    def Plot_Profile(self,trial_index,time=0,no_popup=False,legend=True,lw=1):
+    def Plot_Profile(self,trial_index,time=0,no_popup=False,legend=True,lw=1,ax=None):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and plot the gene profile along the cells at
@@ -244,7 +250,7 @@ class Simulation:
         for key,dynamics in sorted(self.buffer_data[trial_index].items()):
             data.append(dynamics[time,:])
         data = np.array(data)
-        fig = self.PlotData(data,"Cell index","Concentration",no_popup=no_popup,legend=legend,lw=lw)
+        fig = self.PlotData(data,"Cell index","Concentration",no_popup=no_popup,legend=legend,lw=lw,ax=ax)
         return fig
         
     def load_Profile_data(self,trial_index,time):
@@ -284,7 +290,6 @@ class Seed:
         species = data['n_species']
         fitness = data['fitness']
 
-
         self.generations = {
             i:{
                 "n_interactions" : interac[i],
@@ -293,6 +298,7 @@ class Seed:
                 }
             for i in indexes}
         self.indexes = indexes
+        
         self.observables = {
             "generation":lambda:list(self.indexes),
             "n_interactions":lambda:[gen["n_interactions"] for i,gen in self.generations.items()],
@@ -327,8 +333,7 @@ class Seed:
         Y_val = {y:self.observables[y]() for y in Y}
 
         NUM_COLORS = len(Y)
-        cm = pylab.get_cmap('gist_rainbow')
-        color_l= {Y[i]:colors.rgb2hex(cm(1.*i/NUM_COLORS)) for i in range(NUM_COLORS)}
+        color_l= {Y[i]:col for i,col in zip(range(NUM_COLORS),palette.color_generate(NUM_COLORS))}
         fig = plt.figure()
         ax = fig.gca()
         for label,y_val in Y_val.items():
@@ -471,8 +476,7 @@ class Seed_Pareto(Seed):
     def pareto_generate_fit_dict(self,generations,max_rank=1):
         ## Load fitness data for the selected generations and format them to be
         ## understandable by plot_multiGen_front2D
-        data = MF.load_generation_data(generations,self.root+"Restart_file")
-        
+        data = MF.load_generation_data(generations,self.root+"Restart_file")        
         fitnesses = {gen:
                      [
                          [net.fitness
@@ -487,20 +491,20 @@ class Seed_Pareto(Seed):
                      for gen,networks in data.items()}
         return net_info,fitnesses
     
-    def plot_pareto_fronts(self,generations,max_rank=1,with_indexes=False,legend=False,xlim=[],ylim=[],colors=[],xlabel="F_1",ylabel="F_2",s=50,no_popup=False):
-        
+    def plot_pareto_fronts(self,generations,max_rank=1,with_indexes=False,legend=False,xlim=[],ylim=[],colors=[],gradient=[],xlabel="F_1",ylabel="F_2",s=50,no_popup=False):
         net_info,fitnesses = self.pareto_generate_fit_dict(generations,max_rank)
-        if not colors:colors = {gen:col for gen,col in zip(fitnesses.keys(),palette.color_generate(len(fitnesses)))}
+        if not colors and not gradient:colors = {gen:col for gen,col in zip(fitnesses.keys(),palette.color_generate(len(fitnesses)))}
+        if gradient:
+            colors = {gen:col for gen,col in zip(generations,palette.generate_gradient(generations,gradient))}
+            
         shapes = ["o","s","^"]
-        
         fig = plt.figure()
         ax = fig.gca()
         for gen,ranks in sorted(fitnesses.items(), key=lambda x:x[1]):
             for ind,rank in enumerate(ranks):
                 if not rank: continue
                 F1,F2 = zip(*rank)
-                ax.scatter(F1,F2,s=s,color=colors[gen],marker=shapes[ind])
-                
+                ax.scatter(F1,F2,s=s,color=colors[gen],marker=shapes[ind])                
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
         if xlim:ax.set_xlim(xlim)
