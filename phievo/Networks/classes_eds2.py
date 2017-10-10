@@ -656,7 +656,7 @@ class Network(object):
                 self.dict_types.setdefault(name,[]).append(node)
         for key in self.dict_types:
             self.dict_types[key].sort(key=compare_node)
-
+                
     def __write_id__(self):
         """Write the ids for the network
 
