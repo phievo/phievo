@@ -914,3 +914,5 @@ def pareto_space(fitness_dico,fitnesses):
         func("fitness_{}".format(index))
     plt.legend(loc=0)
     plt.show()
+
+## TEST
