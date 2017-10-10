@@ -231,9 +231,7 @@ class Simulation:
             figure
         """
         data = self.buffer_data[trial_index][cell]
-        fig = self.PlotData(data,"Time","Concentration",select_networks=select_networks,no_popup=no_popup,legend=legend,lw=lw,ax=ax)
-
-        
+        fig = self.PlotData(data,"Time","Concentration",select_networks=select_networks,no_popup=no_popup,legend=legend,lw=lw,ax=ax)        
         return fig
 
     def Plot_Profile(self,trial_index,time=0,no_popup=False,legend=True,lw=1,ax=None):
