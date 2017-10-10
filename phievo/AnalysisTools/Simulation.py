@@ -192,6 +192,9 @@ class Simulation:
         self.buffer_data = None
 
     def PlotData(self,data,xlabel,ylabel,select_networks=[],no_popup=False,legend=True,lw=1,ax=None):
+        """
+        Function in charge of the call to matplotlib for both Plot_TimeCourse and Plot_Profile.
+        """
         fig = plt.figure()
         if not ax:ax = fig.gca()
         Ngene = data.shape[1]
