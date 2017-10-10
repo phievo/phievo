@@ -232,6 +232,8 @@ class Simulation:
         """
         data = self.buffer_data[trial_index][cell]
         fig = self.PlotData(data,"Time","Concentration",select_networks=select_networks,no_popup=no_popup,legend=legend,lw=lw,ax=ax)
+
+        
         return fig
 
     def Plot_Profile(self,trial_index,time=0,no_popup=False,legend=True,lw=1,ax=None):
@@ -259,7 +261,6 @@ class Simulation:
     def load_Profile_data(self,trial_index,time):
         """
         Loads the data from the simulation and generate ready to plot data.
-
         Args:
             trial_index: index of the trial you. Refere to run_dynamics to know how
             many trials there are.

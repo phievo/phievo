@@ -1,3 +1,0 @@
- - Test initialize_identifier(both new simu and restart)
- - Test increment_identifier in evolution
- - Check with Mathieu l339 classes_eds2.py

@@ -160,7 +160,7 @@ def rand_modify(self,random_generator):
     name=self.__class__.__name__ #take the name of the class
     if not self.mutable: return None #do nothing
 
-    for k in self.__dict__: #take all the attributes of a class
+    for k in sorted(self.__dict__): #take all the attributes of a class in a reproducible way
         entry=name+"."+k  #builds the key to check
         if entry in dictionary_ranges:
             if 'relative_variation' in dictionary_ranges:
@@ -357,8 +357,6 @@ class Mutable_Network(classes_eds2.Network):
         if possible_duplicate:
             species= self.Random.choice(possible_duplicate)
             [D_module,D_promoter,D_species] = self.duplicate_species_and_interactions(species)
-            if species.isinstance('Output'):
-                D_species.add_type(['Output',len(self.dict_types['Output'])])
             self.write_id()
             return True
         else:

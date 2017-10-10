@@ -1,7 +1,10 @@
 import numpy as np
 import shelve
 import pickle
-
+from phievo.AnalysisTools import palette
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+from  matplotlib.lines import Line2D
 def read_network(filename,verbose=False):
     """Retrieve a whole network from a pickle object named filename
 
@@ -75,8 +78,7 @@ def plot_multiGen_front2D(generation_fitness,generation_indexes=None):
     """
     NUM_COLORS = len(generation_fitness)
     shapes = ["o","s","^"]
-    cm = pylab.get_cmap('gist_rainbow')
-    color_l= [colors.rgb2hex(cm(1.*i/NUM_COLORS)) for i in range(NUM_COLORS)]
+    color_l = palette.color_generate(NUM_COLORS)
     legend_patches = []
     #plt.legend(handles=[red_patch])
     i = 0

@@ -459,7 +459,7 @@ class Network(object):
         self.hash_topology = 0
         self.title = ""
         self.Cseed=0
-        self.remove_output_when_duplicate=False
+        self.remove_output_when_duplicate=True
         self.activator_required=False
         self.fixed_activity_for_TF= True
 
@@ -621,11 +621,6 @@ class Network(object):
         """
         #one first starts to duplicate the gene
         [D_module,D_promoter,D_species,module] = self.duplicate_gene(species)
-        if D_species.isinstance('Output') and self.remove_output_when_duplicate:
-            D_species.clean_type('Output') #clean output tag
-        if D_species.isinstance('Input'):
-            D_species.clean_type('Input') #clean input tag
-
         ###duplicate the DOWNSTREAM interactions#####
         self.duplicate_downstream_interactions(species,D_species,module,D_module)
 
