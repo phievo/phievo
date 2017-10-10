@@ -915,4 +915,3 @@ def pareto_space(fitness_dico,fitnesses):
     plt.legend(loc=0)
     plt.show()
 
-## TEST

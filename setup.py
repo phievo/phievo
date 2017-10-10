@@ -13,7 +13,7 @@ setup(
     url='https://bitbucket.org/onnetworkevolution/phievo',
     install_requires=[
         "matplotlib>=1.5.3",
-        "networkx>=1.11",
+        "networkx==1.11",
         "numpy>=1.11.3",
         "scipy>=0.18.1",
         "Sphinx>=1.5.3",

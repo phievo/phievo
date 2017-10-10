@@ -133,9 +133,8 @@ class Select_Seed(CellModule):
             self.widget_select_seed.disabled = True
             self.widget_select_seed.value = None
         else:
-            seeds = self.widget_select_seed.options = {"Seed{}".format(i):i for i,seed in self.notebook.sim.seeds.items()}
             self.widget_select_seed.disabled = False
-            self.widget_select_seed.options = {"Seed{}".format(i):i for i,seed in self.notebook.sim.seeds.items()}
+            self.widget_select_seed.options = {"Seed {}".format(i):i for i,seed in self.notebook.sim.seeds.items()}            
             self.widget_select_seed.value = self.widget_select_seed.options[list(self.widget_select_seed.options.keys())[0]]
             self.notebook.seed = self.widget_select_seed.value
 

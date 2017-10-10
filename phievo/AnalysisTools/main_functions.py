@@ -1,6 +1,7 @@
 import numpy as np
 import shelve
-import pickle
+import sys,os,glob,pickle,zipfile,re
+from urllib.request import urlretrieve
 from phievo.AnalysisTools import palette
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
@@ -106,3 +107,46 @@ def plot_multiGen_front2D(generation_fitness,generation_indexes=None):
     ax.legend(handles=legend_patches)
     plt.show()
     return fig
+
+def download_example_seed(seed_name):
+    """
+    Downloads a seed from the seed repository.
+    """
+    existing_seeds = {
+        "adaptation":"https://github.com/phievo/simulation_examples/blob/master/adaptation.zip?raw=true",
+        "hox_pareto_light":"https://github.com/phievo/simulation_examples/blob/master/hox_pareto_light.zip?raw=true",
+        "lacOperon":"https://github.com/phievo/simulation_examples/blob/master/lacOperon.zip?raw=true",
+        "somite":"https://github.com/phievo/simulation_examples/blob/master/somitogenesis.zip?raw=true"
+    }
+    try:
+        url = existing_seeds[seed_name]
+    except KeyError:
+        print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_seeds.keys())))
+        return None
+    directory = "example_{}".format(seed_name)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    else:
+        print("The directory {} already exists, download_example_seed cannot overwrite it.".format(directory))
+        return None
+    ## Downloading zipfile
+    
+        
+    zip_path = os.path.join(directory,seed_name+".zip")
+    urlretrieve(url,zip_path)
+    ## unziping file
+    seed_path = os.path.join(directory,"Seed{}".format(seed_name))
+    zip_ref = zipfile.ZipFile(zip_path, 'r')
+    zip_ref.extractall(seed_path)
+    zip_ref.close()
+    os.remove(zip_path)
+    for log_f in glob.glob(os.path.join(seed_path,"log_*")):
+        f_name = log_f.split(os.sep)[-1]
+        f_name = f_name.replace("log_","")
+        os.rename(log_f, os.path.join(directory,f_name))
+    with open(os.path.join(directory,"init_file.py"),"r") as init_file:
+        init_text = init_file.read()
+    init_text = re.sub("(cfile\[[\'\"](\w+)[\'\"]]\s*=\s*).+",r"\1'\2.c'",init_text)
+    init_text = re.sub("(pfile\[[\'\"](\w+)[\'\"]]\s*=\s*).+",r"\1'\2.py'",init_text)
+    with open(os.path.join(directory,"init_file.py"),"w") as init_file:
+        init_file.write(init_text)
