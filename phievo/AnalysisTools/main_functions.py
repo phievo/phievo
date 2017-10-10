@@ -118,6 +118,11 @@ def download_example_seed(seed_name):
         "lacOperon":"https://github.com/phievo/simulation_examples/blob/master/lacOperon.zip?raw=true",
         "somite":"https://github.com/phievo/simulation_examples/blob/master/somitogenesis.zip?raw=true"
     }
+    try:
+        url = existing_seeds[seed_name]
+    except KeyError:
+        print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_seeds.keys())))
+        return None
     directory = "example_{}".format(seed_name)
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -125,7 +130,8 @@ def download_example_seed(seed_name):
         print("The directory {} already exists, download_example_seed cannot overwrite it.".format(directory))
         return None
     ## Downloading zipfile
-    url = existing_seeds[seed_name]
+    
+        
     zip_path = os.path.join(directory,seed_name+".zip")
     urlretrieve(url,zip_path)
     ## unziping file
