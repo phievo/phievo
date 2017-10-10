@@ -246,6 +246,9 @@ class Mutable_Network(classes_eds2.Network):
         self.data_evolution = []
         self.data_next_mutation = [0,""]
         self.Random = generator
+        self.identifier = None
+        self.parent = None
+        self.last_mutation = None
 
     def compute_Cseed(self):
         """Return a random integer to determine the integrator seed"""
@@ -277,7 +280,6 @@ class Mutable_Network(classes_eds2.Network):
             getattr(self,'random_'+Interaction_Type)()
         except Exception:
             print(display_error)
-            #import pdb;pdb.set_trace()
             display_error("Error when creating randomize Interaction "+Interaction_Type)
 
     def remove_Interaction(self,Type):
@@ -355,8 +357,6 @@ class Mutable_Network(classes_eds2.Network):
         if possible_duplicate:
             species= self.Random.choice(possible_duplicate)
             [D_module,D_promoter,D_species] = self.duplicate_species_and_interactions(species)
-            if species.isinstance('Output'):
-                D_species.add_type(['Output',len(self.dict_types['Output'])])
             self.write_id()
             return True
         else:
@@ -479,15 +479,19 @@ class Mutable_Network(classes_eds2.Network):
         """
         n_mutations,age = 0,0
         if mutation:
+            self.last_mutation = []
+            backup = self.last_mutation
             while True:
                 tau,next_mutation = self.compute_next_mutation()
                 age += tau
                 if age > tgeneration: break #exit the loop when enough time has passed
                 exec("self."+next_mutation)
+                self.last_mutation.append(next_mutation)
                 n_mutations+=1
+            if n_mutations==0:
+                self.last_mutation=backup
             age -= tgeneration
             self.data_next_mutation[0:2] = [age,next_mutation]  #keeps track of the time and type of the next mutation
-
         self.Cseed = self.compute_Cseed()
         result = compile_and_integrate(self,prmt,nnetwork,0,self.Cseed)
         return [n_mutations,nnetwork,self,result]

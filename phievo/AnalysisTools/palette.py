@@ -91,19 +91,43 @@ def color_generate(n,colormap=None):
         >>> print color_generate(5)
         ['#5fcbff','#e5edad','#f0b99b','#c3e5e4','#ffff64']
     """
-    # if n==0:
-    #     return []
-    #
-    # start_hue = 0.333  # 0=red    1/3=0.333=green   2/3=0.666=blue
-    # saturation = 0.9
-    # lightness = 0.5
-    # colors = ['#%02x%02x%02x' % HSL_to_RGB(hue,saturation,lightness) for hue in floatrange(start_hue,start_hue+1,n+1)][:-1]
-    # small_colors= ['#%02x%02x%02x' % HSL_to_RGB(hue,saturation,lightness) for hue in floatrange(start_hue,start_hue+1,5)][:-1]
-    # if (n<5):
-    #     return small_colors[0::2]+small_colors[1::2]
-    # return colors[0::2]+colors[1::2]
-    if not colormap:
-        colormap = default_colormap
-    cm = pylab.get_cmap(default_colormap)
+
+    
+    if type(colormap)==colors.LinearSegmentedColormap:
+        cm = colormap
+    else:
+        if not colormap:
+            colormap = default_colormap
+        cm = pylab.get_cmap(default_colormap)
     color_l= [colors.rgb2hex(cm(1.*i/n)) for i in range(n)]
     return color_l
+
+
+def make_colormap(seq):
+    """Return a LinearSegmentedColormap
+    seq: a sequence of floats and RGB-tuples. The floats should be increasing
+    and in the interval (0,1).
+    """
+    seq = [colors.ColorConverter().to_rgb(col) if type(col)!=float else col for col in seq]
+    seq = [(None,) * 3, 0.0] + list(seq) + [1.0, (None,) * 3]
+    cdict = {'red': [], 'green': [], 'blue': []}
+    for i, item in enumerate(seq):
+        if isinstance(item, float):
+            r1, g1, b1 = seq[i - 1]
+            r2, g2, b2 = seq[i + 1]
+            cdict['red'].append([item, r1, r2])
+            cdict['green'].append([item, g1, g2])
+            cdict['blue'].append([item, b1, b2])
+    return colors.LinearSegmentedColormap('CustomMap', cdict)
+
+def generate_gradient(values,seq):
+    """
+    Generates a desired list of colors along a gradient from a custom list of colors.
+
+    args:
+        values: list of values that need to ba allocated to a color
+        seq: sequence of colors in the gradient
+    """
+    cm = make_colormap(seq)
+    return [colors.rgb2hex(cm((val - min(values))/(max(values) - min(values)))) for val in  values]
+    

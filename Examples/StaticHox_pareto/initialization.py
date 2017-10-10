@@ -66,7 +66,7 @@ dictionary_mutation['random_Interaction(\'Phosphorylation\')']=0.0
 # Rates for nodes to remove. NB 'CorePromoter' rate kills all Species nodes
 dictionary_mutation['remove_Interaction(\'TFHill\')']=0.5
 dictionary_mutation['remove_Interaction(\'PPI\')']=0.0
-dictionary_mutation['remove_Interaction(\'CorePromoter\')']=0.03
+dictionary_mutation['remove_Interaction(\'CorePromoter\')']=0.05
 dictionary_mutation['remove_Interaction(\'Phosphorylation\')']=0.0
 
 # Rates to change parameters for a node
@@ -81,7 +81,6 @@ dictionary_mutation['mutate_Node(\'Phosphorylation\')']=0.0
 dictionary_mutation['random_add_output()']=0.0
 dictionary_mutation['random_remove_output()']=0.0
 dictionary_mutation['random_change_output()']=0.1
-
 dictionary_mutation['random_duplicate()']=0.02
 
 #############################################################################
@@ -104,28 +103,23 @@ prmt['dt'] = 0.05     # time step
 # prmt['free_prmt'] = [1,2]
 
 # Needed in evolution_gill to define evol algorithm and create initial network
-prmt['npopulation'] =10
-prmt['ngeneration'] =5001
+prmt['npopulation'] =50
+prmt['ngeneration'] =16001
 prmt['tgeneration']=0.01       #initial generation time (for gillespie), reset during evolution
 prmt['noutput']=5    # to define initial network
 prmt['ninput']=1
 prmt['freq_stat'] = 5     # print stats every freq_stat generations
 prmt['frac_mutate'] = 0.5 #fraction of networks to mutate
 prmt['redo'] = 1   # rerun the networks that do not change to compute fitness for different IC
-
 # used in run_evolution,
 prmt['nseed'] = 70   # number of times entire evol procedure repeated, see main program.
 prmt['firstseed'] = 1  #first seed
-
 # multipro_level used in evolution_gillespie.  if using parallel processing(pypar) =1 for threading =0 for serial processing
-
 prmt['multipro_level']=1
-
 prmt['pareto']=1
 prmt['npareto_functions']=2
 prmt['rshare']=0
 prmt['plot']=0
-
 
 ## prmt['restart']['kgeneration'] tells phievo to save a complete generation
 ## at a given frequency in a restart_file. The algorithm can relaunched at
@@ -157,11 +151,11 @@ from phievo.Networks import mutation
 # Will overwrite default variants in evol_gillespie if supplied below
 
 
-
 def init_network():
    seed=int(random.random()*100000)
    g=random.Random(seed)
    L=mutation.Mutable_Network(g)
+   L.remove_output_when_duplicate = False
    parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random) ]]
    parameters.append(['TF',1])
    parameters.append(['Input',0])
@@ -172,6 +166,13 @@ def init_network():
    L.activator_required=1
    L.fixed_activity_for_TF=0
    L.write_id()
+   L.random_Interaction('TFHill')
+   L.random_Interaction('TFHill')
+   L.random_Interaction('TFHill')
+   L.write_id()
+   for i in L.dict_types['TFHill']:
+       i.activity=1
+       i.threshold=min(0.1,i.threshold)
    return L
 
 def fitness_treatment(population):

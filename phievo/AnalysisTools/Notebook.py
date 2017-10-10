@@ -133,9 +133,9 @@ class Select_Seed(CellModule):
             self.widget_select_seed.disabled = True
             self.widget_select_seed.value = None
         else:
-            seeds = self.widget_select_seed.options = {"Seed%d"%i:i for i,seed in self.notebook.sim.seeds.items()}
+            seeds = self.widget_select_seed.options = {"Seed{}".format(i):i for i,seed in self.notebook.sim.seeds.items()}
             self.widget_select_seed.disabled = False
-            self.widget_select_seed.options = {"Seed%d"%i:i for i,seed in self.notebook.sim.seeds.items()}
+            self.widget_select_seed.options = {"Seed{}".format(i):i for i,seed in self.notebook.sim.seeds.items()}
             self.widget_select_seed.value = self.widget_select_seed.options[list(self.widget_select_seed.options.keys())[0]]
             self.notebook.seed = self.widget_select_seed.value
 
@@ -307,7 +307,7 @@ class Plot_Cell_Profile(CellModule):
         self.notebook.dependencies_dict["generation"].append(self)
         self.widget_selectInput = widgets.IntSlider(value = 0,min=0,max=0,description = 'Input:',disabled=True)
         self.widget_selectTime = widgets.IntSlider(value = 0,min=0,max=0,description = 'Time:',disabled=True)
-        self.button_plotdynamics = widgets.Button(description="Plot dynamics",disabled=True)
+        self.button_plotdynamics = widgets.Button(description="Plot profile",disabled=True)
 
     def plot_dynamics(self,button):
         plt.close()

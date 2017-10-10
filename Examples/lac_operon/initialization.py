@@ -185,8 +185,9 @@ def init_network():
     TF2=L.new_Species(parameters)
 
     [tm, prom, o1] = L.random_gene('TF')
+    o1.mutable = False
     o1.add_type(['Output',0])
-    
+    o1.clean_type('Complexable')
     L.write_id()
     
     return L
