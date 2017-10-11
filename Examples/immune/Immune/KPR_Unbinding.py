@@ -58,14 +58,14 @@ setattr(classes_eds2.Network,'new_KPR_Unbinding',new_KPR_Unbinding)
 
 def random_KPR_Unbinding(self):
         """Create new random KPR_Unbinding from list of those possible """
-        if 'Ligand' in self.list_types and 'Receptor' in self.list_types:
+        if 'Ligand' in self.dict_types and 'Receptor' in self.dict_types:
             list_possible_KPR_Unbinding=[]
-            nL=len(self.list_types['Ligand'])
-            nR=len(self.list_types['Receptor'])
+            nL=len(self.dict_types['Ligand'])
+            nR=len(self.dict_types['Receptor'])
             for iL in range(nL):
                 for iR in range(nR):
-                    L=self.list_types['Ligand'][iL]
-                    R=self.list_types['Receptor'][iR]
+                    L=self.dict_types['Ligand'][iL]
+                    R=self.dict_types['Receptor'][iR]
                     if not self.check_existing_binary([L,R],'KPR_Unbinding'):
                         list_possible_KPR_Unbinding.append([L,R])
             n_pKPR_Unbinding=len(list_possible_KPR_Unbinding)
@@ -107,8 +107,8 @@ def compute_KPR_Unbinding(net):
     """ Create a function that computes the derivative for Receptor and product of KPR_Unbinding interaction for a given cell"""
     func="\n/***********KPR_Unbinding**************/\n"
 
-    if ('KPR_Unbinding' in net.list_types):
-        for index in net.list_types['KPR_Unbinding']:
+    if ('KPR_Unbinding' in net.dict_types):
+        for index in net.dict_types['KPR_Unbinding']:
             C=net.graph.predecessors(index)[0] #finds the complex
             [P1,P2]=net.graph.successors(index) #finds the receptor and ligands
             if P1.isinstance('Ligand'):
@@ -122,7 +122,7 @@ def compute_KPR_Unbinding(net):
             func=func+deriv2.compute_leap([C.id],[L.id,R.id],drate)
             # self term
             n = C.n_phospho
-            number_species = len(net.list_types['Species'])
+            number_species = len(net.dict_types['Species'])
             drate="1.0/TAU_SELF*s[%d]"%(number_species+n+1)
             func=func+deriv2.compute_leap(["s[%d]"%(number_species+n+1)],["s[%d]"%number_species,R.id],drate)
     return func
@@ -137,8 +137,8 @@ def compute_gillespie_KPR_Unbinding(net,n_reactions):
     proba="\n\t/*****************KPR_Unbinding*****************/\n"
     action="\n\t/*****************KPR_Unbinding*****************/\n"
     
-    if ('KPR_Unbinding' in net.list_types):
-        for index in net.list_types['KPR_Unbinding']:  # looping over all Simple_Dephosphorylation reactions
+    if ('KPR_Unbinding' in net.dict_types):
+        for index in net.dict_types['KPR_Unbinding']:  # looping over all Simple_Dephosphorylation reactions
             C = net.graph.predecessors(index)[0]  # a complex
             [P1,P2] = net.graph.successors(index)  # the receptor and ligand
             if (P1.isinstance('Ligand')):
@@ -160,7 +160,7 @@ def compute_gillespie_KPR_Unbinding(net,n_reactions):
             # Self.
             # the unbinding probability
             n = C.n_phospho
-            number_species = len(net.list_types['Species'])
+            number_species = len(net.dict_types['Species'])
             proba=proba + "\t \t p[" + str(n_reactions) + "]=1.0/TAU_SELF*floor(s[%d][ncell]);\n"%(number_species+n+1)
             # the effect of unbinding (R,L --> R+1,L+1  &  C --> C - 1 )
             action=action + "\tif (index_action==" + str(n_reactions) + ") {\n\t\ts[%d][ncell] += INCREMENT;\n"%R.int_id()

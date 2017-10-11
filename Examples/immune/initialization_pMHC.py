@@ -62,7 +62,7 @@ cfile['input'] =  'input.c'
 pfile = {}
 pfile["deriv2"] = "immune.Immune.deriv2_pMHC_modifier"
 pfile["interaction"] = "immune.Immune.interaction_pMHC"
-pfile["pretty_graph"] = "immune.Immune.pretty_graph_2_pMHC"
+pfile["pretty_graph"] = "immune.Immune.pretty_graph_3_pMHC"
 pfile["plotdata"] = "immune.Immune.plotdata_pMHC"
 
 #################################################################################
@@ -200,7 +200,7 @@ list_types_output=['Kinase','Phosphatase']
 # =0 serial processing, only one C job running at a time
 # =1 threaded, multiple C jobs started on one machine to use multi-core capabilities
 # =2 multiple computers, cluster, using mpirun See HowTo in /Doc
-prmt['multipro_level'] = 1
+prmt['multipro_level'] = 0
 
 # Parameters for pareto evolution module. Pareto optimization allows one to use multiple
 # fitness functions. When running pareto optimization, network X is only considered better

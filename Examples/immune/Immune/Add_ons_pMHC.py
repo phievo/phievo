@@ -26,8 +26,8 @@ def Plot_pMHC(self):
     """
     net = self.buffer_data["net"]
     nstep = self.inits.prmt['nstep']
-    size = len(net.list_types['Species'])
-    pMHC_size = len(net.list_types['pMHC'])
+    size = len(net.dict_types['Species'])
+    pMHC_size = len(net.dict_types['pMHC'])
     ntau=len(self.inits.prmt['tau_off'])
     #print(size)
     #print(pMHC_size)
@@ -74,7 +74,7 @@ def run_dynamics_pMHC(self,net=None,trial=1,erase_buffer=False,return_treatment_
     self.inits.prmt["ntries"] = trial
     prmt = dict(self.inits.prmt)
     N_cell = prmt["ncelltot"]
-    N_species = len(net.list_types['Species'])
+    N_species = len(net.dict_types['Species'])
     self.buffer_data = {"time":np.arange(0,prmt["dt"]*(prmt["nstep"]),prmt["dt"])}
     prmt["ntries"] = trial
     treatment_fitness = self.deriv2.compile_and_integrate(net,prmt,1000,True)
@@ -93,8 +93,8 @@ def run_dynamics_pMHC(self,net=None,trial=1,erase_buffer=False,return_treatment_
     self.buffer_data["net"] = net
     get_species = re.compile("s\[(\d+)\]")
 
-    self.buffer_data["outputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Output"]]
-    self.buffer_data["inputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Input"]]
+    self.buffer_data["outputs"] = [int(get_species.search(species.id).group(1)) for species in net.dict_types["Output"]]
+    self.buffer_data["inputs"] = [int(get_species.search(species.id).group(1)) for species in net.dict_types["Input"]]
 
     return self.buffer_data
     
