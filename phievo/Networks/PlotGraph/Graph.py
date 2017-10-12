@@ -17,7 +17,7 @@ class Graph:
         self.index_counter = 0
         ## An interaction contains all the edges between two given nodes
         self.interactions = {}
-        self.node_size = 0.2
+        self.node_size = 1
         self.grouped_interactions = {}
     def add_node(self,*argv,**kwargs):
         """
