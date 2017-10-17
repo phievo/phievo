@@ -79,7 +79,7 @@ def produce_Phospho_name(node_reac,cat=False):
                 return '$Ph_{%i}$'%node_reac.int_id()
 
 
-def pretty_graph(net,extended=True):
+def pretty_graph(net,extended=True,layout="graphviz"):
         """
         Creates a ready-to-plot graph object from a network.
 
@@ -92,7 +92,7 @@ def pretty_graph(net,extended=True):
         net.__build_dict_types__()
         size=len(net.dict_types['Species'])
         colors=palette.color_generate(size)
-        graph = PlotGraph.Graph()
+        graph = PlotGraph.Graph(layout)
         # create pydot nodes for all species nodes in net and store in dictionary
         map_species = {}
 

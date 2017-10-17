@@ -6,6 +6,7 @@ import numpy as np
 import glob,os,sys
 import re
 import matplotlib.pyplot as plt
+import networkx as nx
 
 from importlib import import_module
 pretty_graph = import_module('immune.Immune.pretty_graph_2_pMHC')
@@ -26,8 +27,8 @@ def Plot_pMHC(self):
     """
     net = self.buffer_data["net"]
     nstep = self.inits.prmt['nstep']
-    size = len(net.list_types['Species'])
-    pMHC_size = len(net.list_types['pMHC'])
+    size = len(net.dict_types['Species'])
+    pMHC_size = len(net.dict_types['pMHC'])
     ntau=len(self.inits.prmt['tau_off'])
     #print(size)
     #print(pMHC_size)
@@ -74,7 +75,7 @@ def run_dynamics_pMHC(self,net=None,trial=1,erase_buffer=False,return_treatment_
     self.inits.prmt["ntries"] = trial
     prmt = dict(self.inits.prmt)
     N_cell = prmt["ncelltot"]
-    N_species = len(net.list_types['Species'])
+    N_species = len(net.dict_types['Species'])
     self.buffer_data = {"time":np.arange(0,prmt["dt"]*(prmt["nstep"]),prmt["dt"])}
     prmt["ntries"] = trial
     treatment_fitness = self.deriv2.compile_and_integrate(net,prmt,1000,True)
@@ -93,8 +94,8 @@ def run_dynamics_pMHC(self,net=None,trial=1,erase_buffer=False,return_treatment_
     self.buffer_data["net"] = net
     get_species = re.compile("s\[(\d+)\]")
 
-    self.buffer_data["outputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Output"]]
-    self.buffer_data["inputs"] = [int(get_species.search(species.id).group(1)) for species in net.list_types["Input"]]
+    self.buffer_data["outputs"] = [int(get_species.search(species.id).group(1)) for species in net.dict_types["Output"]]
+    self.buffer_data["inputs"] = [int(get_species.search(species.id).group(1)) for species in net.dict_types["Input"]]
 
     return self.buffer_data
     
@@ -152,7 +153,7 @@ class Plot_pMHC(CellModule):
     def display(self):
         self.button_plotdynamics.on_click(self.plot_pMHC)
         display(widgets.HBox([self.button_plotdynamics]))
-        
+
 class Plot_Layout_Immune(CellModule):
     def __init__(self,Notebook):
         super(Plot_Layout_Immune, self).__init__(Notebook)
@@ -160,15 +161,12 @@ class Plot_Layout_Immune(CellModule):
         self.notebook.dependencies_dict["generation"].append(self)
         self.button_plotLayout = widgets.Button(description="Plot network layout",disabled=True)
 
-    def plot_layout_immune(self,button):
+    def plot_layout(self,button):
         plt.close()
         clear_output()
-        network=self.notebook.net
-        #print(self.notebook.sim.inits)
-        graph=pretty_graph.pretty_graph(network)
-        #print(graph)
-        graph.write_png('current_graph.png')
-        display(Image(filename='current_graph.png'))
+        graph=pretty_graph.pretty_graph(self.notebook.net)
+        graph.write_svg('current_graph.svg')
+        display(HTML(open('current_graph.svg').read()))
 
     def update(self):
         if self.notebook.generation is None:
@@ -177,6 +175,31 @@ class Plot_Layout_Immune(CellModule):
             self.button_plotLayout.disabled = False
 
     def display(self):
-        self.button_plotLayout.on_click(self.plot_layout_immune)
+        self.button_plotLayout.on_click(self.plot_layout)
         display(self.button_plotLayout)
+        
+# class Plot_Layout_Immune(CellModule):
+#     def __init__(self,Notebook):
+#         super(Plot_Layout_Immune, self).__init__(Notebook)
+#         self.notebook.dependencies_dict["seed"].append(self)
+#         self.notebook.dependencies_dict["generation"].append(self)
+#         self.button_plotLayout = widgets.Button(description="Plot network layout",disabled=True)
+
+#     def plot_layout_immune(self,button):
+#         plt.close()
+#         clear_output()
+#         network=self.notebook.net
+#         #print(self.notebook.sim.inits)
+#         graph=pretty_graph.pretty_graph(network)
+        
+
+#     def update(self):
+#         if self.notebook.generation is None:
+#             self.button_plotLayout.disabled = True
+#         else:
+#             self.button_plotLayout.disabled = False
+
+#     def display(self):
+#         self.button_plotLayout.on_click(self.plot_layout_immune)
+#         display(self.button_plotLayout)
 

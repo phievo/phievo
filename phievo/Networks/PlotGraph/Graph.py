@@ -3,21 +3,23 @@ from . import Components
 from .Layout import layout
 from math import *
 import numpy as np
+import networkx as nx
 
 class Graph:
     """
     Container of a directed graph. It contains mainly two types of objects: nodes and edges.
     """
-    def __init__(self):
+    def __init__(self,layout):
         """
         Initial set up of the conatiner.
         """
+        self.layout_name = layout
         self.nodes = {}
         self.edges = {}
         self.index_counter = 0
         ## An interaction contains all the edges between two given nodes
         self.interactions = {}
-        self.node_size = 0.2
+        self.node_size = 1
         self.grouped_interactions = {}
     def add_node(self,*argv,**kwargs):
         """
@@ -73,8 +75,8 @@ class Graph:
             try:
                 nodeFrom =  kwargs["nodeFrom"]
                 nodeTo =  kwargs["nodeTo"]
-            except KeyError:
-                print("An edge cannot be added without a nodeFrom and a nodeTo.")
+            except KeyError:           
+                print("An edge cannot be added without a nodeFrom, a nodeTo, and a reaction index.")
                 return None
         style = kwargs.pop("style","Arrow")
         label = kwargs.pop("label",len(self.edges))
@@ -167,12 +169,20 @@ class Graph:
         """
         radius = sqrt(self.node_size/pi)
         #positions = layout(self.node_list(),self.edge_list(),radius,recursion,layout="graphviz")
-        positions = layout(self.node_list(),self.edge_list(),radius=radius,layout="graphviz")
+        
+        positions = layout(self.node_list(),self.edge_list(),radius=radius,layout=self.layout_name)
         for label,pos in positions.items():
             self.nodes[label].center = tuple(pos)
         return positions
 
 
+    def get_networkx(self):
+        G = nx.Graph()
+        for node in self.node_list():
+            G.add_node(node)
+        for edge in self.edge_list():
+            G.add_edge(edge[0],edge[1])
+        return(G)
 
     def draw(self,file=None,edgeLegend=False,display=True):
         """

@@ -44,8 +44,8 @@ class Simple_Phosphorylation(classes_eds2.Interaction):
 # species should be the kinase).
 def check_existing_Simple_Phosphorylation(self,list):
         """ special function to check if a simple phosphorylation exists : order in the list should be Kinase first"""
-        if 'Simple_Phosphorylation' in self.list_types:    #goes through the list of interactions
-            for inter in self.list_types['Simple_Phosphorylation']:
+        if 'Simple_Phosphorylation' in self.dict_types:    #goes through the list of interactions
+            for inter in self.dict_types['Simple_Phosphorylation']:
                 [catalyst,listIn,listOut]=self.catal_data(inter)
                 if (catalyst==list[0]) and (listIn[0]==list[1]):
                     return True
@@ -54,12 +54,12 @@ def check_existing_Simple_Phosphorylation(self,list):
 def number_Simple_Phosphorylation(self):
         """ Computes the number of possible Simple_Phosphorylations"""
         counter = 0
-        nK=len(self.list_types['Kinase'])
-        nS=len(self.list_types['Phosphorylable'])
+        nK=len(self.dict_types['Kinase'])
+        nS=len(self.dict_types['Phosphorylable'])
         for iK in range(nK):
             for iS in range(nS):  
-                K=self.list_types['Kinase'][iK]
-                S=self.list_types['Phosphorylable'][iS]
+                K=self.dict_types['Kinase'][iK]
+                S=self.dict_types['Phosphorylable'][iS]
                 Out_S=self.graph.successors(S)
                 bool_kinase = True
                 bool_K_is_Sp = False
@@ -176,8 +176,8 @@ def new_Simple_Phosphorylation(self,kinase,species,rate):
                     #if species.n_phospho == 0: # this is if we take C_0 not a kinase.
                     #    species_P.add_type(['Kinase'])
                     # connecting the newly phosphorylated pMHC components to the ligand/receptor
-                    L = self.list_types['Ligand'] #Assuming the correct ligand and receptor are the first in the list (there should be only one anyway...)
-                    R = self.list_types['Receptor']
+                    L = self.dict_types['Ligand'] #Assuming the correct ligand and receptor are the first in the list (there should be only one anyway...)
+                    R = self.dict_types['Receptor']
                     self.new_KPR_Unbinding(L[0],R[0],species_P)
                 
                 
@@ -237,16 +237,16 @@ def new_random_Simple_Phosphorylation(self, K, S):
 def random_Simple_Phosphorylation(self):
         """Create new random Simple_Phosphorylations from list of possible kinase substrates."""
         
-        if 'Kinase' in self.list_types and 'Phosphorylable' in self.list_types and 'Phosphatase' in self.list_types:
+        if 'Kinase' in self.dict_types and 'Phosphorylable' in self.dict_types and 'Phosphatase' in self.dict_types:
                     
             list_possible_Phospho=[]
-            nK=len(self.list_types['Kinase'])
-            nS=len(self.list_types['Phosphorylable'])
+            nK=len(self.dict_types['Kinase'])
+            nS=len(self.dict_types['Phosphorylable'])
             for iK in range(nK):
                 for iS in range(nS):
                     
-                    K=self.list_types['Kinase'][iK]
-                    S=self.list_types['Phosphorylable'][iS]
+                    K=self.dict_types['Kinase'][iK]
+                    S=self.dict_types['Phosphorylable'][iS]
                     
                     Out_S=self.graph.successors(S)
                     bool_kinase = True
@@ -270,10 +270,10 @@ def random_Simple_Phosphorylation(self):
                             if bool_kinase: # verifying that the species is not already phosphorylated by the same kinase.
                                 if not (K.isinstance('pMHC') and S.isinstance('pMHC')): # we do not want a kinase from the cascade to phosphorylate another member in the cascade.
                                     if not already_phosphorylated:
-                                        nP=len(self.list_types['Phosphatase'])
+                                        nP=len(self.dict_types['Phosphatase'])
                                         list_possible_phosphatase = []
                                         for m in range(nP):
-                                            P = self.list_types['Phosphatase'][m]
+                                            P = self.dict_types['Phosphatase'][m]
                                             if not P==S:
                                                 list_possible_phosphatase.append(P)
                                         n_Phosphatase = len(list_possible_phosphatase)
@@ -322,15 +322,15 @@ def random_shift_Simple_Phosphorylation(self):
     """Shifts the kinase responsible for a given phosphorylation."""
     
     number_simple_phosphorylation = 0
-    if 'Simple_Phosphorylation' in self.list_types:
-        number_simple_phosphorylation = len(self.list_types['Simple_Phosphorylation'])
+    if 'Simple_Phosphorylation' in self.dict_types:
+        number_simple_phosphorylation = len(self.dict_types['Simple_Phosphorylation'])
     
     if number_simple_phosphorylation == 0:
         print("No possible Simple_Phosphorylation to shift")
         return None
     
     else:
-        simple_phospho = self.list_types['Simple_Phosphorylation'][random.randint(0,number_simple_phosphorylation-1)]
+        simple_phospho = self.dict_types['Simple_Phosphorylation'][random.randint(0,number_simple_phosphorylation-1)]
         [kinase,unphosphorylated,phosphorylated]=self.catal_data(simple_phospho)
         unphosphorylated = unphosphorylated[0]
         phosphorylated = phosphorylated[0]
@@ -338,7 +338,7 @@ def random_shift_Simple_Phosphorylation(self):
         
         if unphosphorylated.isinstance('pMHC'):
             # we want to find all kinases which are not pMHC molecules.
-            for species in self.list_types['Species']:
+            for species in self.dict_types['Species']:
                 if species.isinstance('Kinase') and (not species.isinstance('pMHC')) and (species != phosphorylated) and (species != unphosphorylated):
                     if not self.isphosphorylated_by_K(species,unphosphorylated):
                         list_possible_phospho.append(species)
@@ -357,7 +357,7 @@ def random_shift_Simple_Phosphorylation(self):
         else:
             # any kinase will do here.
             # we want to find all kinases (not the species itself or the phosphorylated one) which are not pMHC molecules.
-            for species in self.list_types['Species']:
+            for species in self.dict_types['Species']:
                 if species.isinstance('Kinase') and (species != phosphorylated) and (species != unphosphorylated):
                     if not self.isphosphorylated_by_K(species,unphosphorylated):
                         list_possible_phospho.append(species)
@@ -388,25 +388,28 @@ def SimplePhospho_deriv_inC(net):
     func="\n/**** Simple_Phosphorylation (without spontaneous dephosphorylation) ****/\n" 
  
     list_phospho = []
-    if ('Simple_Phosphorylation' in net.list_types):
-        for reaction in net.list_types['Simple_Phosphorylation']:
+    if ('Simple_Phosphorylation' in net.dict_types):
+        for reaction in net.dict_types['Simple_Phosphorylation']:
             [kinase,species,species_P]=net.catal_data(reaction)
+            
             species = species[0]
             species_P = species_P[0]
-         
-            # agonist term
+            kinase = kinase[0]
+            #import pdb;pdb.set_trace()
+            # agonist term            
             rate = "%f*"%reaction.rate+kinase.id+"*"+species.id
+            
             func = func+deriv2.compute_leap([species.id],[species_P.id],rate)     
 
             # self term
             if species.isinstance('pMHC'):
                 n = species.n_phospho
-                number_species = len(net.list_types['Species'])
+                number_species = len(net.dict_types['Species'])
                 rate = "%f*"%reaction.rate+kinase.id+"*s[%d]"%(number_species+n+1)
                 func = func+deriv2.compute_leap(["s[%d]"%(number_species+n+1)],["s[%d]"%(number_species+n+2)],rate)     
             elif kinase.isinstance('pMHC'):
                 n = kinase.n_phospho
-                number_species = len(net.list_types['Species'])
+                number_species = len(net.dict_types['Species'])
                 rate = "%f*"%reaction.rate+"s[%d]"%(number_species+n+1)+"*"+species.id
                 func = func+deriv2.compute_leap([species.id],[species_P.id],rate)
     return func
@@ -419,8 +422,8 @@ def compute_gillespie_Simple_Phosphorylation(net,n_reactions):
     proba="\n\t/*****************Simple_Phosphorylations*****************/\n"
     action="\n\t/*****************Simple_Phosphorylations*****************/\n"
     
-    if ('Simple_Phosphorylation' in net.list_types):
-        for index in net.list_types['Simple_Phosphorylation']:  # looping over all Simple_Phosphorylation reactions
+    if ('Simple_Phosphorylation' in net.dict_types):
+        for index in net.dict_types['Simple_Phosphorylation']:  # looping over all Simple_Phosphorylation reactions
             [K,S,S_p] = net.catal_data(index) # the kinase, initial species and phosphorylated species.
             S = S[0]
             S_p = S_p[0]
@@ -437,7 +440,7 @@ def compute_gillespie_Simple_Phosphorylation(net,n_reactions):
             # Self.
             if S.isinstance('pMHC'):
                 n = S.n_phospho
-                number_species = len(net.list_types['Species'])
+                number_species = len(net.dict_types['Species'])
                 
                 # the phosphorylation probability (enzymatic)
                 proba=proba + "\t\t p[" + str(n_reactions) + "]=%f*floor(s["%index.rate + "%d][ncell])*floor(s["%(number_species+n+1) +"%d][ncell]);\n"%K.int_id()            
@@ -450,7 +453,7 @@ def compute_gillespie_Simple_Phosphorylation(net,n_reactions):
                 
             elif K.isinstance('pMHC'):
                 n = K.n_phospho
-                number_species = len(net.list_types['Species'])
+                number_species = len(net.dict_types['Species'])
                 
                 # the phosphorylation probability (enzymatic)
                 proba=proba + "\t\t p[" + str(n_reactions) + "]=%f*floor(s["%index.rate + "%d][ncell])*floor(s["%S.int_id() +"%d][ncell]);\n"%(number_species+n+1)           

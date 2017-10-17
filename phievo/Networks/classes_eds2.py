@@ -763,9 +763,12 @@ class Network(object):
                         modification=True
 
     def delete_clean(self,id,verbose=False):
-        """Remove a node according to its id and clean the network
-
+        """
+        Remove a node according to its id and clean the network
         Warning: This operation renames all the nodes (and changes the id)
+        
+        Args:
+            id: integer id of the node
         """
         for node in self.graph.nodes():
             if node.int_id() == id:
@@ -805,6 +808,7 @@ class Network(object):
             from phievo.Networks import lovelyGraph
             setattr(Networks,"pretty_graph",lovelyGraph)
         self.write_id()
+        
         graph = Networks.pretty_graph.pretty_graph(self,extended=extended)
         if return_graph:
             return graph

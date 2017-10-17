@@ -8,13 +8,13 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
     hdr = []   # collect lines of output as list then join, speed issue
 
     # various sizes/lengths mostly from prmt dict
-    size=len(net.list_types['Species'])
+    size=len(net.dict_types['Species'])
     
-    #for s in net.list_types['Species']:
+    #for s in net.dict_types['Species']:
     #    s.print_node()
-    pMHC_size = len(net.list_types['pMHC'])
-    #print len(net.list_types['pMHC'])
-    #print net.list_types['pMHC']
+    pMHC_size = len(net.dict_types['pMHC'])
+    #print len(net.dict_types['pMHC'])
+    #print net.dict_types['pMHC']
     hdr.append("#define SIZE %i" %(size+pMHC_size+1) )
     #Index are organized in the following way
     #from 0 to size-1-> agonist, kinases,phosphatases and complex of the agonist cascades. Order is imposed by evolution
@@ -50,27 +50,27 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
     hdr.append("#define TINY %.15f" %prmt['tiny'])
     
     # List of ID of species in the KPR cascade for init_history file.
-    if 'pMHC' in net.list_types:
-        list_pMHC=net.list_types['pMHC']
+    if 'pMHC' in net.dict_types:
+        list_pMHC=net.dict_types['pMHC']
         hdr.append("#define pMHC_LENGTH %i" %len(list_pMHC) )
         hdr.append("static int pMHC_LIST[pMHC_LENGTH];")
     
     # List of all phosphatase or kinase (unphosphorylated).
     nP = 0
-    if 'Phosphatase' in net.list_types:
-        P_list = net.list_types['Phosphatase']
+    if 'Phosphatase' in net.dict_types:
+        P_list = net.dict_types['Phosphatase']
         for i in range(len(P_list)):
              if(P_list[i].n_phospho == 0):
                  nP += 1    # all the phosphatase (not phosphorylated).
     nK = 0
-    if 'Kinase' in net.list_types:
-        K_list = net.list_types['Kinase']
+    if 'Kinase' in net.dict_types:
+        K_list = net.dict_types['Kinase']
         for i in range(len(K_list)):
             if(K_list[i].n_phospho == 0):
                 if not K_list[i].isinstance('pMHC'):
                     nK += 1  
          
-    S_list = net.list_types['Species']
+    S_list = net.dict_types['Species']
     counter = 0
     for i in range(len(S_list)):
         if (S_list[i].isinstance('Kinase') or S_list[i].isinstance('Phosphatase')):
@@ -126,8 +126,8 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
     trackdiff = track_changing_variable(net, 'Diffusible' )
     
     # poor way to count the outputs (to specialized...)
-    if 'Output' in net.list_types:
-        Outs = net.list_types['Output']
+    if 'Output' in net.dict_types:
+        Outs = net.dict_types['Output']
         Out = Outs[0]  # at most one output...
         if Out.isinstance('pMHC'):
             hdr.append("#define    NOUTPUT %i" %(len(trackout)+1) )
@@ -152,12 +152,12 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
     str_out = ', '.join( [str(nn) for nn in trackout] )
     
     # very unmodular way of adding the ouput arising from the self ligands...
-    if 'Output' in net.list_types:
-        Outs = net.list_types['Output']
+    if 'Output' in net.dict_types:
+        Outs = net.dict_types['Output']
         Out = Outs[0]  # at most one output...
         if Out.isinstance('pMHC'):  # if the output is in the KPR cascade, need to add the other species for output.
             n = Out.n_phospho
-            number_species = len(net.list_types['Species'])
+            number_species = len(net.dict_types['Species'])
             str_out = str_out+", %i"%(n + number_species + 1)
             
     hdr.append("static int trackout[] = {%s};" %str_out )
@@ -166,11 +166,11 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
 
     str_diff = ', '.join( [str(nn) for nn in trackdiff] )
     hdr.append("static int trackdiff[] = {%s};" %str_diff )    
-    str_diff_constant=', '.join([str(net.list_types['Species'][nn].diffusion) for nn in trackdiff])
+    str_diff_constant=', '.join([str(net.dict_types['Species'][nn].diffusion) for nn in trackdiff])
     hdr.append("static double diff_constant[] = {%s};" %str_diff_constant )#table containing diffusion constants of ligands
     list_ext=[]
-    if 'Ligand' in net.list_types:
-        for nn in net.list_types['Ligand']:
+    if 'Ligand' in net.dict_types:
+        for nn in net.dict_types['Ligand']:
             if nn.isinstance('Diffusible'):
                 list_ext.append(str(1))
             else:
@@ -202,11 +202,11 @@ def write_deriv_inC(net,prmt,programm_file):
         add("LIGAND_SELF_LIST[%i] = %f;\n" %(j, prmt['Ligand_self'][j] ))
     for j in range(len(prmt['tau_off'])):
         add("TAU_LIST[%i] = %f;\n" %(j, prmt['tau_off'][j]) )
-    list_pMHC=net.list_types['pMHC']
+    list_pMHC=net.dict_types['pMHC']
     for j in range(len(list_pMHC)):
         add("pMHC_LIST[%i] = %i;\n" %(j, list_pMHC[j].int_id()) )
     
-    S_list = net.list_types['Species']
+    S_list = net.dict_types['Species']
     counter = 0
     for i in range(len(S_list)):
         if (S_list[i].isinstance('Kinase') or S_list[i].isinstance('Phosphatase') ):
