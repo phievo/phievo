@@ -2,6 +2,7 @@ import random as rd
 from matplotlib import pyplot as plt
 import numpy as np
 import warnings
+import networkx as nx
 #dist = lambda A,B,pos: ((pos[A][0]-pos[B][0])**2+(pos[A][1]-pos[B][1])**2)**.5
 #reg = lambda x: max(x,-1) if x < 0 else min(x,1)
 
@@ -27,13 +28,13 @@ def layout(node_list,interaction_list,radius=1,layout="graphviz"):
         dict: indexed by nodes names and containing their (x,y) position (for use with draw_networkx pos argument typically)
     """
     pos = None
-    import networkx as nx
-    G = nx.Graph()
+    G = nx.DiGraph()
     for node in node_list:
         G.add_node(node)
     for edge in interaction_list:
         G.add_edge(edge[0],edge[1])
 
+    
     if layout=="graphviz":
         try:
             ## Graphviz does not return the positions as numpy arrays
@@ -41,9 +42,17 @@ def layout(node_list,interaction_list,radius=1,layout="graphviz"):
         except ImportError:
             warnings.warn('pygraphviz is not correctly installed - using spring_layout instead')
             pos = nx.spring_layout(G)
+    elif layout=="hierarchical":
+         try:
+            ## Graphviz does not return the positions as numpy arrays
+             #neato, dot, twopi, circo, fdp, nop, wc, acyclic, gvpr, gvcolor, ccomps, sccmap, tred, sfdp.
+             pos = {kk:np.array(xx) for kk,xx in nx.nx_agraph.graphviz_layout(G,prog="dot").items()}
+         except ImportError:
+             warnings.warn('pygraphviz is not correctly installed - using spring_layout instead')
+             pos = nx.spring_layout(G)
     else:
-        pos = getattr(nx,layout+"_layout")
-
+        compute_layout = getattr(nx,layout+"_layout")
+        pos = compute_layout(G)
         # except AttributeError:
         #     print("%s is not a compatible layout. Please try with one of the following layouts:
         #     \t - circular
@@ -54,6 +63,7 @@ def layout(node_list,interaction_list,radius=1,layout="graphviz"):
         #     \t - fruchterman_reingold")
             ## Scaling according to the minimal distance between two nodes
     minDist = 100000
+
     keys = list(pos.keys())
     ## Need to run over the indexes in order not to count twice the same distance
     for iA in range(len(node_list)):
@@ -63,3 +73,6 @@ def layout(node_list,interaction_list,radius=1,layout="graphviz"):
         pos[iA][0]*=(7*radius/minDist)
         pos[iA][1]*=(7*radius/minDist)
     return pos
+
+def hierarchical_layout(node_list):
+    NotImplemented

@@ -93,7 +93,8 @@ class Edge:
         self.angles = []
         self.receiveEdge = 0
         self.interaction = None
-
+        
+        
     def radius(self,theta):
         return 0
     def record_angle(self,angle):
