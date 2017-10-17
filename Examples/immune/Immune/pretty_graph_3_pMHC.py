@@ -126,7 +126,7 @@ def pretty_graph(net,extended=True,layout="hierarchical"):
                 graph.add_node(post_name,**global_node_attribute['TModule'])
                 param = dict(**global_edge_attribute['Default'])
                 param["label"] = produce_CorePromoter_name(net.graph.successors(nn)[0])
-                ee = graph.add_edge(post_name, succ_name,reac,**param)
+                ee = graph.add_edge(post_name, succ_name,**param)
             else:
                 post_species = succ
                 post_name = succ_name
@@ -137,15 +137,15 @@ def pretty_graph(net,extended=True,layout="hierarchical"):
                     if (pre.activity==1):
                         param = dict(**global_edge_attribute['activation'])
                         param["label"] = produce_TFHill_name(pre)
-                        ee = graph.add_edge(pre_name, post_name,reac,**param)
+                        ee = graph.add_edge(pre_name, post_name,**param)
                     else:
                         param = dict(**global_edge_attribute['repression'])
                         param["label"] = produce_TFHill_name(pre)
-                        ee = graph.add_edge(pre_name, post_name,reac,**param )
+                        ee = graph.add_edge(pre_name, post_name,**param )
                 else:
                     param = dict(**global_edge_attribute['Default'])
                     param["label"] = produce_TFHill_name(pre)
-                    ee = graph.add_edge(pre_name,post_name,reac,**param)
+                    ee = graph.add_edge(pre_name,post_name,**param)
 
 
         elif isinstance(nn,Interaction):
@@ -163,7 +163,7 @@ def pretty_graph(net,extended=True,layout="hierarchical"):
                 param["arrowstyle"] = "-|>"
 
                 param["label"] = produce_Phospho_name(nn,cat=True)
-                graph.add_edge(produce_species_name(cataList[0]),produce_Phospho_name(nn),reac,**param)
+                graph.add_edge(produce_species_name(cataList[0]),produce_Phospho_name(nn),**param)
 
             elif isinstance(nn,PPI):
                 namePPI = produce_PPI_name(nn)
@@ -172,11 +172,11 @@ def pretty_graph(net,extended=True,layout="hierarchical"):
                 graph.add_node(namePPI,**global_node_attribute["PPI"])
                 param = dict(**global_edge_attribute['PPI'])
                 param["label"] = produce_PPI_name(nn)
-                graph.add_edge(namePPI,produce_species_name(PPI_complex),reac,**param)
+                graph.add_edge(namePPI,produce_species_name(PPI_complex),**param)
                 for compo in PPI_components:
                     param["label"] = ""
                     param["arrowstyle"]="-"
-                    graph.add_edge(produce_species_name(compo),namePPI,reac,**param)
+                    graph.add_edge(produce_species_name(compo),namePPI,**param)
 
             elif isinstance(nn,Degradation):
                 nameDegrad = produce_Degradation_name(nn)
@@ -190,12 +190,12 @@ def pretty_graph(net,extended=True,layout="hierarchical"):
                 param = dict(**global_edge_attribute['Phospho'])
                 param["color"] = "#B42B3C"
                 param["label"] = produce_species_name(listCata[0])
-                graph.add_edge(produce_species_name(listIn[0]),produce_species_name(listOut[0]),reac, **param)
+                graph.add_edge(produce_species_name(listIn[0]),produce_species_name(listOut[0]), **param)
                 if not extended:
                     continue
                 param["arrowstyle"] = "-|>"
                 param["label"] = produce_Phospho_name(nn,cat=True)
-                graph.add_edge(produce_species_name(listCata[0]),produce_Phospho_name(nn),reac,**param)
+                graph.add_edge(produce_species_name(listCata[0]),produce_Phospho_name(nn),**param)
 
             elif nn.label == "Simple_Dephosphorylation":
                 
@@ -204,12 +204,12 @@ def pretty_graph(net,extended=True,layout="hierarchical"):
                 param = dict(**global_edge_attribute['Phospho'])
                 param["color"] = "#2B39B4"
                 param["label"] = produce_species_name(listCata[0])
-                graph.add_edge(produce_species_name(listIn[0]),produce_species_name(listOut[0]),reac,**param)
+                graph.add_edge(produce_species_name(listIn[0]),produce_species_name(listOut[0]),**param)
                 if not extended:
                     continue
                 param["arrowstyle"] = "-|>"
                 param["label"] = produce_Phospho_name(nn,cat=True)
-                graph.add_edge(produce_species_name(listCata[0]),produce_Phospho_name(nn),reac,**param)
+                graph.add_edge(produce_species_name(listCata[0]),produce_Phospho_name(nn),**param)
 
             elif nn.label == "KPR_Binding":              
                 binding_name = 'LR'
@@ -218,11 +218,11 @@ def pretty_graph(net,extended=True,layout="hierarchical"):
                 graph.add_node(binding_name,**global_node_attribute["Binding"])
                 param = dict(**global_edge_attribute['Binding'])
                 param["label"] = ""
-                graph.add_edge(binding_name,produce_species_name(binding_complex),reac,**param)
+                graph.add_edge(binding_name,produce_species_name(binding_complex),**param)
                 for compo in binding_components:
                     param["label"] = ""
                     param["arrowstyle"]="-"
-                    graph.add_edge(produce_species_name(compo),binding_name,reac,**param)
+                    graph.add_edge(produce_species_name(compo),binding_name,**param)
 
             elif nn.label == "KPR_Unbinding":
                 if not extended:
@@ -238,7 +238,7 @@ def pretty_graph(net,extended=True,layout="hierarchical"):
                     L=P2
                 param = dict(**global_edge_attribute['Binding'])
                 param["label"] = "1/τ"
-                graph.add_edge(produce_species_name(binding_complex),produce_species_name(L),reac,**param)
+                graph.add_edge(produce_species_name(binding_complex),produce_species_name(L),**param)
         
 
             else:

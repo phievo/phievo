@@ -62,7 +62,7 @@ cfile['input'] =  'input.c'
 pfile = {}
 pfile["deriv2"] = "immune.Immune.deriv2_pMHC_modifier"
 pfile["interaction"] = "immune.Immune.interaction_pMHC"
-pfile["pretty_graph"] = "immune.Immune.pretty_graph_3_pMHC"
+pfile["pretty_graph"] = "immune.Immune.pretty_graph_2_pMHC"
 pfile["plotdata"] = "immune.Immune.plotdata_pMHC"
 
 #################################################################################

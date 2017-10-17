@@ -68,16 +68,13 @@ class Graph:
             :class:`Networks.PlotGraph.Components.Edge`:The edge reference.
 
         """
-        if len(argv) == 3:
+        if len(argv) == 2:
             nodeFrom = argv[0]
             nodeTo=argv[1]
-            reac=argv[2]
-
         else:
             try:
                 nodeFrom =  kwargs["nodeFrom"]
                 nodeTo =  kwargs["nodeTo"]
-                reac = kwargs["reac"]
             except KeyError:           
                 print("An edge cannot be added without a nodeFrom, a nodeTo, and a reaction index.")
                 return None
@@ -102,7 +99,7 @@ class Graph:
             nodeTo = self.edges[nodeTo]
             nodeTo.setReceiveEdge()
         try:
-            newEdge = getattr(Components,style)(nodeFrom=nodeFrom,nodeTo=nodeTo,reac=reac,label=label,**kwargs)
+            newEdge = getattr(Components,style)(nodeFrom=nodeFrom,nodeTo=nodeTo,label=label,**kwargs)
         except AttributeError:
             print("Error: %s does not correspond to a edge style."%style)
             return None
