@@ -18,7 +18,7 @@ When python2 and python3 are installed on the same computer, it is common to nee
 
 From the root of the project, run the following command:
 ```bash
-	sudo pip3 install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.tar.gz?raw=true
+	sudo pip3 install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.tar.gz
 ```
 
 ## Instructions specific to windows
