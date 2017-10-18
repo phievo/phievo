@@ -40,8 +40,8 @@ class Simple_Dephosphorylation(classes_eds2.Interaction):
 # species should be the kinase).
 def check_existing_Simple_Dephosphorylation(self,list):
         """ special function to check if a dephosphorylation exists : order in the list should be phosphatase first"""
-        if 'Simple_Dephosphorylation' in self.list_types:    #goes through the list of interactions
-            for inter in self.list_types['Simple_Dephosphorylation']:
+        if 'Simple_Dephosphorylation' in self.dict_types:    #goes through the list of interactions
+            for inter in self.dict_types['Simple_Dephosphorylation']:
                 [catalyst,listIn,listOut]=self.catal_data(inter)
                 if (catalyst==list[0]) and (listIn[0]==list[1]):
                     return True
@@ -67,9 +67,9 @@ def number_Simple_Dephosphorylation(self):
         for iP in range(nP):
             for iSp in range(nSp):
                 for iS in range(nS):
-                    P=self.list_types['Phosphatase'][iP]
-                    Sp=self.list_types['Phospho'][iSp]
-                    S=self.list_types['Phosphorylable'][iS]
+                    P=self.dict_types['Phosphatase'][iP]
+                    Sp=self.dict_types['Phospho'][iSp]
+                    S=self.dict_types['Phosphorylable'][iS]
                     if self.is_phospho_successor(Sp,S): # Need the two species to be connected by a phosphorylation.
                         if P != S: # We do not want the phosphatase to be the species itself.
                             if P != Sp: # We do not want the phosphatase to be the phosphorylated species.
@@ -193,7 +193,7 @@ def new_random_Simple_Dephosphorylation(self, K, Sp,S):
 def random_Simple_Dephosphorylation(self):
         """Create new random  Phosphorylations from list of possible kinase substrates"""
         
-        if 'Phosphatase' in self.list_types and 'Phosphorylable' in self.list_types and 'Phospho' in self.list_types:
+        if 'Phosphatase' in self.dict_types and 'Phosphorylable' in self.dict_types and 'Phospho' in self.dict_types:
             list_possible_Simple_Dephosphorylation=[]
             nP=self.number_nodes('Phosphatase')
             nSp=self.number_nodes('Phospho')
@@ -202,9 +202,9 @@ def random_Simple_Dephosphorylation(self):
             for iP in range(nP):
                 for iSp in range(nSp):
                     for iS in range(nS):
-                        P=self.list_types['Phosphatase'][iP]
-                        Sp=self.list_types['Phospho'][iSp]
-                        S=self.list_types['Phosphorylable'][iS]
+                        P=self.dict_types['Phosphatase'][iP]
+                        Sp=self.dict_types['Phospho'][iSp]
+                        S=self.dict_types['Phosphorylable'][iS]
                     
                         if self.is_phospho_successor(Sp,S): # Need the two species to be connected by a phosphorylation.
                             if P != S: # We do not want the phosphatase to be the species itself.
@@ -242,18 +242,19 @@ setattr(mutation.Mutable_Network,'new_random_Simple_Dephosphorylation',new_rando
 ## Deterministic stuff.
 def SimpleDephospho_deriv_inC(net):
  func="\n/***********Simple_Dephosphorylation**************/\n"
- if ('Simple_Dephosphorylation' in net.list_types):
-     for reaction in net.list_types['Simple_Dephosphorylation']:
+ if ('Simple_Dephosphorylation' in net.dict_types):
+     for reaction in net.dict_types['Simple_Dephosphorylation']:
          [phosphatase,species_P,species]=net.catal_data(reaction)
          species = species[0]
          species_P = species_P[0]
+         phosphatase = phosphatase[0]
          # agonist term
          rate = "%f*"%reaction.rate+phosphatase.id+"*"+species_P.id
          func = func+deriv2.compute_leap([species_P.id],[species.id],rate)
          # self term
          if species.isinstance('pMHC'):
              n = species.n_phospho
-             number_species = len(net.list_types['Species'])
+             number_species = len(net.dict_types['Species'])
              rate = "%f*"%reaction.rate+phosphatase.id+"*s[%d]"%(number_species+n+2)
              func = func+deriv2.compute_leap(["s[%d]"%(number_species+n+2)],["s[%d]"%(number_species+n+1)],rate)
          elif phosphatase.isinstance('pMHC'):
@@ -273,8 +274,8 @@ def compute_gillespie_Simple_Dephosphorylation(net,n_reactions):
     proba="\n\t/*****************Simple_Dephosphorylations*****************/\n"
     action="\n\t/*****************Simple_Dephosphorylations*****************/\n"
     
-    if ('Simple_Dephosphorylation' in net.list_types):
-        for index in net.list_types['Simple_Dephosphorylation']:  # looping over all Simple_Dephosphorylation reactions
+    if ('Simple_Dephosphorylation' in net.dict_types):
+        for index in net.dict_types['Simple_Dephosphorylation']:  # looping over all Simple_Dephosphorylation reactions
             [P,S_p,S] = net.catal_data(index) # the phosphatase, initial phosphorylated species and species.
             S = S[0]
             S_p = S_p[0]
@@ -290,7 +291,7 @@ def compute_gillespie_Simple_Dephosphorylation(net,n_reactions):
             # Self.
             if S.isinstance('pMHC'):
                 n = S.n_phospho
-                number_species = len(net.list_types['Species'])
+                number_species = len(net.dict_types['Species'])
                 # the dephosphorylation probability (enzymatic)
                 proba=proba + "\t \t p[" + str(n_reactions) + "]=%f*floor(s["%index.rate + "%d][ncell])*floor(s["%(number_species+n+2) + "%d][ncell]);\n"%P.int_id()
                 # the effect of a dephosphorylation (S_p --> S_p-1  &  S --> S + 1 )
@@ -301,7 +302,7 @@ def compute_gillespie_Simple_Dephosphorylation(net,n_reactions):
                 
             elif P.isinstance('pMHC'):
                 n = P.n_phospho
-                number_species = len(net.list_types['Species'])
+                number_species = len(net.dict_types['Species'])
                 # the dephosphorylation probability (enzymatic)
                 proba=proba + "\t \t p[" + str(n_reactions) + "]=%f*floor(s["%index.rate + "%d][ncell])*floor(s["%S_p.int_id() + "%d][ncell]);\n"%(number_species+n+1)
                 # the effect of a dephosphorylation (S_p --> S_p-1  &  S --> S + 1 )

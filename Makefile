@@ -9,7 +9,7 @@ push:
 	git push origin master
 
 package:
-	python3 setup.py sdist
+	python3 setup.py sdist --format=zip
 
 install_dependencies:
 	sudo $(PIP) install -r requirements.txt

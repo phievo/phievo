@@ -1,7 +1,7 @@
 # Install φ-evo
 
 
-Since _phievo_ is not pusblished on any official repository yet, you need to install it manually.
+Since _φ-evo_ is not pusblished on any official repository yet, you need to install it manually.
 
 ### install Anaconda
 In case python is not already installed on your computer, we recommand to install it via the [anaconda distribution](https://www.continuum.io/downloads).
@@ -18,7 +18,7 @@ When python2 and python3 are installed on the same computer, it is common to nee
 
 From the root of the project, run the following command:
 ```bash
-	sudo pip3 install dist/phievo-1.0.tar.gz
+	sudo pip3 install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.tar.gz
 ```
 
 ## Instructions specific to windows

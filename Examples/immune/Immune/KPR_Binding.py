@@ -64,14 +64,14 @@ setattr(classes_eds2.Network,'new_KPR_Binding',new_KPR_Binding)
 
 def random_KPR_Binding(self):
         """Create new random KPR_Binding from list of those possible """
-        if 'Ligand' in self.list_types and 'Receptor' in self.list_types:
+        if 'Ligand' in self.dict_types and 'Receptor' in self.dict_types:
             list_possible_KPR_Binding=[]
-            nL=len(self.list_types['Ligand'])
-            nR=len(self.list_types['Receptor'])
+            nL=len(self.dict_types['Ligand'])
+            nR=len(self.dict_types['Receptor'])
             for iL in range(nL):
                 for iR in range(nR):
-                    L=self.list_types['Ligand'][iL]
-                    R=self.list_types['Receptor'][iR]
+                    L=self.dict_types['Ligand'][iL]
+                    R=self.dict_types['Receptor'][iR]
                     if not self.check_existing_binary([L,R],'KPR_Binding'):
                         list_possible_KPR_Binding.append([L,R])
             n_pKPR_Binding=len(list_possible_KPR_Binding)
@@ -112,8 +112,8 @@ setattr(mutation.Mutable_Network,'new_random_KPR_Binding',new_random_KPR_Binding
 def compute_KPR_Binding(net):
     """ Create a function that computes the derivative for Receptor and product of KPR_Binding interaction for a given cell"""
     func="\n/***********KPR_Binding**************/\n"
-    if ('KPR_Binding' in net.list_types):
-        for index in net.list_types['KPR_Binding']:
+    if ('KPR_Binding' in net.dict_types):
+        for index in net.dict_types['KPR_Binding']:
             C=net.graph.successors(index)[0]#finds the product of KPR_Binding interaction
             [P1,P2]=net.graph.predecessors(index) #find the components
             if P1.isinstance('Ligand'):
@@ -126,7 +126,7 @@ def compute_KPR_Binding(net):
             arate="%.10f*"%index.association+L.id+"*"+R.id
             func=func+deriv2.compute_leap([R.id,L.id],[C.id],arate)
             # self term
-            number_species = len(net.list_types['Species'])
+            number_species = len(net.dict_types['Species'])
             arate="%.10f*"%index.association+"s[%d]"%number_species+"*"+R.id;
             func = func+deriv2.compute_leap([R.id,"s[%d]"%number_species],["s[%d]"%(number_species+1)],arate);
     return func
@@ -138,8 +138,8 @@ def compute_gillespie_KPR_Binding(net,n_reactions):
     """ Create a function computing the KPR_Binding."""
     proba="\n\t/*****************KPR_Binding*****************/\n"
     action="\n\t/*****************KPR_Binding*****************/\n"
-    if ('KPR_Binding' in net.list_types):
-        for index in net.list_types['KPR_Binding']:  # looping over all Simple_Dephosphorylation reactions
+    if ('KPR_Binding' in net.dict_types):
+        for index in net.dict_types['KPR_Binding']:  # looping over all Simple_Dephosphorylation reactions
             C = net.graph.successors(index)[0]  # the complex
             [P1,P2] = net.graph.predecessors(index)  # the receptor and ligand
             if (P1.isinstance('Ligand')):
@@ -158,7 +158,7 @@ def compute_gillespie_KPR_Binding(net,n_reactions):
             n_reactions+=1 
             
             # Self.
-            number_species = len(net.list_types['Species'])
+            number_species = len(net.dict_types['Species'])
             # the binding probability
             proba=proba + "\t \t p[" + str(n_reactions) + "]=%.10f*floor(s["%index.association + "%d][ncell])*floor(s["%R.int_id()  + "%d][ncell]);\n"%number_species
             # the effect of binding (R,L --> R-1,L-1  &  C --> C + 1 )
