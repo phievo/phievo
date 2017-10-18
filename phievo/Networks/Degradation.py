@@ -194,4 +194,4 @@ def Degradation_deriv_inC(net):
         return '' #Empty string if no degradation in net
 
 #update deriv2
-deriv2.Degradation_deriv_inC = Degradation_deriv_inC
+deriv2.interactions_deriv_inC["Degradation"] = Degradation_deriv_inC
