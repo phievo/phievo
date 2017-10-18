@@ -112,15 +112,17 @@ def download_example_seed(seed_name):
     """
     Downloads a seed from the seed repository.
     """
+    server_address = "http://www.physics.mcgill.ca/~henrya/seeds_phievo/"
     existing_seeds = {
-        "adaptation":"https://github.com/adrienhenry/simulation_examples/blob/master/adaptation.zip?raw=true",
-        "adaptation_pruning":"https://github.com/adrienhenry/simulation_examples/blob/master/adaptation_pruning.zip?raw=true",
-        "lacOperon":"https://github.com/adrienhenry/simulation_examples/blob/master/lacOperon.zip?raw=true",
-        "lacOperon_pruning":"https://github.com/adrienhenry/simulation_examples/blob/master/lacOperon_pruning.zip?raw=true",
-        "somite":"https://github.com/adrienhenry/simulation_examples/blob/master/somite.zip?raw=true",
-        "somite_pruning":"https://github.com/adrienhenry/simulation_examples/blob/master/somite_pruning.zip?raw=true",
-        "hox_pareto_light":"https://github.com/adrienhenry/simulation_examples/blob/master/hox_pareto_light.zip?raw=true",
+        "adaptation":"adaptation.zip",
+        "adaptation_pruning":"adaptation_pruning.zip",
+        "lacOperon":"lacOperon.zip",
+        "lacOperon_pruning":"lacOperon_pruning.zip",
+        "somite":"somite.zip",
+        "somite_pruning":"somite_pruning.zip",
+        "hox_pareto_light":"hox_pareto_light.zip",
     }
+    existing_seeds = {kk:"{}{}".format(server_address,val) for kk,val in existing_seeds.items()}
     try:
         url = existing_seeds[seed_name]
     except KeyError:
