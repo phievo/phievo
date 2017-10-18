@@ -1,45 +1,46 @@
 Install φ-evo
 =============
 
-Since *phievo* is not pusblished on any official repository yet, you
-need to install it manually.
-
 install Anaconda
 ~~~~~~~~~~~~~~~~
 
-In case python is not already installed on your computer, we recommand
-to install it via the `anaconda
-distribution <https://www.continuum.io/downloads>`__.
+The \_phievo package depends on python>=3.5. In it is not already
+installed on your computer, we recommand to install it by using the
+`anaconda distribution <https://www.continuum.io/downloads>`__.
 
 Among other things, anaconda provides the standard package manager of
-python *pip*. *pip* can upgrade itself, it is generally recommanded to
-do so before starting the installation process.
+python *pip*. Before anything, it is good to check that you are working
+with the most recent version of pip:
 
 .. code:: bash
 
         pip3 install --upgrade pip
 
-When python2 and python3 are installed on the same computer, it is
-common to need to specify the version of python or pip you are using:
-``python`` (``pip``) for python2 and ``python3`` (``pip3``) for python3.
-Make sure you verify which command correspond to python3 on you
-computer. In the following instruction you may need replace "pip3" by
-"pip".
+**Note:** When multiple versions of python are installed on the same
+computer, you may need to specify the version of python or pip you are
+using: ``python`` (``pip``) for python2 and ``python3`` (``pip3``) for
+python3. Make sure that the ``which pip`` and ``which python`` return
+the right pip (and python) installation path. For simplicity we will use
+``pip`` in the following instructions.
+
+**Note:** If you install packages for all the users of your computer,
+you need to have admidistrator rights and use ``sudo`` before the pip
+command. It can happens that your global and your local pip are not the
+same. To make sure the administrator uses the right pip, run
+``sudo which pip``. The installation instructions assume you do not need
+to add ``sudo`` before ``pip``.
 
 install the package
 ~~~~~~~~~~~~~~~~~~~
 
-From the root of the project, run the following command:
+With pip installed, the installation is straight forward, run:
 
 .. code:: bash
 
-        sudo pip3 install dist/phievo-1.0.tar.gz
+        pip install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.zip?raw=true
 
-Instructions specific to windows
---------------------------------
-
-Install gcc
-~~~~~~~~~~~
+Install gcc on windows
+~~~~~~~~~~~~~~~~~~~~~~
 
 Windows does not come with the ``gcc`` compiler installed but the free
 software foundation provides a minimal distribution of the gnu softwares
@@ -47,56 +48,53 @@ for windows, it is called `MinGW <http://mingw.org/>`__.
 
 Once you have downloaded ``mingw-get-setup.exe``, run it. A selection
 panel will open. We recommend you to install at least the two following
-packages(the others are not relevant for phievo): -
+packages(the others are not relevant for φ-evo): -
 mingw-developper-toolkit - mingw32-base
 
 Choose the default directory.
 
 After the installation is finished, update windows ``PATH`` so that it
-knows where to look for *gcc* command. Open a the command prompt and
-run:
+knows where to look for the ``gcc`` command. Open a the command prompt
+and run:
 
 .. code:: bash
 
     setx PATH "%path%;C:\MinGW\bin"
 
-**Note:** If you may use other coding distribution such as code blocks
-or visual basics that already contain the *gcc* compiler. In such case,
-you do not need to install MinGw. Just upload you ``PATH`` so that
-windows knows where is the gcc compiler.
+**Note:** gcc is distributed by other packages such as code blocks or
+visual basics. In such case, you do not need to install MinGw. Just
+upload you ``PATH`` so that windows knows where is the gcc compiler.
 
-Instructions specific to OSX
-----------------------------
+Install gcc on mac osx
+~~~~~~~~~~~~~~~~~~~~~~
 
-Install gcc
-~~~~~~~~~~~
-
-OSX does not have the gcc compiler installed by default. There are
-different way to install it. The fastest is probably via
+OSX does not have the gcc compiler installed by default either. There
+are different ways to install it. The fastest is probably via
 `homebrew <https://brew.sh/>`__:
 
 .. code:: bash
 
     brew install gcc
 
-If *gcc* is not already installed on you system (via macports or Xcode),
-*homebrew*'s *gcc* should be automatically in the system's ``PATH``.
+If ``gcc`` is not already installed on you system (via macports or
+Xcode), *homebrew*'s *gcc* should be automatically in the system's
+``PATH``.
 
 Install pygraphviz
-------------------
+~~~~~~~~~~~~~~~~~~
 
-*pygraphviz* is not istalled by default with *phievo* because it does
-not exist natively on windows and we wanted to publish a version that
-that run on al the systems. *pygraphviz* is used only to display network
-layouts. If it is not install *phievo* will print a warning and use
-*networkx* spring layout instead.
+*pygraphviz* is not included in the default dependencies of *phievo*
+because it does not exist natively on windows and we wanted to publish a
+version that that runs on all the systems. *pygraphviz* is used only to
+display network layouts. If it is not installed, *phievo* will print a
+warning and use *networkx* spring layout instead.
 
 On max OSX, you have to use homebrew to install graphvix first :
 
 .. code:: bash
 
     brew install graphviz pkg-config
-    pip3 install pygraphviz
+    pip install pygraphviz
 
 On GNU/linux, installing the dependencies varies depanding on the
 distribution. We tested the following on debian and ubuntu
@@ -104,35 +102,21 @@ distribution. We tested the following on debian and ubuntu
 .. code:: bash
 
     sudo apt-get install graphviz graphviz-dev pkg-config
-    sudo pip3 install pygraphviz
+    sudo pip install pygraphviz
 
 On other distribution, you may want to find the equivalent of
 *graphviz*, *graphviz-dev*, and *pkg-config*.
 
 We found that sometimes on ubuntu the C linking to the graphviz library
-does not work properly, to fix this, be more explicit on the linking:
+does not work properly, to fix this, be more explicit and use the
+linking for the pip command:
 
 .. code:: bash
 
-    sudo pip3 install pygraphviz --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
-
-Build the documentation
------------------------
-
-To build the documentation, go to the ``docs`` directory and run
-
-.. code:: bash
-
-    make html
-
-the documentation is built in ``docs/build/html`` by default.
-
-Note that you may need to run make html twice because the build process
-uses the package *numfig* that first needs to list all the figures
-before numbering them.
+    sudo pip install pygraphviz --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
 
 Analyse notebook
-----------------
+~~~~~~~~~~~~~~~~
 
 We provide a jupyter notebook to help with the analysis of the runs. If
 you wand to run it, you will need to install several extra python
@@ -141,25 +125,37 @@ libraries, to help with this, they are writen in
 
 .. code:: bash
 
-    pip3 install -r extra.txt
+    pip install -r extra.txt
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
 
-Example: Static Hox
--------------------
+Test your installation
+~~~~~~~~~~~~~~~~~~~~~~
 
-Copy the project directory ``StaticHox`` from ``Examples`` where you
-want to run it. Then copy ``run_evolution`` at the same place as
-``StaticHox``.
+TO test that everything works properly, we will run an simulation
+example.
+
+Copy the project directory ``Examples/Somites`` and ``run_evolution.py``
+fom `github <https://github.com/phievo/phievo>`__ on your computer. Then
+copy ``run_evolution.py`` at the same place as the ``Somites/``
+directory.
 
 To launch the evolution, simply run
 
 .. code:: bash
 
-        ./run_evolution.py -m StaticHox
+        ./run_evolution.py -m Somites
 
 On windows machine we recommand that you explicitly tell the system that
 you are running python (make sure you use the good version).
 
 .. code:: bash
 
-        python run_evolution.py -m StaticHox
+        python run_evolution.py -m Somites
+
+If everything works correctly you should see the evolution starting and
+regular terminal print of the population best fitness.
+
+You can also choose to stop the simulation by deleting the
+``Somites/STOP.txt`` file after a few generations. The `jupyter
+notebook <https://raw.githubusercontent.com/phievo/phievo/master/Analyse%20Run.ipynb>`__
+can then be use to visualize the results.
