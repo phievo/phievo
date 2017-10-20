@@ -17,42 +17,40 @@ described by one or more of the following tags:
 Most of the former attributes are handled internally. If the user wants
 can to enter a type manually, it is done through:
 
-``` {.sourceCode .python}
+``` python
 mySpecies.add_type(["Degradation",0.5])
-print(mySpecies.list_types())
+print(mySpecies.dict_types())
 ```
 
 ### TModule
 
-A TModule is a third type of network component along with species\_ and
-interactions\_ that has not been mentioned yet. It is an artificial
-element introduced to allow the regulation of a species\_ production by
+A TModule is a third type of network component along with species and
+interactions that has not been mentioned yet. It is an artificial
+element introduced to allow the regulation of a species production by
 more than one transcription factor (TF). One, two or more can enhance or
 repress the production of a species, those a linked to the TModule using
-a [TFHill](interaction_) interaction. The TModule itself is linked to
+a TFHill interaction. The TModule itself is linked to
 the synthetized species by an interaction named CorePromoter. During the
-model export, the program will gather all the information contained in
+model export, the program will gather all the informations contained in
 the interactions suroundong the module en use them to generate the
 governing equation of the species that is produced.
 
-![](TModule.svg){.align-center width="500px"}
+![](TModule.svg){.align-center width="500px"} 
 
 ### Interaction
 
-The Interactions serve as links between other species\_ and TModules\_.
-The different interactions are:
+The Interactions, as suggested by its name, accounts for how species and TModules interact.
 
 ### Network
 
 The network class is a container that can accomodate its different
-Components (species\_, TModules\_, and interactions\_). A network is
-encoded using a biparpatite graph where species\_ one hand are connected
-to [interactions](interaction_) on the other hand. In fact the three
+Components (species, TModules, and interactions). A network is
+encoded using a biparpatite graph where species one hand are connected
+to interactions on the other hand. In fact the three
 types of components are represented by nodes from the [networkx
 package](https://networkx.github.io/) in the network's graph.
 
-The inherited class **Mutable\_Network** is used when running an *in
-silico* evolution.
+A layer called **MutableNetwork** is used over the Network class to account for the possibility to mutate the nodes.
 
 The time course of the species is obtained after compilation step where
 the program indexes the components and their parameters to produce a set
@@ -61,7 +59,7 @@ of delayed differential equations.
 ### Dynamical components
 
 To simulate the dynamics of the species the program first need to
-explore the nodes and the interactions\_ that are connected to it in
+explore the nodes and the interactions that are connected to it in
 order to build the equations that govern the dynamic of the
 concentrations. Once the equations are set, the equations are exported
 to c code and integrated. The following examples presents networks
