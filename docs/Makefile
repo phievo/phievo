@@ -13,6 +13,8 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+MD_FILES = $(wildcard source/*.md)
+RST_FILES = $(MD_FILES:.md=.rst)
 
 .PHONY: help
 help:
@@ -48,8 +50,12 @@ help:
 clean:
 	rm -rf $(BUILDDIR)/*
 
+source/%.rst:source/%.md
+	pandoc --from=markdown --to=rst --output=$@ $<
+	@echo Convert $< to $@
+
 .PHONY: html
-html:
+html:$(RST_FILES)
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

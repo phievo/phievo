@@ -37,8 +37,8 @@ class Degradation(classes_eds2.Interaction):
         classes_eds2.Node.__init__(self)
         self.rate=rate
         self.label='Degradation'
-        self.input=['Species','Degradable']
-        self.output=['Species']
+        self.input=['Species']
+        self.output=['Degradable']
 
     def __str__(self):
         return "{0.id} Degradation: rate = {0.rate:.2f}".format(self)
@@ -84,7 +84,7 @@ def new_Degradation(self,Input1, Input2, rate):
         or None if an error occured
     """
     p=Degradation(rate)
-    if p.check_grammar([Input1,Input2], [Input1]):
+    if p.check_grammar([Input1], [Input2]):
         self.add_Node(p)
         self.graph.add_edge(Input1,p)
         self.graph.add_edge(p,Input2)
@@ -194,4 +194,4 @@ def Degradation_deriv_inC(net):
         return '' #Empty string if no degradation in net
 
 #update deriv2
-deriv2.Degradation_deriv_inC = Degradation_deriv_inC
+deriv2.interactions_deriv_inC["Degradation"] = Degradation_deriv_inC

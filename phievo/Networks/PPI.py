@@ -44,6 +44,23 @@ class PPI(classes_eds2.Interaction):
     def outputs_to_delete(self,net):
         """Return the complex to delete when removing the LR"""
         return net.graph.successors(self)
+    
+    def check_grammar(self,input_list,output_list):
+        """checks the grammar for the interactions (custom for PPI)
+
+        Args:
+            input_list (list): nodes to be checked
+            output_list (list): nodes to be checked
+
+        Return:
+            Boolean for the consistency of up and downstream grammar
+        """
+        if len(input_list) == 1: #auto-phosphorylation
+            input_check = classes_eds2.check_consistency(['Complexable'],input_list)
+            output_check = classes_eds2.check_consistency(self.output,output_list)
+            return input_check and output_check
+        else:
+            return classes_eds2.Interaction.check_grammar(self,input_list,output_list)
 
 ########## Attributes attached to Network for PPI ##########
 
