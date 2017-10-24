@@ -191,7 +191,7 @@ class Simulation:
         """
         self.buffer_data = None
 
-    def PlotData(self,data,xlabel,ylabel,select_networks=[],no_popup=False,legend=True,lw=1,ax=None):
+    def PlotData(self,data,xlabel,ylabel,select_genes=[],no_popup=False,legend=True,lw=1,ax=None):
         """
         Function in charge of the call to matplotlib for both Plot_TimeCourse and Plot_Profile.
         """
@@ -200,7 +200,7 @@ class Simulation:
         Ngene = data.shape[1]
         colors = palette.color_generate(Ngene)
         for gene in range(Ngene):
-            if select_networks!=[] and gene not in select_networks:
+            if select_genes!=[] and gene not in select_genes:
                 continue
             ls = "--"
             label = "Species {}"
@@ -216,7 +216,7 @@ class Simulation:
         if legend:ax.legend()
         return fig
     
-    def Plot_TimeCourse(self,trial_index,cell=0,select_networks=[],no_popup=False,legend=True,lw=1,ax=None):
+    def Plot_TimeCourse(self,trial_index,cell=0,select_genes=[],no_popup=False,legend=True,lw=1,ax=None):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and the cell and plot the gene time series
@@ -225,16 +225,23 @@ class Simulation:
             trial_index: index of the trial you. Refere to run_dynamics to know how
             many trials there are.
             cell: Index of the cell to plot
+            select_genes: list of gene indexes to plot
             no_popup: False by default. Option used to forbid matplotlib popup windows
                      Useful when saving figures to a file.
         Return:
             figure
         """
-        data = self.buffer_data[trial_index][cell]
-        fig = self.PlotData(data,"Time","Concentration",select_networks=select_networks,no_popup=no_popup,legend=legend,lw=lw,ax=ax)        
+        data = self.buffer_data[trial_index]#[cell]
+        try:
+            data = data[cell]
+        except KeyError:
+            assert cell<0
+            cell = sorted(list(data.keys()))[-1]
+            data = data[cell]
+        fig = self.PlotData(data,"Time","Concentration",select_genes=select_genes,no_popup=no_popup,legend=legend,lw=lw,ax=ax)        
         return fig
 
-    def Plot_Profile(self,trial_index,time=0,no_popup=False,legend=True,lw=1,ax=None):
+    def Plot_Profile(self,trial_index,time=0,select_genes=[],no_popup=False,legend=True,lw=1,ax=None):
         """
         Searches in the data last stored in the Simulation buffer for the time course
         corresponding to the trial_index and plot the gene profile along the cells at
@@ -244,6 +251,7 @@ class Simulation:
             trial_index: index of the trial you. Refere to run_dynamics to know how
             many trials there are.
             time: Index of the time to select
+            select_genes: list of gene indexes to plot
             no_popup: False by default. Option used to forbid matplotlib popup windows
                      Useful when saving figures to a file.
         Return:
@@ -253,7 +261,7 @@ class Simulation:
         for key,dynamics in sorted(self.buffer_data[trial_index].items()):
             data.append(dynamics[time,:])
         data = np.array(data)
-        fig = self.PlotData(data,"Cell index","Concentration",no_popup=no_popup,legend=legend,lw=lw,ax=ax)
+        fig = self.PlotData(data,"Cell index","Concentration",select_genes=select_genes,no_popup=no_popup,legend=legend,lw=lw,ax=ax)
         return fig
         
     def load_Profile_data(self,trial_index,time):
