@@ -1,19 +1,51 @@
 Presentation
 ============
 
-This section presents the basics
+This section presents the basics element to understand the structure of
+the algorithm and the role of the various python module.
+
+An algorithm overview
+---------------------
+
+There is three main blocs in the algorithm that correspond to the three
+library presents at the root of the project.
+
+-  *Networks*: gather all the elements to represent, modify and simulate
+   the biological networks that are the various indidividuals of our
+   population.
+-  *Population\_types*: implements the so-called genetic algorithm and
+   its several variants
+-  *AnalysisTools*: gather the tools used after the simulation to
+   analyse, represent and study its results.
 
 Network components
 ------------------
+
+*Network* (and its sub-class *Mutable\_Network*) represent the
+individual levels of our evolutionnary algorithm. Apart of the methods
+used to implement the different operations, the main attribute is
+*graph*, a networkx.MultiDiGraph object that stores the biochemical
+network as a bipartite graph of *Species* (and *TModule*) on one side
+and *Interaction* on the other. The organisation of the graph thus
+relies on the `networkx package <https://networkx.github.io/>`__.
+
+The subclass called *MutableNetwork* handles the mutations in the
+*Network*
+
+The *deriv2* module is responsible for reading a *Network*'s
+interactions and to generate a C file with the species differencial
+equation used for the integration and compute the fitness of the network
+that will be used at the genetic algorithm level.
 
 Species
 ~~~~~~~
 
 Species is one of the two major components of a network. A species is a
-protein that can have different functions. Adding a new type requires a
-list containing the type name as a first element. If a type require
-parameter, the must complete the list in a pre-defined order. For
-instance a degradable species comes with its degradation rate.
+protein that can have different types (Degradable, Phosphorylable,
+etc.). Adding a new type requires a list containing the type name as a
+first element and the different parameters (if any) must complete the
+list in a pre-defined order. For instance a degradable species comes
+with its degradation rate.
 
 Most of the former attributes are handled internally, but nothing
 prevent us from adding a type manually:
@@ -23,12 +55,27 @@ prevent us from adding a type manually:
     mySpecies.add_type(["Degradation",0.5])
     print(mySpecies.dict_types())
 
+Species may also be added or deleted manually from the Network, but
+adding a single Species is actually quite rare as they often came as a
+whole gene with a CorePromoter and a TModule (see the TModule picture
+below).
+
+.. code:: python
+
+    mySpecies = my_Network.new_Species(["Degradation",0.5])
+    mySpecies = my_Network.new_gene(rate, delay,["Degradation",0.5],basal_rate)
+
 Interaction
 ~~~~~~~~~~~
 
 The Interactions, as suggested by its name, accounts for how species and
 TModules interact. Examples of interactions are protein-protein
-interactions, transcription factor regulations, etc.
+interactions, transcription factor regulations, etc. See the sections
+below for various type of preimplemented interactions.
+
+Note also that it is often necessary to implement new interactions
+tailored for a specific task. (See Examples/immune/ for an example of
+such new interactions.)
 
 TModule
 ~~~~~~~
@@ -47,24 +94,60 @@ the Tmodule.
    :figclass: align-center
    :width: 500px
 
-Network
-~~~~~~~
+Evolution
+---------
 
-The network class is a container that includes the different Components
-(species, TModules, and interactions) presented above. A network is
-encoded using a biparpatite where species and TModules are connected to
-interactions. The organisation of the *Network*'s graph relies on the
-`networkx package <https://networkx.github.io/>`__.
+The evolution algorithm mimics Darwinian selection. It generates an
+initial population (of constant size size defined by the user) where the
+individuals are in competition to pass their genome to the next
+generation. The algorithm thus follow a cycle of mutation, fitness
+computation and selection. Each cycle thus defines our time step of
+evolution and will subsequently be called a generation.
 
-An extra layer called *MutableNetwork* handles the mutations in the
-*Network*
+Elite strategy
+~~~~~~~~~~~~~~
 
-The *deriv2* class is responsible for reading a *Network*'s interactions
-and to generate a C file with the species differencial equation used for
-the integration.
+By default we use the more robust and less computationnaly costly
+strategy of genetic algorithm, the *elite strategy*. During the
+selection step, the worst part of the population is deleted, while the
+fittest half of the individuals are directly passed to the next
+generation. Then, each of themis copied and this copy is mutated. Note
+that this scheme automatically keep constant the population size and
+depend only on the rank of the individuals in the population and not on
+the quantitative fitness which make it robust to the possible failure of
+the fitness implementation.
 
-Dynamical components
-~~~~~~~~~~~~~~~~~~~~
+Pareto evolution
+~~~~~~~~~~~~~~~~
+
+In the case where the fitness is composed of multiple components, it is
+not obvious how to balance the different modules in the global fitness.
+It may be interesting to have a multiple objective optimization where
+all the components have the same importance; only changes improving a
+component without decreasing the others are kept. The fitness
+:math:`F = \{f_1,f_2,...,f_N\}` is of higher rank than
+:math:`G = \{g_1,g_2,...,g_N\}` if
+
+.. math:: \forall i\quad f_i\geq g_i
+
+.. math:: \exists k,\quad f_k>g_k
+
+Clearly multiple objective optimisation does not result in one best
+network in the end but to a population of highest rank networks called
+the Pareto front. More information can be found on
+`Wikipedia <https://en.wikipedia.org/wiki/Multi-objective_optimization>`__.
+
+From a practical standpoint, the algorithm works similarly to the
+genetic algorithm with a modified selection process. As in the genetic
+algorithm, half of the population is passed to the next generation and
+duplicated. Because the only classification criterion is the network's
+rank, the cutoff may occur in the middle of a set of equivalent network
+since they have the same rank. In such a case the algorithm selects
+randomly the networks with the cutoff rank to complete the set of
+individuals passed to the next generation.
+
+Modelization & Integration
+--------------------------
 
 To simulate the dynamics of a species the program first needs to explore
 the nodes and the interactions that are connected and to build the
@@ -74,8 +157,8 @@ equations are exported to c code and integrated.
 The following examples presents networks components are converted into
 ordinary differential equations.
 
-TModule
-^^^^^^^
+TModule and gene production
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 There exists two types of TF actions: activition and inhibition. Both
 types are modelled using Hill functions but there their effects is
@@ -109,7 +192,7 @@ the basal rate(in case no activator is present). The overall production
 is modulated by the repression.
 
 Degradation
-^^^^^^^^^^^
+~~~~~~~~~~~
 
 Every protein :math:`P` labelled as *degradable* is degraded over time
 with a rate :math:`\delta_P`. This
@@ -117,7 +200,7 @@ with a rate :math:`\delta_P`. This
 .. math:: \frac{d P}{d t} =  - \delta_P P
 
 Phosphorylation
-^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~
 
 The phosphorilasion is the addition of a phosphate group to a Species by
 a kinase. It creates a new phophorilated species. The dynamics of this
@@ -136,7 +219,7 @@ catalyses the phosphorilation of two species :math:`S_1` and
    :width: 300px
 
 Protein-Protein-Interaction (PPI)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The PPI interaction accounts for the complexation of two single proteins
 into one complex.
@@ -152,76 +235,3 @@ The rate is obtained from a mass-action dynamics:
 
 with :math:`k^{+}` and :math:`k^{-}` being respectively the forward and
 backward rate constants
-
-.. raw:: html
-
-   <!-- #### Ligand-Receptor interaction (LR) -->
-
-.. raw:: html
-
-   <!-- This interaction corresponds to the complexation of two species - a -->
-
-.. raw:: html
-
-   <!-- ligand and a receptor - to trigger a response in the system. -->
-
-.. raw:: html
-
-   <!-- ![](LR_interaction.svg){.align-center width="300px"} -->
-
-.. raw:: html
-
-   <!-- The ligand concentration are assumed to be add steady state which allows -->
-
-.. raw:: html
-
-   <!-- to describe the rate using the *Michaelis-Menten-Henri* formalism: -->
-
-.. raw:: html
-
-   <!-- $$\frac{d L}{dt} = \frac{d R}{dt} = - \frac{d C}{dt} = - \text{rate} = - \frac{V\,L\,R}{h + R}$$ -->
-
-.. raw:: html
-
-   <!-- with $V$ and $h$ being respectively the association rate and the -->
-
-.. raw:: html
-
-   <!-- association threshold. -->
-
-.. raw:: html
-
-   <!-- ## Evolution -->
-
-.. raw:: html
-
-   <!-- The evolution algorithm mimics Darwinian selection. It generates an initial population (of constant size size defined by the user) where the individuals are in competition to pass their genome to the next generation. Only the fittest half of the individuals passes to next generation and is allowed do reproduce (by duplication) in order to maintain the population size. -->
-
-Pareto evolution
-----------------
-
-In the case where the fitness is composed of multiple components, it is
-not obvious how to balance the different modules in the global fitness.
-It may be interesting to have a multiple objective optimization where
-all the components have the same importance; only changes improving a
-component without decreasing the others are kept. The fitness
-:math:`F = \{f_1,f_2,...,f_N\}` is of higher rank than
-:math:`G = \{g_1,g_2,...,g_N\}` if
-
-.. math:: \forall i\quad f_i\geq g_i
-
-.. math:: \exists k,\quad f_k>g_k
-
-Clearly multiple objective optimisation does not result in one best
-network in the end but to a population of highest rank networks called
-the Pareto front. More information can be found on
-`Wikipedia <https://en.wikipedia.org/wiki/Multi-objective_optimization>`__.
-
-From a practical standpoint, the algorithm works similarly to the
-genetic algorithm with a modified selection process. As in the genetic
-algorithm, half of the population is passed to the next generation and
-duplicated. Because the only classification criterion is the network's
-rank, the cutoff may occur in the middle of a set of equivalent network
-since they have the same rank. In such a case the algorithm selects
-randomly the networks with the cutoff rank to complete the set of
-individuals passed to the next generation.
