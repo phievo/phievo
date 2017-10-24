@@ -135,10 +135,13 @@ def download_example_seed(seed_name):
         print("The directory {} already exists, download_example_seed cannot overwrite it.".format(directory))
         return None
     ## Downloading zipfile
-    
+    def dlProgress(count, blockSize, totalSize):
+        state = int(count * blockSize * 100 / totalSize)
+        if state%2==0:
+            print("{}: [".format(seed_name+".zip")+("#"*int(state/2))+(" "*(50-int(state/2)))+"] {}%".format(state),end="\r")
         
     zip_path = os.path.join(directory,seed_name+".zip")
-    urlretrieve(url,zip_path)
+    urlretrieve(url,zip_path,reporthook=dlProgress)
     ## unziping file
     seed_path = os.path.join(directory,"Seed{}".format(seed_name))
     zip_ref = zipfile.ZipFile(zip_path, 'r')
