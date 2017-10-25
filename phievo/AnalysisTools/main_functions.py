@@ -158,3 +158,4 @@ def download_example_seed(seed_name):
     init_text = re.sub("(pfile\[[\'\"](\w+)[\'\"]]\s*=\s*).+",r"\1'\2.py'",init_text)
     with open(os.path.join(directory,"init_file.py"),"w") as init_file:
         init_file.write(init_text)
+ 
