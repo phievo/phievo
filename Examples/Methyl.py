@@ -15,6 +15,8 @@ mutation.species_types["Methylable"] = lambda random_generator:[
     ['Diffusible',mutation.sample_dictionary_ranges('Species.diffusion',random_generator)]
 ]
 classes_eds2.Species.Tags_Species["Methylable"] = []
+
+
 ## Define the default dictionary_range
 mutation.dictionary_ranges['Methyl.methyl'] = 0.0/(mutation.C*mutation.T)
 mutation.dictionary_ranges['Methyl.demethyl'] = 0.0/mutation.T
