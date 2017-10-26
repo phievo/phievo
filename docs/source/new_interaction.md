@@ -267,7 +267,7 @@ setattr(classes_eds2.Network,"random_Methyl",random_Methyl)
 deriv2.interactions_deriv_inC["Methyl"] = Methyl_deriv_inC
 ```
 
-You can download [Methyl.py]() from φ-evo's examples
+You can download [Methyl.py](https://github.com/phievo/phievo/raw/master/Examples/Methyl.py) from φ-evo's examples
 ## Edit the init file to load Methyl
 
 The top of the init file should now be able to load the Methyl module with an import if the two files are in the same directory:
