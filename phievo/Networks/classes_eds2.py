@@ -232,20 +232,17 @@ class Species(Node):
         """
         Node.__init__(self)
         self.types=['Species']
-
         for index in listtypes: #add the various tags
             if index == 'Species': continue # present by default
             if index[0] == 'Input': self.removable=False
-            if index[0] in self.Tags_Species:
-                self.types.append(index[0])
-                for i in range(0,len(self.Tags_Species[index[0]])):
-                    try:
-                        #updates the attributes corresponding to the types
-                        setattr(self,self.Tags_Species[index[0]][i],index[i+1])
-                    except Exception:
-                        display_error('Error in Species definition tag={0} : no attributes defined'.format(index[0]))
-            else:
-                print("Error in Species definition : no Tags "+index[0])
+            assert index[0] in self.Tags_Species,"Error in Species definition : no Tags "+index[0]
+            self.types.append(index[0])
+            for i in range(0,len(self.Tags_Species[index[0]])):
+                try:
+                    #updates the attributes corresponding to the types
+                    setattr(self,self.Tags_Species[index[0]][i],index[i+1])
+                except Exception:
+                    display_error('Error in Species definition tag={0} : no attributes defined'.format(index[0]))
 
     def __str__(self):
         def cutter(arg):
@@ -290,10 +287,13 @@ class Species(Node):
         """
         self.label=""
         for k in self.types:
-            self.label += ", "+k
+            self.label += ", "+k            
             if k in self.Tags_Species:
                 for item in self.Tags_Species[k]:
-                    self.label += ", "+str(getattr(self,item))
+                    try:
+                        self.label += ", "+str(getattr(self,item))
+                    except:
+                        import pdb;pdb.set_trace()
             else:
                 print("Error in label definition : no Tags "+k)
                 return False

@@ -166,6 +166,6 @@ def download_example_seed(seed_name):
     with open(os.path.join(directory,"init_file.py"),"w") as init_file:
         init_file.write(init_text)
     print("recovering log files...   done.",end="\n")
-    print("The example directory is {}.".format(directory))
+    print("Project saved in {}.".format(directory))
     
  
