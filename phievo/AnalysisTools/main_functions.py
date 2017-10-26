@@ -112,7 +112,8 @@ def download_example_seed(seed_name):
     """
     Downloads a seed from the seed repository.
     """
-    server_address = "http://www.physics.mcgill.ca/~henrya/seeds_phievo/"
+    #server_address = "http://www.physics.mcgill.ca/~henrya/seeds_phievo/{}"
+    server_address = "https://github.com/phievo/simulation_examples/blob/master/{}?raw=true"
     existing_seeds = {
         "adaptation":"adaptation.zip",
         "adaptation_pruning":"adaptation_pruning.zip",
@@ -122,7 +123,7 @@ def download_example_seed(seed_name):
         "somite_pruning":"somite_pruning.zip",
         "hox_pareto_light":"hox_pareto_light.zip",
     }
-    existing_seeds = {kk:"{}{}".format(server_address,val) for kk,val in existing_seeds.items()}
+    existing_seeds = {kk:server_address.format(val) for kk,val in existing_seeds.items()}
     try:
         url = existing_seeds[seed_name]
     except KeyError:
@@ -142,12 +143,18 @@ def download_example_seed(seed_name):
         
     zip_path = os.path.join(directory,seed_name+".zip")
     urlretrieve(url,zip_path,reporthook=dlProgress)
+    print("{}: [".format(seed_name+".zip")+("#"*50)+"] 100%",end="\n")
     ## unziping file
+    print("Extracting zip file...",end="\r")
     seed_path = os.path.join(directory,"Seed{}".format(seed_name))
     zip_ref = zipfile.ZipFile(zip_path, 'r')
     zip_ref.extractall(seed_path)
     zip_ref.close()
+    print("Extracting zip file...   done.",end="\n")
+    print("Deleting zip file...",end="\r")
     os.remove(zip_path)
+    print("Deleting zip file...   done.",end="\n")
+    print("recovering log files...",end="\r")
     for log_f in glob.glob(os.path.join(seed_path,"log_*")):
         f_name = log_f.split(os.sep)[-1]
         f_name = f_name.replace("log_","")
@@ -158,3 +165,7 @@ def download_example_seed(seed_name):
     init_text = re.sub("(pfile\[[\'\"](\w+)[\'\"]]\s*=\s*).+",r"\1'\2.py'",init_text)
     with open(os.path.join(directory,"init_file.py"),"w") as init_file:
         init_file.write(init_text)
+    print("recovering log files...   done.",end="\n")
+    print("Project saved in {}.".format(directory))
+    
+ 

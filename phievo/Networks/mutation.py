@@ -46,12 +46,35 @@ dictionary_ranges['Species.diffusion']=L   # for ligands diffusion
 dictionary_ranges['TModule.rate']=C/T
 dictionary_ranges['TModule.basal']=0.0
 
+
+ 
 dictionary_mutation={}
 
 list_types_output=['Species']
 list_mutate=[]
 list_remove=[]
 list_create=[]
+ 
+#############################
+### Define species types ####
+#############################
+
+species_types = {
+    "TF":lambda random_generator:[
+        ['Diffusible',sample_dictionary_ranges('Species.diffusion',random_generator)],
+        ['TF',int(2*random_generator.random())],
+        ['Complexable']
+    ],
+    "Kinase":lambda random_generator:[["Kinase"],["Complexable"]],
+    "Receptor":lambda random_generator:[["Receptor"],["Complexable"]],
+}
+def ligand_fct(random_generator):
+    list = [["Ligand"]]
+    external=int(2*random_generator.random())
+    if external==1:
+        list.append(['Diffusible',sample_dictionary_ranges('Species.diffusion',random_generator)])
+species_types["Ligand"] = ligand_fct
+
 
 #########################
 ### Routine functions ###
@@ -105,7 +128,7 @@ def sample_dictionary_ranges(key,random_generator):
     else:
         return dice
 
-def random_parameters(Type,random_generator,multiple_phospho=True):
+def random_parameters(Type,random_generator,multiple_phospho=False):
     """Create a set of new random parameters for a Species instance of type Type
 
     This used only for initialization and adds attributes to various types.
@@ -116,33 +139,17 @@ def random_parameters(Type,random_generator,multiple_phospho=True):
         random_generator: a random number generator (.random() called here)
 
     Return:
-        list a list of random parameters that can create a new Species
+        parameters a list of random parameters that can create a new Species
         or None if an error occured
     """
-    if not Type in classes_eds2.Species.Tags_Species: #look directly at the class attribute
-        print("Try to create a  not allowed random species of type "+Type)
-        return None
+    assert Type in list(classes_eds2.Species.Tags_Species.keys())+list(species_types.keys()),"Try to create a  not allowed random species of type "+Type
 
-    list=[['Degradable', sample_dictionary_ranges('Species.degradation',random_generator) ],['Phosphorylable']]
+    parameters=[['Degradable', sample_dictionary_ranges('Species.degradation',random_generator) ],['Phosphorylable']]
 
-    if multiple_phospho: list.append(['Phospho',0])
-
-    # We start with Ligand because it is the trickiest one
-    if Type=='Ligand':
-        list.append(['Ligand'])
-        external=int(2*random_generator.random())
-        if (external==1):
-            parameter=sample_dictionary_ranges('Species.diffusion',random_generator)
-            list.append(['Diffusible',parameter])
-    elif Type=='TF':
-        parameter=sample_dictionary_ranges('Species.diffusion',random_generator)
-        list.append(['Diffusible',parameter])
-        list.append(['TF',int(2*random_generator.random())])
-        list.append(['Complexable'])
-    elif Type=='Kinase' or Type=='Receptor':
-        list.append([Type])
-        list.append(['Complexable'])
-    return list
+    if multiple_phospho: parameters.append(['Phospho',0])
+    
+    parameters += species_types.get(Type,lambda random_generator:[])(random_generator)
+    return parameters
 
 def rand_modify(self,random_generator):
     """modify every parameters of the node self
@@ -277,10 +284,11 @@ class Mutable_Network(classes_eds2.Network):
             None
         """
         try:
+            
             getattr(self,'random_'+Interaction_Type)()
-        except Exception:
-            print(display_error)
-            display_error("Error when creating randomize Interaction "+Interaction_Type)
+        except Exception:        
+            print("\tError when creating randomize Interaction "+Interaction_Type)
+            raise
 
     def remove_Interaction(self,Type):
         """Randomly removes a Node of a given Type
