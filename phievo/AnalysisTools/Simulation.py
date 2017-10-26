@@ -66,9 +66,9 @@ class Simulation:
             seed (int): the seed-number of the run
 
         Returns:
-            list: fitness as a function of time
+            matplotlib figure
         """
-        fig = self.seeds[seed].show_fitness(smoothen,kwargs)
+        fig = self.seeds[seed].show_fitness(smoothen,**kwargs)
         return fig
 
     def custom_plot(self,seed,X,Y):
@@ -89,7 +89,7 @@ class Simulation:
             generation (int): number of the generation
 
         Returns:
-            Networks : the best network for the selected generation
+            The best network for the selected generation
         """
 
         return self.seeds[seed].get_best_net(generation)
@@ -106,7 +106,7 @@ class Simulation:
                 generation : index of the generation (must be a stored generation)
                 index : index of the network within its generation
             Return:
-                the selected network object
+                The selected network object
         """
         return self.seeds[seed].get_backup_net(generation,index)
 
@@ -141,7 +141,9 @@ class Simulation:
         Args:
             net (Networks): network to simulate
             trial (int): Number of independent simulation to run
-        Returns: data (dict) : dictionnary containing the time steps
+
+        Returns: 
+            data (dict) dictionnary containing the time steps
             at the "time" key, the network at "net" and the corresponding
             time series for index of the trial.
              - net : Network
@@ -429,7 +431,7 @@ class Seed_Pareto(Seed):
             seed (int): the seed-number of the run
             index(array): index of of the fitness to plot. If None, all the fitnesses are ploted
         Returns:
-            list: fitness as a function of time
+            Matplolib figure
         """
         gen = self.get_observable("generation")
 
@@ -452,40 +454,11 @@ class Seed_Pareto(Seed):
         fig.show()
         return fig
 
-
-
-    def pareto_scatter(self,generation):
-        """Display one generation as pareto fronts
-
-        Run on 2D and 3D and use the Restart_file to retrieve whole population
-
-        Args:
-           generation (int): must be a whole generation saved (from restart file)
-        Returns:
-           dict: rank -> [[fitness1],[fitness2],…]
-        """
-
-        with shelve.open(self.restart_path) as data:
-            dummy,pop_list = data[str(generation)]
-        fitness_dico = {}
-        fitnesses = self.get_observable("fitness")
-        for ind in pop_list:
-            try:
-                fitness_dico[ind.prank].append([ind.fitness[i] for i in range(self.nbFunctions)])
-            except KeyError:
-                fitness_dico[ind.prank] = [[ind.fitness[i] for i in range(self.nbFunctions)]]
-
-        if self.nbFunctions == 2:
-            pareto_plane(fitness_dico,fitnesses)
-        elif self.nbFunctions == 3:
-            pareto_space(fitness_dico,fitnesses)
-        else:
-            print('Error, too many fitnesses to plot them all')
-        return fitness_dico
-
     def pareto_generate_fit_dict(self,generations,max_rank=1):
-        ## Load fitness data for the selected generations and format them to be
-        ## understandable by plot_multiGen_front2D
+        """
+        Load fitness data for the selected generations and format them to be
+        understandable by plot_pareto_fronts
+        """
         data = MF.load_generation_data(generations,self.root+"Restart_file")        
         fitnesses = {gen:
                      [
@@ -502,6 +475,26 @@ class Seed_Pareto(Seed):
         return net_info,fitnesses
     
     def plot_pareto_fronts(self,generations,max_rank=1,with_indexes=False,legend=False,xlim=[],ylim=[],colors=[],gradient=[],xlabel="F_1",ylabel="F_2",s=50,no_popup=False):
+        """
+        Plot every the network of the selected generations in the (F_1,F_2) fitness space.
+
+        Args:
+            generations (list): list of the selected generations
+            max_rank (int): In given population plot only the network of rank <=max_rank
+            with_indexes(bool): NotImplemented 
+            legend(bool): NotImplemented
+            xlim (list): [xmax,xmin]
+            ylim (list): [ymax,ymin]
+            colors (list): List of html colors, one for each generation
+            gradient (list): List of colors to include in the gradient
+            xlabel(str): Label of the xaxis
+            ylabel(str): Label of the yaxis
+            s (float): marker size
+            no_popup(bool): prevents the popup of the plot windows 
+        
+        Returns:
+            matplotlib figure
+        """
         net_info,fitnesses = self.pareto_generate_fit_dict(generations,max_rank)
         if not colors and not gradient:colors = {gen:col for gen,col in zip(fitnesses.keys(),palette.color_generate(len(fitnesses)))}
         if gradient:
@@ -523,35 +516,6 @@ class Seed_Pareto(Seed):
         return fig
         
         
-    def plot_pareto_fronts_bak(self,generations,with_indexes = False):
-        """
-            Plots the pareto fronts for a selected list of generations.
-            Args:
-                generations: list of generations indexes
-        """
-
-        ## Load fitness data for the selected generations and format them to be
-        ## understandable by plot_multiGen_front2D
-        data = MF.load_generation_data(generations,self.root+"Restart_file")
-
-        generation_fitness = {}
-        generation_indexes = {}
-        for gen in generations:
-
-            fitness_dico = {}
-            index_dico = {}
-            for i,ind in enumerate(data[gen]):
-                try:
-                    index_dico[ind.prank].append(i)
-                    fitness_dico[ind.prank].append(list(ind.fitness))
-                except KeyError:
-                    index_dico[ind.prank] = [i]
-                    fitness_dico[ind.prank] = [list(ind.fitness)]
-            generation_fitness[gen] = fitness_dico
-            generation_indexes[gen] = index_dico
-        ## Obvious: plot
-        fig = MF.plot_multiGen_front2D(generation_fitness,generation_indexes if with_indexes else None)
-        return fig
 
 class Genealogy:
     def __init__(self,seed):
@@ -899,27 +863,3 @@ class Genealogy:
         plotly_graph.py.plot(figure, filename='pareto_accross_generations.html')
         return figure
         
-def pareto_plane(fitness_dico,fitnesses):
-    """2d plotting subroutine of pareto_scatter"""
-    ax = plt.gca()#(111, projection='polar')
-    for rank,points in fitness_dico.items():
-        F1,F2 = list(zip(*points))
-        plt.plot(F1,F2,'d',label='rank {}'.format(rank))
-    for func,index in zip([plt.xlabel,plt.ylabel],fitnesses):
-        func("fitness_{}".format(index))
-    plt.legend(loc=0)
-    plt.show()
-
-def pareto_space(fitness_dico,fitnesses):
-    """3d plotting subroutine of pareto_scatter"""
-    from mpl_toolkits.mplot3d import Axes3D
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    for rank,points in fitness_dico.items():
-        F1,F2,F3 = list(zip(*points))
-        ax.plot(F1,F2,F3,label='rank {}'.format(rank))
-    for func,index in zip([plt.xlabel,plt.ylabel,plt.zlabel],fitnesses):
-        func("fitness_{}".format(index))
-    plt.legend(loc=0)
-    plt.show()
-

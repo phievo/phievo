@@ -124,7 +124,8 @@ def check_model_dir(model):
     try:
         pfile.update(init_module.pfile)
     except AttributeError:
-        print('Remark: No pfile object in init* file, use default one (see check_model_dir)!')
+        if __verbose__:
+            print('Remark: No pfile object in init* file, use default one (see check_model_dir)!')
     try:
         cfile.update(init_module.cfile)
     except AttributeError:

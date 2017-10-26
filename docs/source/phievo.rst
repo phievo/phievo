@@ -110,3 +110,28 @@ Pareto evolution
         :members:
         :undoc-members:
         :show-inheritance:
+
+Analysis tools
+--------------
+
+Simulation
+^^^^^^^^^^
+.. automodule:: phievo.AnalysisTools.Simulation
+        :members:
+        :undoc-members:
+        :show-inheritance:
+
+	   
+Palette
+^^^^^^^
+.. automodule:: phievo.AnalysisTools.palette
+        :members:
+        :undoc-members:
+        :show-inheritance:
+	   
+extra_functions
+^^^^^^^^^^^^^^^
+.. automodule:: phievo.AnalysisTools.main_functions
+        :members:
+        :undoc-members:
+        :show-inheritance:

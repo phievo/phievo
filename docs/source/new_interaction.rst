@@ -20,7 +20,7 @@ We choose the simplest kinetics for this reaction:
 Let us start by creating the *Methyl.py* in a project directory.
 
 Imports
--------
+~~~~~~~
 
 Every interaction depends on the following φ-evo modules:
 
@@ -43,7 +43,7 @@ Every interaction depends on the following φ-evo modules:
     import copy
 
 Define a new type of species
-----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Only methylable species can be methylated. For now φ-evo does not know
 how to create a methylable species and what are its characteristics.
@@ -69,19 +69,19 @@ characteristics:
 
 **Note:** You can use the ``mutation.sample_dictionary_ranges`` to
 sample a random variable whose range has been define in
-``dictionary_ranges`` in the *init* file. ## Set the default ranges for
+``dictionary_ranges`` in the *init* file. ### Set the default ranges for
 the parameters
 
 .. code:: python
 
     # In Methyl.py
 
-    ## Define the default dictionary_range
+    ### Define the default dictionary_range
     mutation.dictionary_ranges['Methyl.methyl'] = 0.0/(mutation.C*mutation.T)
     mutation.dictionary_ranges['Methyl.demethyl'] = 0.0/mutation.T
 
 Define the *Methyl* class
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Every interaction in φ-evo inherits from the
 *classes\_eds2.Interaction*:
@@ -129,13 +129,13 @@ The interaction's methods are the following:
    need to be deleted when the interaction is removed.
 
 Handling the mutation
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 The program needs five functions to tell φ-evo how to add the mutation
 via a mutation
 
 number\_Methyl
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Evaluate the number of possible interactions of type *Methyl* that can
 be added to the network. This number is used to verify that the actual
@@ -157,7 +157,7 @@ with our intuition.
         return n-n_Methyl
 
 new\_Methyl
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 This is the function that adds the *Methyl* interaction to the Network.
 It creates both a *Methyl* interaction and a *methylated species*.
@@ -191,7 +191,7 @@ It creates both a *Methyl* interaction and a *methylated species*.
 methylated species created. It is provide via ``parameters``.
 
 new\_random\_Methyl
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Wrapping of the ``new_Methyl`` function. It generates randomly the rate
 of the methylation and the parameters of the methylated species created.
@@ -224,7 +224,7 @@ of the methylation and the parameters of the methylated species created.
         
 
 random\_Methyl
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Function called by the φ-evo to add a new Methylation interaction to the
 network during the evolution. It chooses a methylable species randomly
@@ -263,7 +263,7 @@ and calls ``new_random_Methyl`` to add a methylation to this species.
             
 
 Methyl\_deriv\_inC
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 Function that generates the C code string of the interaction kinetics.
 
@@ -288,7 +288,7 @@ Function that generates the C code string of the interaction kinetics.
         return func_str
 
 Bind the code to φ-evo
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 The last step is to add all the functions written previously to the
 default ``Mutable_Network``.
@@ -302,8 +302,9 @@ default ``Mutable_Network``.
     setattr(classes_eds2.Network,"random_Methyl",random_Methyl)
     deriv2.interactions_deriv_inC["Methyl"] = Methyl_deriv_inC
 
-You can download `Methyl.py <>`__ from φ-evo's examples ## Edit the init
-file to load Methyl
+You can download
+`Methyl.py <https://github.com/phievo/phievo/raw/master/Examples/Methyl.py>`__
+from φ-evo's examples ### Edit the init file to load Methyl
 
 The top of the init file should now be able to load the Methyl module
 with an import if the two files are in the same directory:

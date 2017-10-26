@@ -3,7 +3,7 @@ Results and Analysis Tools
 
 φ-evo has a module dedicated to the analysis of the results. The results
 are stored in a *Simulation* object that contains a set of method that
-give a quick access to the most relevant observable of a run. To start
+give a quick access to the most relevant observables of a run. To start
 analyzing the ``evo_dir`` project, you need to create a *Simulation*
 object associated to it.
 
@@ -15,31 +15,31 @@ object associated to it.
 
 From there it is pretty straight forward to explore the architecture of
 the results. A simulation contains Seeds which themselves contain
-Network. In order not to overload the memory, the Seeds do not contain
-exactly the networks but a link to them. As an example, here is how you
-would load the best network for generation 326 in the seed number 2:
+Networks. In order not to overload the memory, the Seeds only store a
+link to the networks. As an example, here is how you would load the best
+network for generation 350 in the seed number 2:
 
 .. code:: python
 
     sim = Simulation("evo_dir")
-    best_net_2_326 = sim.Seeds[2].get_best_net(326)
+    best_net_2_350 = sim.Seeds[2].get_best_net(350)
     # Equivalent to
     sim = Simulation("evo_dir")
-    best_net_2_326 = sim.get_best_net(2,326)
+    best_net_2_350 = sim.get_best_net(2,350)
 
 Organization of the results
 ---------------------------
 
 If you want to understand why the *Simulation* object is organized the
-way it is and how to go beyond its possibilities, you will need to have
-an idea of how φ-evo stores the results of a simulation.
+way it is and how to go beyond its possibilities, you need to have an
+idea of how φ-evo stores the results of a simulation.
 
 By default, for every generation *g* only one *Network* is stored using
 pickle in a file labelled ``Bests_g.net``. When the simulation has only
 one fitness objective, this network is the one with the best fitness in
 the population. However when the evolution is run using a multiobjective
 criterium (like pareto optimisation), the best net is chosen randomly
-amongst the network of rank 1.
+among the network of rank 1.
 
 The former storing method limits the disk space usage. However you might
 want to store the whole population either for restarting the algorithm
@@ -52,8 +52,8 @@ named ``restart_file``.
 
 Other files created:
 
--  ``data`` is a quick access shelve file to elementary informations
-   stored as lists at the following keys:
+-  ``data`` is a quick access shelve file to certain informations stored
+   as lists at the following keys:
 
    -  *generation*: index of the generation
    -  *fitness*: fitness of the best network
@@ -65,11 +65,12 @@ Other files created:
    simulation.
 -  ``log_#.c`` Copy of the input, fitness, history, etc. **c** files
    used for the simulation.
+-  ``log_init_file.py`` Copy of the init file used for the simulation
 
 Analysis Tools
 --------------
 
-In this section we will explore the built in functions that are bound to
+In this section we will explore the built-in functions that are bound to
 a *Simulation* object.
 
 custom\_plot
@@ -113,7 +114,8 @@ get\_backup\_net
 
 If you want to extract a network from a entirely stored generation, you
 can use *get\_backup\_net*. Be careful though, not every population is
-stored in the ``restart_file``.
+stored in the ``restart_file``. You can use the
+``stored_generation_indexes`` to check which generation has been stored.
 
 .. code:: python
 
@@ -137,8 +139,8 @@ Read a network from the pickle file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The simulation stores the best networks of every generation in the name
-``Bests_#.net``. This is only a pickle file and can be read using
-pickle:
+``Bests_#.net``. This is only a pickle file and can be read manually
+using the pickle library:
 
 .. code:: python3
 
@@ -159,38 +161,31 @@ Running a network's dynamics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By construction φ-evo does not allow to quickly run the dynamics of a
-network. More precisely a Network object does not have method that
-directly returns the derivative from at a given state of gene
-quantities. Instead φ-evo has a method to write a **c** file containing
-the derivative function and that runs the dynamics on pre-defined
-inputs. This may seem a bit bulky but the software was initially written
-to evaluate the fitness of a given network as quickly as possible. This
-is better done in **c**.
-
-However *Simulation* has the method *run\_dynamics* to ease the access
-to the results the dynamics.
+network. Because the dynamics is computed in C (for performance reason),
+a python Network object does not have a method that directly returns the
+derivative at a given state of gene quantities. However φ-evo has the
+method ``run_dynamics`` to symplify the run of a dynmics for a given
+network based on the history and inputs defined in *init\_history.c* and
+*input.c* respectively.
 
 .. code:: python
 
     net = sim.get_best_net(3,5)
     dyn_buffer = sim.run_dynamics(net=net,trial=1)
 
-This runs the dynamics as it would in the evolution algorithm with the
-history and input **c** files (provided in the project directory). You
-can specify the number of trial you want to run (if the dynamics is
+You can specify the number of trial you want to run (if the dynamics is
 stochastic for example). The buffer returned by the function is a
 dictionary where the "time" and "net" keys give you access to the time
 vector and the network used for the run respectively. The other keys are
 the index of the trial for which you want to access the data. Note that
-the buffer is also stored in the *Simulation* object as *buffer\_data*,
-the latter is erased every time you run a new set of dynamics for
-*Simulations*.
+the buffer is also stored in the *Simulation.buffer\_data*, the latter
+is erased every time you run a new set of dynamics for *Simulations*.
 
 Plotting the results of a dynamics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simulation object allows you to plot the two most obvious results
-you would like to see after running a dynamics:
+The simulation object allows you to plot the two results you would like
+to see after running a dynamics:
 
 1) The time course of the genes in a given cell with *Plot\_TimeCourse*
 2) The evolution of the genes along the system at a given time point
@@ -220,10 +215,10 @@ To facilitate the use of the former functions, φ-evo as a class
 notebook <https://jupyter.org>`__.
 
 All the functions described previously can be used directly in a jupyter
-notebook but the *Notebook* class increases the usability by handling
-the dependencies between widgets. For instance you want the module in
-charge of plotting a network's layout to be disabled as long as a Seed
-and a Network have not been selected.
+notebook but the *Notebook* class improves the usability by handling the
+dependencies between widgets. For instance you want the module in charge
+of plotting a network's layout to be disabled as long as a Seed and a
+Network have not been selected.
 
 A Notebook object serves as a container for all the available modules
 you can use in the jupyter notebook. A module contains the material to
@@ -236,9 +231,9 @@ expected inputs from the user.
 Creating a custom module
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Every module of contained in the *Notebook* object of the *CellModule*
-class. The latter is a minimal template used to constrain the minimal
-requirement a module must have:
+Every module of contained in the *Notebook* inherits from the
+*CellModule* class. The latter is a minimal template used to constrain
+the requirements a module must have:
 
 -  ``__init__(self,Notebook)`` : The init function takes the *Notebook*
    it is contained in as an argument.
@@ -374,5 +369,6 @@ creating a new cell and running:
 
     notebook.display_fitness.display()
 
-A copy of the *NB\_Module.py* file is available in the *Examples/*
-directory.
+A copy of the
+`*NB\_Module.py* <https://raw.githubusercontent.com/phievo/phievo/master/Examples/NB_Module.py>`__
+file is available in the *Examples/* directory.

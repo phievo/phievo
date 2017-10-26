@@ -118,15 +118,26 @@ linking for the pip command:
 Analyse notebook
 ~~~~~~~~~~~~~~~~
 
-We provide a jupyter notebook to help with the analysis of the runs. If
-you wand to run it, you will need to install several extra python
-libraries, to help with this, they are writen in
-`extra.txt <extra.txt>`__.
+We provide a `jupyter
+notebook <https://github.com/phievo/phievo/blob/master/Analyse%20Run.ipynb>`__
+to help with the analysis of the runs. If you wand to run it, you will
+need to install several extra python libraries, to help with this, they
+are writen in
+`extra.txt <https://raw.githubusercontent.com/phievo/phievo/master/extra.txt>`__.
 
 .. code:: bash
 
-    pip install -r extra.txt
+    pip install -r https://raw.githubusercontent.com/phievo/phievo/master/extra.txt
     jupyter nbextension enable --py --sys-prefix widgetsnbextension
+
+When using the plotly package, you may find that the plots do dot
+display well in the notebook (white square), the solution to this
+priblem is to increase the io rate allocated to the notebook by using
+the ``NotebookApp.iopub_data_rate_limit`` option when starting jupyter:
+
+.. code:: bash
+
+    jupyter notebook --NotebookApp.iopub_data_rate_limit=10000000000
 
 Test your installation
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -157,5 +168,5 @@ regular terminal print of the population best fitness.
 
 You can also choose to stop the simulation by deleting the
 ``Somites/STOP.txt`` file after a few generations. The `jupyter
-notebook <https://raw.githubusercontent.com/phievo/phievo/master/Analyse%20Run.ipynb>`__
+notebook <https://github.com/phievo/phievo/blob/master/Analyse%20Run.ipynb>`__
 can then be use to visualize the results.

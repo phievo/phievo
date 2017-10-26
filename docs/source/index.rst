@@ -8,6 +8,7 @@
 
    installation
    Presentation
+   examples
    example-lac-operon
    howto
    analyse
