@@ -29,6 +29,7 @@ pp.add_option('--test', '-t', action='store',
 pp.add_option('--network', '-n', action='store',
               help='Curtom initial network')
 pp.add_option("--clear","-c", action="store_true", dest="clear",default=False)
+
 (options, arg) = pp.parse_args()  # NB arg=[], but required output
 options = options.__dict__
 
@@ -36,7 +37,6 @@ options = options.__dict__
 ### MAIN ###
 ############
 if __name__ == "__main__":
-
     if options["model"]:
         phievo.launch_evolution(options)
     elif options["test"]:
@@ -46,3 +46,4 @@ if __name__ == "__main__":
         phievo.clear_project(options=options)
     else:
         print('must specify either --test file OR --model directory.  Use -h for help')
+    

@@ -13,7 +13,7 @@ $$ \frac{d S^{*}}{d t} = -\frac{d S}{d t} = k_f S - k_b S^{*} $$
 
 Let us start by creating the *Methyl.py* in a project directory.
 
-## Imports
+### Imports
 
 Every interaction depends on the following φ-evo modules:
 
@@ -33,7 +33,7 @@ from phievo.Networks import deriv2
 from phievo.Networks import classes_eds2
 import copy
 ```
-## Define a new type of species
+### Define a new type of species
 Only methylable species can be methylated. For now φ-evo does not know how to create a methylable species and what are its characteristics. There should be a few line telling how to do it:
 
 ```python
@@ -50,18 +50,18 @@ In the above lines, we tell φ-evo that a Methylable species has two characteris
  - Diffusable: An extra characteristic is added to show how one would add a characteristics that comes with a parameter. A lambda function allows the program to generate new parameters when a new species is created.
 	
 **Note:** You can use the `mutation.sample_dictionary_ranges` to sample a random variable whose range has been define in `dictionary_ranges` in the *init* file.
-## Set the default ranges for the parameters
+### Set the default ranges for the parameters
 
 ```python
 # In Methyl.py
 
-## Define the default dictionary_range
+### Define the default dictionary_range
 mutation.dictionary_ranges['Methyl.methyl'] = 0.0/(mutation.C*mutation.T)
 mutation.dictionary_ranges['Methyl.demethyl'] = 0.0/mutation.T
 
 ```
 
-## Define the *Methyl* class
+### Define the *Methyl* class
 
 Every interaction in φ-evo inherits from the *classes_eds2.Interaction*:
 
@@ -106,11 +106,11 @@ The interaction's methods are the following:
  - `__str__`: Produces the string used by the print function
  - `outputs_to_delete`: Function that tells what are the species that were added to the network when the interaction was built and that need to be deleted when the interaction is removed.
  
-## Handling the mutation
+### Handling the mutation
 
 The program needs five functions to tell φ-evo how to add the mutation via a mutation
 
-### number_Methyl
+#### number_Methyl
 
 Evaluate the number of possible interactions of type *Methyl* that can be added to the network. This number is used to verify that the actual number of possible mutation found in `random_Methyl` is consistant with our intuition.
 
@@ -128,7 +128,7 @@ def number_Methyl(self):
     return n-n_Methyl
 ```
  
-### new_Methyl
+#### new_Methyl
 
 This is the function that adds the *Methyl* interaction to the Network. It creates both a *Methyl* interaction and a *methylated species*.
 
@@ -159,7 +159,7 @@ def new_Methyl(self,S,methyl,demethyl,parameters):
 
 **Note:** Then function needs a list of characteristics for the methylated species created. It is provide via `parameters`.
 
-### new_random_Methyl
+#### new_random_Methyl
 
 Wrapping of the `new_Methyl` function. It generates randomly the rate of the methylation and the parameters of the methylated species created.
 
@@ -192,7 +192,7 @@ def new_random_Methyl(self,S):
 
 ```
 
-### random_Methyl
+#### random_Methyl
 
 Function called by the φ-evo to add a new Methylation interaction to the network during the evolution. It chooses a methylable species randomly and calls `new_random_Methyl` to add a methylation to this species.
 
@@ -229,7 +229,7 @@ def random_Methyl(self):
 
 ```
 
-### Methyl_deriv_inC
+#### Methyl_deriv_inC
 
 Function that generates the C code string of the interaction kinetics.
 
@@ -254,7 +254,7 @@ def Methyl_deriv_inC(net):
 ```
 
 
-## Bind the code to φ-evo
+### Bind the code to φ-evo
 
 The last step is to add all the functions written previously to the default `Mutable_Network`.
 
@@ -268,7 +268,7 @@ deriv2.interactions_deriv_inC["Methyl"] = Methyl_deriv_inC
 ```
 
 You can download [Methyl.py](https://github.com/phievo/phievo/raw/master/Examples/Methyl.py) from φ-evo's examples
-## Edit the init file to load Methyl
+### Edit the init file to load Methyl
 
 The top of the init file should now be able to load the Methyl module with an import if the two files are in the same directory:
 
