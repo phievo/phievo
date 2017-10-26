@@ -137,8 +137,8 @@ via a mutation
 number\_Methyl
 ~~~~~~~~~~~~~~
 
-Evaluate the number of possible interaction of type *Methyl* that can be
-added to the network. This number is used to verify that the actual
+Evaluate the number of possible interactions of type *Methyl* that can
+be added to the network. This number is used to verify that the actual
 number of possible mutation found in ``random_Methyl`` is consistant
 with our intuition.
 
@@ -302,8 +302,8 @@ default ``Mutable_Network``.
     setattr(classes_eds2.Network,"random_Methyl",random_Methyl)
     deriv2.interactions_deriv_inC["Methyl"] = Methyl_deriv_inC
 
-Edit the init file to load Methyl
----------------------------------
+You can download `Methyl.py <>`__ from φ-evo's examples ## Edit the init
+file to load Methyl
 
 The top of the init file should now be able to load the Methyl module
 with an import if the two files are in the same directory:
