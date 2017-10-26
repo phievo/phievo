@@ -286,7 +286,6 @@ class Mutable_Network(classes_eds2.Network):
         try:
             
             getattr(self,'random_'+Interaction_Type)()
-            print("created {}".format(Interaction_Type))
         except Exception:        
             print("\tError when creating randomize Interaction "+Interaction_Type)
             raise

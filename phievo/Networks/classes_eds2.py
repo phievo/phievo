@@ -287,13 +287,10 @@ class Species(Node):
         """
         self.label=""
         for k in self.types:
-            self.label += ", "+k            
+            self.label += ", "+k
             if k in self.Tags_Species:
                 for item in self.Tags_Species[k]:
-                    try:
                         self.label += ", "+str(getattr(self,item))
-                    except:
-                        import pdb;pdb.set_trace()
             else:
                 print("Error in label definition : no Tags "+k)
                 return False
