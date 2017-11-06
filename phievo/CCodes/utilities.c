@@ -70,15 +70,15 @@ void sum_concentration(int ncell, int step, double concentrations[]) {
 
 
 
-/* print history array to file= BUFFER, where int try is 0,1,..NTRIES-1 */
+/* print history array to file= BUFFER, where int trial is 0,1,..NTRIES-1 */
 
-void print_history( int try )  {
+void print_history( int trial )  {
 
     int pas, i, j;
     char titre[50];
     FILE *fileptr;
 
-    sprintf(titre, "Buffer%i", try);
+    sprintf(titre, "Buffer%i", trial);
     fileptr=fopen(titre, "w");
 
     for(pas=0; pas<NSTEP; pas++)  {
