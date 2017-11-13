@@ -232,11 +232,11 @@ def compute_transcription(net,module):
             term="%f*"%module.rate+listactivator[0]
         if (l>1):
             term="%f*"%module.rate
+            term += "("
+            term += listactivator[0]
             for index in range(l-1):
-                term=term+"MAX("
-            term=term+listactivator[0]
-            for index in range(l-1):
-                term=term+","+listactivator[index+1]+")"
+                term += "*"+listactivator[index+1]
+            term += ")"
 
         if hasattr(module, "basal"): #tests on the existenc of a basal rate from version 1.3
             term="MAX("+term+",%f)"%module.basal
