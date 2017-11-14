@@ -156,6 +156,9 @@ prmt['restart'] = {
   "activated": False,
   "freq": 50 # Generation frequency for saving the complete population
 }
+## Define the compiler (gcc by default)
+prmt["compiler"] = "g++"
+
 prmt['langevin_noise'] = 0 # Intensity of the langevin noise for stochastic simulation
 prmt['multipro_level'] = 1 # Use multiprocess if one 1. If 0, singlethread.
 ## 

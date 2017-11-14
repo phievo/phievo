@@ -36,7 +36,7 @@ import subprocess
 
 # Parameters
 workplace_dir = './Workplace/'
-Ccompiler = 'gcc'
+cCompiler = 'gcc'
 cfile = {}  # see initialization_code.init_deriv2 for the whole definition
 interactions_deriv_inC = {}
 noise_flag = False
@@ -302,7 +302,8 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
     # Compile the program
     # cmd contains the command in the same order as they would be on a full bash commans
     # ex: cmd = ["gcc", "-o", "run",  "test.c"] for "gcc -o run test.c"
-    cmd = [Ccompiler , cfile_directory+".c" , "-lm" , "-o" , cfile_directory]
+    cCompiler = prmt.get("compiler","gcc")
+    cmd = [cCompiler , cfile_directory+".c" , "-lm" , "-o" , cfile_directory]
     out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()
 
 

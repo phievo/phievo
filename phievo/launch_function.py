@@ -214,7 +214,7 @@ def test_project(project_path,network=None,return_sim= False):
     cfile = glob.glob(os.path.join(project_path,"Workplace","*.c"))[0]
     print("C file created.")
     print("You can recompile by running:")
-    print(str.encode("gcc {cfile} -lm -o executable".format(cfile=cfile)))
+    print(str.encode("{compiler} {cfile} -lm -o executable".format(compiler=sim.inits.prmt.get('compiler','gcc'),cfile=cfile)))
     print(data)
     #print("The network's C file and executable are stored in {}".format())
     net.draw()
