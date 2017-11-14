@@ -63,10 +63,15 @@ def load_generation_data(generations,restart_file):
             dummy,gen_data[gen] = data[str(gen)]
     return gen_data
 
-
-def download_example_seed(seed_name):
+def download_examples(project=""):
     """
-    Downloads a seed from the example seed repository.
+    Download example projects.
+    """
+    server_address = "https://github.com/phievo/simulation_examples/blob/master/{}?raw=true"
+    
+def download_example(seed_name,with_seed=False):
+    """
+    Download an example seed.
     """
     #server_address = "http://www.physics.mcgill.ca/~henrya/seeds_phievo/{}"
     server_address = "https://github.com/phievo/simulation_examples/blob/master/{}?raw=true"
@@ -79,12 +84,17 @@ def download_example_seed(seed_name):
         "somite_pruning":"somite_pruning.zip",
         "hox_pareto_light":"hox_pareto_light.zip",
     }
+    
+    existing
     existing_seeds = {kk:server_address.format(val) for kk,val in existing_seeds.items()}
+    
     try:
         url = existing_seeds[seed_name]
     except KeyError:
         print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_seeds.keys())))
         return None
+   
+            
     directory = "example_{}".format(seed_name)
     if not os.path.exists(directory):
         os.makedirs(directory)

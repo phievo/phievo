@@ -4,5 +4,9 @@ all:zip
 test:
 	echo $(ZIP_NAMES)
 $(ZIP_NAMES):%.zip:%
-	zip -r $@ $<
+	@rm -f $@ 
+	@zip -r $@ $<
 zip:$(ZIP_NAMES)
+
+clean:
+	rm -f  $(ZIP_NAMES)
