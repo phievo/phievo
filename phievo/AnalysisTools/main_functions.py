@@ -80,7 +80,8 @@ def download_zip(dir_name,url):
     zip_path = os.path.join(dir_name,dir_name+".zip")
     def dlProgress(count, blockSize, totalSize):
         state = int(count * blockSize * 100 / totalSize)
-        print("{}: [".format(dir_name+".zip")+("#"*int(state/2))+(" "*(50-int(state/2)))+"] {}%".format(state),end="\r")
+        if state%2==0:
+            print("{}: [".format(dir_name+".zip")+("#"*int(state/2))+(" "*(50-int(state/2)))+"] {}%".format(state),end="\r")
     urlretrieve(url,zip_path,reporthook=dlProgress)
     print("{}: [".format(dir_name+".zip")+("#"*50)+"] 100%",end="\n")
     ## unziping file
@@ -96,6 +97,13 @@ def download_zip(dir_name,url):
     return 1
     
     
+def download_tools():
+    url_runevo = "https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py"
+    url_jpnb = "https://github.com/phievo/phievo/raw/master/Analyse%20Run.ipynb"
+    urlretrieve(url_runevo)
+    print("run_evolution.py ... downloaded.")
+    urlretrieve(url_jpnb)
+    print("Analyse Run.ipynb ... downloaded.")
     
 def download_example(example_name):
     """
