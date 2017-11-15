@@ -63,75 +63,111 @@ def load_generation_data(generations,restart_file):
             dummy,gen_data[gen] = data[str(gen)]
     return gen_data
 
-def download_examples(project=""):
-    """
-    Download example projects.
-    """
-    server_address = "https://github.com/phievo/simulation_examples/blob/master/{}?raw=true"
-    
-def download_example(seed_name,with_seed=False):
-    """
-    Download an example seed.
-    """
-    #server_address = "http://www.physics.mcgill.ca/~henrya/seeds_phievo/{}"
-    server_address = "https://github.com/phievo/simulation_examples/blob/master/{}?raw=true"
-    existing_seeds = {
-        "adaptation":"adaptation.zip",
-        "adaptation_pruning":"adaptation_pruning.zip",
-        "lacOperon":"lacOperon.zip",
-        "lacOperon_pruning":"lacOperon_pruning.zip",
-        "somite":"somite.zip",
-        "somite_pruning":"somite_pruning.zip",
-        "hox_pareto_light":"hox_pareto_light.zip",
-    }
-    
-    existing
-    existing_seeds = {kk:server_address.format(val) for kk,val in existing_seeds.items()}
-    
-    try:
-        url = existing_seeds[seed_name]
-    except KeyError:
-        print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_seeds.keys())))
-        return None
-   
+
+
+
             
-    directory = "example_{}".format(seed_name)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+def download_zip(dir_name,url):
+    """
+    Download and extract zip file to dir_name.
+    """
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
     else:
-        print("The directory {} already exists, download_example_seed cannot overwrite it.".format(directory))
-        return None
-    ## Downloading zipfile
+        print("The directory {} already exists, download_example_seed cannot overwrite it.".format(dir_name))
+        return 0
+    ## Downloading zipfile        
+    zip_path = os.path.join(dir_name,dir_name+".zip")
     def dlProgress(count, blockSize, totalSize):
         state = int(count * blockSize * 100 / totalSize)
-        if state%2==0:
-            print("{}: [".format(seed_name+".zip")+("#"*int(state/2))+(" "*(50-int(state/2)))+"] {}%".format(state),end="\r")
-        
-    zip_path = os.path.join(directory,seed_name+".zip")
+        print("{}: [".format(dir_name+".zip")+("#"*int(state/2))+(" "*(50-int(state/2)))+"] {}%".format(state),end="\r")
     urlretrieve(url,zip_path,reporthook=dlProgress)
-    print("{}: [".format(seed_name+".zip")+("#"*50)+"] 100%",end="\n")
+    print("{}: [".format(dir_name+".zip")+("#"*50)+"] 100%",end="\n")
     ## unziping file
     print("Extracting zip file...",end="\r")
-    seed_path = os.path.join(directory,"Seed{}".format(seed_name))
+    
     zip_ref = zipfile.ZipFile(zip_path, 'r')
-    zip_ref.extractall(seed_path)
+    zip_ref.extractall(dir_name)
     zip_ref.close()
     print("Extracting zip file...   done.",end="\n")
     print("Deleting zip file...",end="\r")
     os.remove(zip_path)
     print("Deleting zip file...   done.",end="\n")
-    print("recovering log files...",end="\r")
-    for log_f in glob.glob(os.path.join(seed_path,"log_*")):
-        f_name = log_f.split(os.sep)[-1]
-        f_name = f_name.replace("log_","")
-        os.rename(log_f, os.path.join(directory,f_name))
-    with open(os.path.join(directory,"init_file.py"),"r") as init_file:
-        init_text = init_file.read()
-    init_text = re.sub("(cfile\[[\'\"](\w+)[\'\"]]\s*=\s*).+",r"\1'\2.c'",init_text)
-    init_text = re.sub("(pfile\[[\'\"](\w+)[\'\"]]\s*=\s*).+",r"\1'\2.py'",init_text)
-    with open(os.path.join(directory,"init_file.py"),"w") as init_file:
-        init_file.write(init_text)
-    print("recovering log files...   done.",end="\n")
+    return 1
+    
+    
+    
+def download_example(example_name):
+    """
+    Download an example seed or project.
+    """
+    #server_address = "http://www.physics.mcgill.ca/~henrya/seeds_phievo/{}"
+    #server_examples = "https://github.com/phievo/phievo/blob/master/Examples/{}?raw=true"
+    server_examples = "file:///home/adrien/Documents/Postdoc_PF/development_phievo/Examples/{}"
+    existing_examples = {
+        "adaptation":"adaptation.zip",
+        "somite":"Somites.zip",
+        "hox":"StaticHox.zip",
+        "hox_pareto":"StaticHox_pareto.zip",
+        "immune":"immune.zip",
+    }
+    server_seed = "https://github.com/phievo/simulation_examples/blob/master/{}?raw=true"
+    existing_seeds = {
+        "seed_adaptation":"adaptation.zip",
+        "seed_adaptation_pruning":"adaptation_pruning.zip",
+        "seed_lacOperon":"lacOperon.zip",
+        "seed_lacOperon_pruning":"lacOperon_pruning.zip",
+        "seed_somite":"somite.zip",
+        "seed_somite_pruning":"somite_pruning.zip",
+        "seed_hox_pareto_light":"hox_pareto_light.zip",
+    }
+    
+    with_seed = False
+    if "seed" in example_name:
+        with_seed = True
+        try:            
+            zip_name = existing_seeds[example_name]
+            example_name = example_name[5:]
+            url = server_seed.format(zip_name)
+        except KeyError:
+            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys()))+"\n\t- ".join(list(existing_seeds.keys())))
+            return None
+    else:
+        try:            
+            zip_name = existing_examples[example_name]
+            url = server_examples.format(zip_name)
+        except KeyError:
+            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys()))+"\n\t- ".join(list(existing_seeds.keys())))
+            return None
+        
+    directory = "example_{}".format(example_name)
+    res = download_zip(directory,url)
+    if not res:
+        return None
+    
+    if with_seed:
+        seed_name = os.path.join(directory,"Seed{}".format(example_name))
+        
+        os.makedirs(seed_name)
+        files = glob.glob(os.path.join(directory,"*"))
+        files.remove(seed_name)
+        for filename in files :
+            try:
+                os.rename(filename, filename.replace(directory,seed_name))
+            except OSError:
+                import pdb;pdb.set_trace()
+        print("recovering log files...",end="\r")
+        for log_f in glob.glob(os.path.join(seed_name,"log_*")):
+            f_name = log_f.split(os.sep)[-1]
+            f_name = f_name.replace("log_","")
+            os.rename(log_f, os.path.join(directory,f_name))
+        with open(os.path.join(directory,"init_file.py"),"r") as init_file:
+            init_text = init_file.read()
+            init_text = re.sub("(cfile\[[\'\"](\w+)[\'\"]]\s*=\s*).+",r"\1'\2.c'",init_text)
+            init_text = re.sub("(pfile\[[\'\"](\w+)[\'\"]]\s*=\s*).+",r"\1'\2.py'",init_text)
+        with open(os.path.join(directory,"init_file.py"),"w") as init_file:
+            init_file.write(init_text)
+        print("recovering log files...   done.",end="\n")
     print("Project saved in {}.".format(directory))
     
  
