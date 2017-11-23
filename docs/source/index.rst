@@ -14,7 +14,7 @@
    analyse
    new_interaction
    phievo
-
+   known_bugs
 
 Indices and tables
 ==================
