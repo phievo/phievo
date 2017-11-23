@@ -1,6 +1,6 @@
 import phievo.AnalysisTools
 from phievo.AnalysisTools import Simulation
-from phievo.AnalysisTools import Seed
+from phievo.AnalysisTools import Seed,Seed_Pareto
 from phievo.AnalysisTools import main_functions as MF
 from phievo.AnalysisTools import palette
 import numpy as np
@@ -54,60 +54,50 @@ def custom_plot(self,X,Y):
     return fig
 setattr(Seed,"custom_plot",custom_plot)
 
-def plot_multiGen_front2D(generation_fitness,generation_indexes=None,net_identifier=False):
+def plot_pareto_fronts(self,generations,max_rank=1,with_indexes=False,legend=False,xlim=[],ylim=[],colors=[],gradient=[],xlabel="F_1",ylabel="F_2",s=50,no_popup=False):
     """
-    Uses the fitness data for multiple generations to represent the pareto fronts
-    of those multiple generations.
-    
-    Args:
-        generation_fitness: nested dictionnaries:
-           level0 keys: generation
-           level1 keys: rank of the fitness (1,2,etc.)
-           index : index of the fitness doublet (they might be
-           multiple fitnesses with identical rank).
-        generation_indexes: Same dictionnary structure as generation_fitness.
-           Contains the index of each network in its population
-        net_identifier: If True, use the network identifier for labelling the points
-    """
-    NUM_COLORS = len(generation_fitness)
-    # https://plot.ly/python/reference/
+        Plot every the network of the selected generations in the (F_1,F_2) fitness space.
+
+        Args:
+            generations (list): list of the selected generations
+            max_rank (int): In given population plot only the network of rank <=max_rank
+            with_indexes(bool): NotImplemented 
+            legend(bool): NotImplemented
+            xlim (list): [xmax,xmin]
+            ylim (list): [ymax,ymin]
+            colors (list): List of html colors, one for each generation
+            gradient (list): List of colors to include in the gradient
+            xlabel(str): Label of the xaxis
+            ylabel(str): Label of the yaxis
+            s (float): marker size
+            no_popup(bool): prevents the popup of the plot windows 
+        
+        Returns:
+            plotly figure
+        """    
+    net_info,fitnesses = self.pareto_generate_fit_dict(generations,max_rank)
+    if not colors and not gradient:colors = {gen:col for gen,col in zip(fitnesses.keys(),palette.color_generate(len(fitnesses)))}
+    if gradient:
+        colors = {gen:col for gen,col in zip(generations,palette.generate_gradient(generations,gradient))}
+            
     shapes = ["circle","square","triangle-up"]
-    color_l = palette.color_generate(NUM_COLORS)
-    legend_patches = []
-
-    i = 0
     data = []
-    for gen in sorted(generation_fitness.keys()):
-        gen_dico = generation_fitness[gen]
-        #legend_patches.append(mpatches.Patch(color=color_l[i], label='Generation {0}'.format(gen)))
-        color = color_l[i]
-        i +=1
-        for rank,points in gen_dico.items():
-            F1,F2 = list(zip(*points))
-            shape = shapes[rank-1] if rank<3 else shapes[-1]
-            trace =  go.Scatter(x = F1,y = F2,mode = 'markers',name="G{0}-rank {1}".format(gen,rank),
-                marker= dict(size=14,color= color,symbol=shape),
-                hoverinfo="text",
-                legendgroup = "group{}".format(gen)
-                )
-            #ax.scatter(F1,F2,c=color,edgecolor=color,s=50,marker=shape)
-            if generation_indexes:
-                
-                str_label = Template("Generation: $gen\nnet: $net\nrank: $rank\nfitness: ($F1 , $F2)")
-                ind_list = generation_indexes[gen][rank]
-                label_dict = { l:dict(gen=gen,net=ind_list[l],rank=rank,F1=F1[l],F2=F2[l]) for l in range(len(ind_list))}
-
-                trace["text"]= [str_label.substitute(label_dict[l]) for l in range(len(ind_list))]
-                str_label = Template("Generation: $gen\nnetwork: $net\nrank: $rank\nfitness: ($F1 , $F2)")
-                ind_list = generation_indexes[gen][rank]
-                label_dict = { l:dict(gen=gen,net=ind_list[l],rank=rank,F1=F1[l],F2=F2[l]) for l in range(len(ind_list))}
-
-                trace["text"]= [str_label.substitute(label_dict[l]) for l in range(len(ind_list))]
-            if generation_indexes and False:
-                ind_list = generation_indexes[gen][rank]
-                for l in range(len(ind_list)):
-                    ax.text(F1[l],F2[l],'%d' % ind_list[l],ha='center', va='bottom')
+    for gen,ranks in sorted(fitnesses.items(), key=lambda x:x[1]):
+        for ind,rank in enumerate(ranks):
+            if not rank: continue
+            F1,F2 = zip(*rank)
+            trace =  go.Scatter(x = F1,y = F2,mode = 'markers',name="G{0}-rank {1}".format(gen,ind),
+                                marker= dict(size=14,color= colors[gen],symbol=shapes[ind]),
+                                hoverinfo="text",
+                                legendgroup = "group{}".format(gen)
+                                
+            )
+            infos = net_info[gen][ind]
+            label_template = Template("Generation: $gen<br>net: $net<br>rank: $rank<br>fitness: ($F1 , $F2)")
+            trace["text"] = [label_template.substitute(inf) for inf in infos]
+            
             data.append(trace)
+            
     layout = go.Layout(
         title="Pareto fronts",
         xaxis=dict(title="Fitness 1"),
@@ -118,8 +108,8 @@ def plot_multiGen_front2D(generation_fitness,generation_indexes=None,net_identif
     fig = go.Figure(data=data, layout=layout)
     plotfunc(fig)
     return fig
-#import pdb;pdb.set_trace()
-setattr(MF,"plot_multiGen_front2D",plot_multiGen_front2D)
+
+setattr(Seed_Pareto,"plot_pareto_fronts",plot_pareto_fronts)
 
 
 def Plot_Profile(self,trial_index,time=0,no_popup=False):

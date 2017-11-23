@@ -495,6 +495,7 @@ class Seed_Pareto(Seed):
         Returns:
             matplotlib figure
         """
+        
         net_info,fitnesses = self.pareto_generate_fit_dict(generations,max_rank)
         if not colors and not gradient:colors = {gen:col for gen,col in zip(fitnesses.keys(),palette.color_generate(len(fitnesses)))}
         if gradient:
