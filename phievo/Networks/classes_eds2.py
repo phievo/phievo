@@ -34,6 +34,7 @@ from phievo import __silent__,__verbose__
 if __verbose__:
     print("Execute classes_eds2.py")
 from phievo.initialization_code import display_error
+from importlib import import_module
 import networkx as NX    # keep name spaces distinct
 import numpy as np
 import string,copy,sys
@@ -214,7 +215,7 @@ class Species(Node):
                       Ligand = [], # ligand diffuses only if diffusible tag is on
                       Receptor = [],
                       Phospho = ['n_phospho'], #Phosphorylated species #For immune case
-                      Phosphorylable = [], #only species with phosphorylated tags can be phosphorylated
+                      Phosphorylable = ['n_phospho'], #only species with phosphorylated tags can be phosphorylated
                       Diffusible = ['diffusion'],
                       pMHC = [],
                       # tags specific to the IL2 model
@@ -238,11 +239,12 @@ class Species(Node):
             assert index[0] in self.Tags_Species,"Error in Species definition : no Tags "+index[0]
             self.types.append(index[0])
             for i in range(0,len(self.Tags_Species[index[0]])):
-                try:
-                    #updates the attributes corresponding to the types
-                    setattr(self,self.Tags_Species[index[0]][i],index[i+1])
-                except Exception:
-                    display_error('Error in Species definition tag={0} : no attributes defined'.format(index[0]))
+                setattr(self,self.Tags_Species[index[0]][i],index[i+1])
+                # try:
+                #     #updates the attributes corresponding to the types
+                #     setattr(self,self.Tags_Species[index[0]][i],index[i+1])
+                # except Exception:
+                #     display_error('Error in Species definition tag={0} : no attributes defined'.format(index[0]))
 
     def __str__(self):
         def cutter(arg):
@@ -290,7 +292,7 @@ class Species(Node):
             self.label += ", "+k
             if k in self.Tags_Species:
                 for item in self.Tags_Species[k]:
-                        self.label += ", "+str(getattr(self,item))
+                    self.label += ", "+str(getattr(self,item))
             else:
                 print("Error in label definition : no Tags "+k)
                 return False
@@ -340,7 +342,9 @@ class Species(Node):
             raise ValueError("Error in Species.add_type : no Type with name= {}".format(Type[0]))
 
         self.types.append(Type[0])
+        
         for i,item in enumerate(self.Tags_Species[Type[0]]):
+            
             try: #updates the attributes corresponding to the types
                 setattr(self,item,Type[i+1])
             except Exception:
@@ -802,11 +806,12 @@ class Network(object):
         from matplotlib import image as mpimg
         from phievo import Networks
         if not hasattr(Networks,"pretty_graph"):
-            from phievo.Networks import lovelyGraph
-            setattr(Networks,"pretty_graph",lovelyGraph)
+            import phievo.Networks.lovelyGraph as pretty_graph
+            #setattr(Networks,"pretty_graph",lovelyGraph)
+        else:
+            pretty_graph = import_module(Networks.pretty_graph)
         self.write_id()
-        
-        graph = Networks.pretty_graph.pretty_graph(self,extended=extended)
+        graph = pretty_graph.pretty_graph(self,extended=extended)
         if return_graph:
             return graph
         fig = graph.draw(file,edgeLegend=edgeLegend)

@@ -157,11 +157,12 @@ def init_networks(inits):
 
     interaction = import_module(inits.pfile["interaction"])
     try:
-        pretty_graph = import_module(inits.pfile["pretty_graph"])
-        setattr(Networks,"pretty_graph",pretty_graph)
+        #pretty_graph = import_module(inits.pfile["pretty_graph"])
+        setattr(Networks,"pretty_graph",inits.pfile["pretty_graph"])
     except (KeyError, AttributeError) as e:
-        pretty_graph = import_module('phievo.Networks.lovelyGraph')
-        setattr(Networks,"pretty_graph",pretty_graph)
+        #pretty_graph = import_module('phievo.Networks.lovelyGraph')
+        #setattr(Networks,"pretty_graph",pretty_graph)
+        setattr(Networks,"pretty_graph",'phievo.Networks.lovelyGraph')
 
     deriv2 = import_module('phievo.Networks.deriv2')
     deriv2.cfile.update(inits.cfile)

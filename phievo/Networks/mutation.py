@@ -144,9 +144,10 @@ def random_parameters(Type,random_generator,multiple_phospho=False):
     """
     assert Type in list(classes_eds2.Species.Tags_Species.keys())+list(species_types.keys()),"Try to create a  not allowed random species of type "+Type
 
-    parameters=[['Degradable', sample_dictionary_ranges('Species.degradation',random_generator) ],['Phosphorylable']]
+    parameters=[['Degradable', sample_dictionary_ranges('Species.degradation',random_generator) ],['Phosphorylable',0]]
 
-    if multiple_phospho: parameters.append(['Phospho',0])
+    if multiple_phospho:
+        parameters.append(['Phospho',0])
     
     parameters += species_types.get(Type,lambda random_generator:[])(random_generator)
     return parameters
@@ -272,7 +273,11 @@ class Mutable_Network(classes_eds2.Network):
         Return:
             Species: note that it is automatically added to the network
         """
-        return self.new_Species(random_parameters(Type,self.Random))
+        try:
+            ss = self.new_Species(random_parameters(Type,self.Random))
+        except IndexError:
+            import pdb;pdb.set_trace()
+        return ss
 
     def random_Interaction(self,Interaction_Type):
         """ create a new (and unique) interaction
