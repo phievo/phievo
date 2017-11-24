@@ -115,20 +115,43 @@ linking for the pip command:
 
     sudo pip install pygraphviz --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
 
+run\_evolution.py script
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+An extra script
+(`run\_evolution.py <https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py>`__)
+needs to be downloaded with the phievo package to start an evolution. It
+is stored in the root of the phievo repository.
+
+You can either manually download it or open a python terminal and run
+
+.. code:: python
+
+    >>> import phievo
+    >>> phievo.download_tools()
+
+The former utility also downloads a jupyter notebook that can be used to
+analyse the results of a simulation.
+
 Analyse notebook
 ~~~~~~~~~~~~~~~~
 
 We provide a `jupyter
 notebook <https://github.com/phievo/phievo/blob/master/Analyse%20Run.ipynb>`__
-to help with the analysis of the runs. If you wand to run it, you will
-need to install several extra python libraries, to help with this, they
-are writen in
+at the root of the `github
+repository <https://github.com/phievo/phievo>`__ to help with the
+analysis of the runs. If you wand to run it, you will need to install
+several extra python libraries, to help with this, they are writen in
 `extra.txt <https://raw.githubusercontent.com/phievo/phievo/master/extra.txt>`__.
 
 .. code:: bash
 
     pip install -r https://raw.githubusercontent.com/phievo/phievo/master/extra.txt
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension
+
+Similarly to the
+(`run\_evolution.py <https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py>`__)
+script, Analyse Run.ipynb is downloaded when you call the
+``phievo.download_tools()`` function.
 
 When using the plotly package, you may find that the plots do dot
 display well in the notebook (white square), the solution to this
@@ -142,15 +165,45 @@ the ``NotebookApp.iopub_data_rate_limit`` option when starting jupyter:
 Test your installation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-TO test that everything works properly, we will run an simulation
-example.
+To test that everything works properly, we recommand that you run an
+example simulation. Several example of simulations are stored in the
+`github
+repository <https://github.com/phievo/phievo/tree/master/Examples>`__
+Examples directory.
 
-Copy the project directory ``Examples/Somites`` and ``run_evolution.py``
-fom `github <https://github.com/phievo/phievo>`__ on your computer. Then
+Several examples are present in in the Example Copy the project
+directory ``Examples/Somites`` and ``run_evolution.py`` fom
+`github <https://github.com/phievo/phievo>`__ on your computer. Then
 copy ``run_evolution.py`` at the same place as the ``Somites/``
-directory.
+directory. You can download all the simulations by cloning the
+repository with git:
 
-To launch the evolution, simply run
+.. code:: bash
+
+        git clone https://github.com/phievo/phievo.git
+
+This will also downloads all phievo's code.
+
+Other you can use the built-in tools by running the following code in a
+python shell:
+
+.. code:: python
+
+    >>> import phievo
+    # Downloads run_evolution.py and Analyse Run.ipynb in  the current directory
+    >>> phievo.download_tolls() 
+    # Downloads an example project directory
+    phievo.download_example("adaptation") 
+
+The function ``download_example`` allows to download one of the
+following examples: - adaptation - somite - hox - hox\_pareto - immune -
+seed\_adaptation - seed\_adaptation\_pruning - seed\_somite -
+seed\_somite\_pruning - seed\_lacOperon - seed\_lacOperon\_pruning -
+seed\_hox\_pareto\_light
+
+The examples starting with "seed\_" keyword also contain the results of
+the simulations(not stored on the main git repository). To launch the
+evolution, simply run
 
 .. code:: bash
 

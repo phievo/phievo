@@ -21,13 +21,13 @@ Examples of seeds
 Because some simulation can take some time to run, we provide the result
 seeds we used to generate the figure of the paper:
 
--  adaptation
--  adaptation\_pruning
--  somite
--  somite\_pruning
--  lacOperon
--  lacOperon\_pruning
--  hox\_pareto\_light
+-  seed\_adaptation
+-  seed\_adaptation\_pruning
+-  seed\_somite
+-  seed\_somite\_pruning
+-  seed\_lacOperon
+-  seed\_lacOperon\_pruning
+-  seed\_hox\_pareto\_light
 
 To download the result of a simulation on your computer, you can use
 phievo:
@@ -35,7 +35,9 @@ phievo:
 .. code:: python
 
     import phievo
-    phievo.download_example_seed("adaptation")
+    phievo.download_example("adaptation")
+    # To download the seed also
+    phievo.download_example("seed_adaptation")
 
 Hox pareto
 ~~~~~~~~~~

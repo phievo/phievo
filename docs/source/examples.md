@@ -15,19 +15,21 @@ The example of projects are stored in the [Example](https://github.com/phievo/ph
 
 Because some simulation can take some time to run, we provide the result seeds we used to generate the figure of the paper:
 
- - adaptation
- - adaptation_pruning
- - somite
- - somite_pruning
- - lacOperon
- - lacOperon_pruning
- - hox_pareto_light
+ - seed_adaptation
+ - seed_adaptation_pruning
+ - seed_somite
+ - seed_somite_pruning
+ - seed_lacOperon
+ - seed_lacOperon_pruning
+ - seed_hox_pareto_light
  
  To download the result of a simulation on your computer, you can use phievo:
  
 ```python 
 import phievo
-phievo.download_example_seed("adaptation")
+phievo.download_example("adaptation")
+# To download the seed also
+phievo.download_example("seed_adaptation")
 ```
  
 ### Hox pareto
