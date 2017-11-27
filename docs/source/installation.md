@@ -7,7 +7,7 @@ In it is not already installed on your computer, we recommand to install it by u
 Among other things, anaconda provides the standard package manager of python _pip_. Before anything, it is good to check that you are working with the most recent version of pip:
 
 ```bash
-	pip3 install --upgrade pip
+	pip install --upgrade pip
 ```
 
 
@@ -115,39 +115,40 @@ Copy the project directory `Examples/Somites` and `run_evolution.py` fom  [githu
 
 This will also downloads all phievo's code.
 
-Other you can use the built-in tools by running the following code in a python shell:
+Otherwise you can use the built-in tools by running the following code in a python shell:
 
 ```python
 >>> import phievo
 # Downloads run_evolution.py and Analyse Run.ipynb in  the current directory
 >>> phievo.download_tolls() 
 # Downloads an example project directory
-phievo.download_example("adaptation") 
+>>> phievo.download_example("adaptation") 
 ```
 
 The function `download_example` allows to download one of the following examples:
- - adaptation
- - somite
- - hox
- - hox_pareto
- - immune
- - seed_adaptation
- - seed_adaptation_pruning
- - seed_somite
- - seed_somite_pruning
- - seed_lacOperon
- - seed_lacOperon_pruning
- - seed_hox_pareto_light
 
-The examples starting with "seed_" keyword also contain the results of the simulations(not stored on the main git repository).
+- adaptation
+- somite
+- hox
+- hox_pareto
+- lac_operon
+- immune
+- seed_adaptation
+- seed_adaptation_pruning
+- seed_somite
+- seed_somite_pruning
+- seed_lacOperon
+- seed_lacOperon_pruning
+- seed_hox_pareto_light
 
-
+The examples starting with "seed_" keyword also contain the results of the simulations(not stored on the main git repository). The results can directly be visualized in the Analyse notebook.
 
 To launch the evolution, simply run
 
 ```bash
 	./run_evolution.py -m example_adaptation
 ```
+**Note:**  You can add the -c option (`./run_evolution.py -cm example_adaptation`) to delete a Seed than was created by a former run and prevents a new run to start. Be careful, a deleted seed cannot be recovered.
 
 On windows machine  we recommand that you explicitly tell the system that you are running python (make sure you use the good version).
 
@@ -155,7 +156,5 @@ On windows machine  we recommand that you explicitly tell the system that you ar
 	python run_evolution.py -m example_adaptation
 ```
 
-If everything works correctly you should see the evolution starting and regular terminal print of the population best fitness.
-
-You can also choose to stop the simulation by deleting the `Somites/STOP.txt` file after a few generations. The [jupyter notebook](https://github.com/phievo/phievo/blob/master/Analyse%20Run.ipynb) can then be use to visualize the results.
+If everything works correctly you should see the evolution starting. When an evolution is running it displays regularly updates of its current state in the terminal and a `STOP.txt` file is created at the root of the project. The purpose of the STOP file is to have a quick method to check on the current state of a run when it is launched as a background task. When the *STOP* file is deleted, the run stops.
 

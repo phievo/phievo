@@ -225,13 +225,29 @@ To get more precise informations, we recommand you to have to look at how
 
 ### Launching a run
 
-The program is launched with the *run_evolution.py* script
+The program is launched with the *run_evolution.py* script:
 
 ``` bash
 ./run_evolution.py -m lac_operon/
 ```
 
 The script loads the parameters and launches the run.
+ 
+*run_evolution.py* should be placed in the same project directory as the project directory:
+```bash
+	|
+     --- run_evolution.py
+	 --- (Analyse Run.ipynb)
+     --- example_project/
+	              |
+				   --- initialization.py
+				   --- fitness.c
+				   --- init_history.c
+				   --- input.c
+			
+```
+
+**Note:** *run_evolution.py* is not installed with phievo and must be downloaded manually from [here](https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py) or by running the command `phievo.download_tools()` in a python shell.
 
 To restart a new run, one must provide the *#* of the run (or seed index). By default,
 the run number is 0. To prevent errasing a run by mistake, the code will
@@ -240,6 +256,7 @@ not start if you do not provide a new run number in the initialization file. You
 ``` bash
 ./run_evolution.py -cm lac_operon/
 ```
+
 ## Restart an evolution
 
 Every *k* generations, the algorithm saves a complete generation in a file called *Restart_file* in the Seed's directory. If interrupted, you can use this *Restart_file* to restart from a backup generation. You can set the restart generation in the initialization file:
