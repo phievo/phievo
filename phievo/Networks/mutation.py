@@ -128,7 +128,7 @@ def sample_dictionary_ranges(key,random_generator):
     else:
         return dice
 
-def random_parameters(Type,random_generator,multiple_phospho=False):
+def random_parameters(Type,random_generator):
     """Create a set of new random parameters for a Species instance of type Type
 
     This used only for initialization and adds attributes to various types.
@@ -144,12 +144,11 @@ def random_parameters(Type,random_generator,multiple_phospho=False):
     """
     assert Type in list(classes_eds2.Species.Tags_Species.keys())+list(species_types.keys()),"Try to create a  not allowed random species of type "+Type
 
-    parameters=[['Degradable', sample_dictionary_ranges('Species.degradation',random_generator) ],['Phosphorylable',0]]
-
-    if multiple_phospho:
-        parameters.append(['Phospho',0])
-    
-    parameters += species_types.get(Type,lambda random_generator:[])(random_generator)
+    if not isinstance(Type,list):
+        Type = [Type]
+    parameters=[['Degradable', sample_dictionary_ranges('Species.degradation',random_generator) ],['Phosphorylable']]
+    for tt in Type:
+        parameters += species_types.get(tt,lambda random_generator:[])(random_generator)
     return parameters
 
 def rand_modify(self,random_generator):

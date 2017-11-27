@@ -10,10 +10,24 @@ The example of projects are stored in the
 `Example <https://github.com/phievo/phievo/tree/master/Examples>`__
 directory of the *phievo* package:
 
--  adaptation  [1]_
--  somites  [2]_
--  StaticHox and StaticHox pareto [3]_
+The function ``download_example`` allows to download one of the
+following examples:
+
+-  adaptation [1]_
+-  somite [2]_
+-  hox [3]_
+-  hox\_pareto
 -  `lac\_operon <example-lac-operon.html>`__
+-  immune
+
+.. code:: python
+
+    import phievo
+    phievo.download_example("adaptation")
+
+This command creates a project directory *example\_adaptation* at your
+current path. The project contains all the configuration files required
+to start an evolution.
 
 Examples of seeds
 ~~~~~~~~~~~~~~~~~
@@ -21,13 +35,13 @@ Examples of seeds
 Because some simulation can take some time to run, we provide the result
 seeds we used to generate the figure of the paper:
 
--  adaptation
--  adaptation\_pruning
--  somite
--  somite\_pruning
--  lacOperon
--  lacOperon\_pruning
--  hox\_pareto\_light
+-  seed\_adaptation
+-  seed\_adaptation\_pruning
+-  seed\_somite
+-  seed\_somite\_pruning
+-  seed\_lacOperon
+-  seed\_lacOperon\_pruning
+-  seed\_hox\_pareto\_light
 
 To download the result of a simulation on your computer, you can use
 phievo:
@@ -35,7 +49,10 @@ phievo:
 .. code:: python
 
     import phievo
-    phievo.download_example_seed("adaptation")
+    phievo.download_example("seed_adaptation")
+
+The project downloaded can be analysed using the *Analyse Run.ipynb*
+notebook.
 
 Hox pareto
 ~~~~~~~~~~

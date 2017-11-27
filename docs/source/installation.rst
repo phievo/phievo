@@ -14,7 +14,7 @@ with the most recent version of pip:
 
 .. code:: bash
 
-        pip3 install --upgrade pip
+        pip install --upgrade pip
 
 **Note:** When multiple versions of python are installed on the same
 computer, you may need to specify the version of python or pip you are
@@ -104,31 +104,54 @@ distribution. We tested the following on debian and ubuntu
     sudo apt-get install graphviz graphviz-dev pkg-config
     sudo pip install pygraphviz
 
-On other distribution, you may want to find the equivalent of
-*graphviz*, *graphviz-dev*, and *pkg-config*.
+On other distributions, you want to find the equivalent of *graphviz*,
+*graphviz-dev*, and *pkg-config*.
 
 We found that sometimes on ubuntu the C linking to the graphviz library
-does not work properly, to fix this, be more explicit and use the
-linking for the pip command:
+does not work properly. The fix is to be more explicit on the linking
+for the pip command:
 
 .. code:: bash
 
     sudo pip install pygraphviz --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
+
+run\_evolution.py script
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+An extra script
+(`run\_evolution.py <https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py>`__)
+needs to be downloaded with the phievo package to start an evolution. It
+is stored in the root of the phievo repository.
+
+You can either manually download it or open a python terminal and run
+
+.. code:: python
+
+    >>> import phievo
+    >>> phievo.download_tools()
+
+The former utility also downloads a jupyter notebook that can be used to
+analyse the results of a simulation in current directory.
 
 Analyse notebook
 ~~~~~~~~~~~~~~~~
 
 We provide a `jupyter
 notebook <https://github.com/phievo/phievo/blob/master/Analyse%20Run.ipynb>`__
-to help with the analysis of the runs. If you wand to run it, you will
-need to install several extra python libraries, to help with this, they
-are writen in
+at the root of the `github
+repository <https://github.com/phievo/phievo>`__ to help with the
+analysis of the runs. If you wand to run it, you will need to install
+several extra python libraries, to help with this, they are writen in
 `extra.txt <https://raw.githubusercontent.com/phievo/phievo/master/extra.txt>`__.
 
 .. code:: bash
 
     pip install -r https://raw.githubusercontent.com/phievo/phievo/master/extra.txt
-    jupyter nbextension enable --py --sys-prefix widgetsnbextension
+
+Similarly to the
+(`run\_evolution.py <https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py>`__)
+script, Analyse Run.ipynb is downloaded when you call the
+``phievo.download_tools()`` function.
 
 When using the plotly package, you may find that the plots do dot
 display well in the notebook (white square), the solution to this
@@ -142,31 +165,78 @@ the ``NotebookApp.iopub_data_rate_limit`` option when starting jupyter:
 Test your installation
 ~~~~~~~~~~~~~~~~~~~~~~
 
-TO test that everything works properly, we will run an simulation
-example.
+To test that everything works properly, we recommand that you run an
+example simulation. Several example of simulations are stored in the
+`github
+repository <https://github.com/phievo/phievo/tree/master/Examples>`__
+Examples directory.
 
-Copy the project directory ``Examples/Somites`` and ``run_evolution.py``
-fom `github <https://github.com/phievo/phievo>`__ on your computer. Then
+Several examples are present in in the Example Copy the project
+directory ``Examples/Somites`` and ``run_evolution.py`` fom
+`github <https://github.com/phievo/phievo>`__ on your computer. Then
 copy ``run_evolution.py`` at the same place as the ``Somites/``
-directory.
+directory. You can download all the simulations by cloning the
+repository with git:
+
+.. code:: bash
+
+        git clone https://github.com/phievo/phievo.git
+
+This will also downloads all phievo's code.
+
+Otherwise you can use the built-in tools by running the following code
+in a python shell:
+
+.. code:: python
+
+    >>> import phievo
+    # Downloads run_evolution.py and Analyse Run.ipynb in  the current directory
+    >>> phievo.download_tolls() 
+    # Downloads an example project directory
+    >>> phievo.download_example("adaptation") 
+
+The function ``download_example`` allows to download one of the
+following examples:
+
+-  adaptation
+-  somite
+-  hox
+-  hox\_pareto
+-  lac\_operon
+-  immune
+-  seed\_adaptation
+-  seed\_adaptation\_pruning
+-  seed\_somite
+-  seed\_somite\_pruning
+-  seed\_lacOperon
+-  seed\_lacOperon\_pruning
+-  seed\_hox\_pareto\_light
+
+The examples starting with "seed\_" keyword also contain the results of
+the simulations(not stored on the main git repository). The results can
+directly be visualized in the Analyse notebook.
 
 To launch the evolution, simply run
 
 .. code:: bash
 
-        ./run_evolution.py -m Somites
+        ./run_evolution.py -m example_adaptation
+
+**Note:** You can add the -c option
+(``./run_evolution.py -cm example_adaptation``) to delete a Seed than
+was created by a former run and prevents a new run to start. Be careful,
+a deleted seed cannot be recovered.
 
 On windows machine we recommand that you explicitly tell the system that
 you are running python (make sure you use the good version).
 
 .. code:: bash
 
-        python run_evolution.py -m Somites
+        python run_evolution.py -m example_adaptation
 
-If everything works correctly you should see the evolution starting and
-regular terminal print of the population best fitness.
-
-You can also choose to stop the simulation by deleting the
-``Somites/STOP.txt`` file after a few generations. The `jupyter
-notebook <https://github.com/phievo/phievo/blob/master/Analyse%20Run.ipynb>`__
-can then be use to visualize the results.
+If everything works correctly you should see the evolution starting.
+When an evolution is running it displays regularly updates of its
+current state in the terminal and a ``STOP.txt`` file is created at the
+root of the project. The purpose of the STOP file is to have a quick
+method to check on the current state of a run when it is launched as a
+background task. When the *STOP* file is deleted, the run stops.

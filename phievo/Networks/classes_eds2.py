@@ -214,8 +214,7 @@ class Species(Node):
                       Complex = [],
                       Ligand = [], # ligand diffuses only if diffusible tag is on
                       Receptor = [],
-                      Phospho = ['n_phospho'], #Phosphorylated species #For immune case
-                      Phosphorylable = ['n_phospho'], #only species with phosphorylated tags can be phosphorylated
+                      Phosphorylable = [], #only species with phosphorylated tags can be phosphorylated
                       Diffusible = ['diffusion'],
                       pMHC = [],
                       # tags specific to the IL2 model

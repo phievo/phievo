@@ -261,13 +261,34 @@ how *Examples/lac\_operon/* project is built.
 Launching a run
 ~~~~~~~~~~~~~~~
 
-The program is launched with the *run\_evolution.py* script
+The program is launched with the *run\_evolution.py* script:
 
 .. code:: bash
 
     ./run_evolution.py -m lac_operon/
 
 The script loads the parameters and launches the run.
+
+*run\_evolution.py* should be placed in the same project directory as
+the project directory:
+
+.. code:: bash
+
+        |
+         --- run_evolution.py
+         --- (Analyse Run.ipynb)
+         --- example_project/
+                      |
+                       --- initialization.py
+                       --- fitness.c
+                       --- init_history.c
+                       --- input.c
+                
+
+**Note:** *run\_evolution.py* is not installed with phievo and must be
+downloaded manually from
+`here <https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py>`__
+or by running the command ``phievo.download_tools()`` in a python shell.
 
 To restart a new run, one must provide the *#* of the run (or seed
 index). By default, the run number is 0. To prevent errasing a run by
