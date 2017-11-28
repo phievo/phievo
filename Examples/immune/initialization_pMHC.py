@@ -60,10 +60,10 @@ cfile['input'] =  'input.c'
 # this one was commented : 'immune/input_adaptation1.c'
 
 pfile = {}
-pfile["deriv2"] = "immune.Immune.deriv2_pMHC_modifier"
-pfile["interaction"] = "immune.Immune.interaction_pMHC"
-pfile["pretty_graph"] = "immune.Immune.pretty_graph_2_pMHC"
-pfile["plotdata"] = "immune.Immune.plotdata_pMHC"
+pfile["deriv2"] = "Immune.deriv2_pMHC_modifier"
+pfile["interaction"] = "Immune.interaction_pMHC"
+pfile["pretty_graph"] = "Immune.pretty_graph_2_pMHC"
+pfile["plotdata"] = "Immune.plotdata_pMHC"
 
 #################################################################################
 

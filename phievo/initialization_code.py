@@ -96,12 +96,12 @@ def check_model_dir(model):
     if hasattr(init_module,"pfile"):
 
         for key,ff in init_module.pfile.items():
-            ff=ff.replace(".",os.sep)
+            ff=ff.replace(".",os.sep)            
             if not os.path.isfile(ff+".py"):
                 if os.path.isfile(os.path.join(model_dir,ff)+".py"):
                     inits.pfile[key] = os.path.join(model_dir,ff).replace(os.sep,".")
                 else:
-                    raise FileNotFoundError("ERROR: The python file cannot be found:\n{} doesn't match a file.".format(ff+".py"))
+                    raise FileNotFoundError("ERROR: A python file cannot be found:\n{} doesn't match a file.".format(ff+".py"))
     for key,ff in init_module.cfile.items():
         if not os.path.isfile(ff):
             if os.path.isfile(os.path.join(model_dir,ff)):
