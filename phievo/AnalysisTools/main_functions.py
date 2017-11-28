@@ -109,6 +109,7 @@ def download_example(example_name,directory=None):
     """
     Download an example seed or project.
     """
+
     #server_address = "http://www.physics.mcgill.ca/~henrya/seeds_phievo/{}"
     server_examples = "https://github.com/phievo/phievo/blob/master/Examples/{}?raw=true"
     
@@ -139,14 +140,16 @@ def download_example(example_name,directory=None):
             example_name = example_name[5:]
             url = server_seed.format(zip_name)
         except KeyError:
-            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys()))+"\n\t- ".join(list(existing_seeds.keys())))
+            print("Example {} is not available.".format(example_name))
+            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys())+list(existing_seeds.keys())))
             return None
     else:
         try:            
             zip_name = existing_examples[example_name]
             url = server_examples.format(zip_name)
         except KeyError:
-            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys()))+"\n\t- ".join(list(existing_seeds.keys())))
+            print("Example {} is not available.".format(example_name))
+            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys())+list(existing_seeds.keys())))
             return None
     if not directory:    
         directory = "example_{}".format(example_name)
