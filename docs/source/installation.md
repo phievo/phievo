@@ -108,19 +108,15 @@ jupyter notebook --NotebookApp.iopub_data_rate_limit=10000000000
 
 ### Test your installation
 
-To test that everything works properly, we recommand that you run an example simulation. Several example of simulations are stored in the [github repository](https://github.com/phievo/phievo/tree/master/Examples) Examples directory. 
-
-
-Several examples are present in in the Example
-Copy the project directory `Examples/Somites` and `run_evolution.py` fom  [github](https://github.com/phievo/phievo) on your computer. Then copy `run_evolution.py` at the same place as the  `Somites/` directory. You can download all the simulations by cloning the repository with git:
+To test that everything works properly, we recommand that you run an example simulation. Several examples of simulations are stored in the [github repository](https://github.com/phievo/phievo/tree/master/Examples) Examples directory. You can download all the simulations by cloning the repository with git:
 
 ```bash
 git clone https://github.com/phievo/phievo.git
 ```
 
-This will also downloads all phievo's code.
+This will also download phievo's code.
 
-Otherwise you can use the built-in tools by running the following code in a python shell:
+To download a single example there is a built-in tool that can be run in a python shell:
 
 ```python
 >>> import phievo
@@ -146,7 +142,20 @@ The function `download_example` allows to download one of the following examples
 - seed_lacOperon_pruning
 - seed_hox_pareto_light
 
-The examples starting with "seed_" keyword also contain the results of the simulations(not stored on the main git repository). The results can directly be visualized in the Analyse notebook.
+The examples starting with "seed_" keyword also contain the results of the simulations. The results can directly be visualized in the Analyse notebook.
+
+After downloading and example project directory and the *run_evolution.py* script you are all set to start an evolution.
+
+```bash
+|-- run_evolution.py
+|-- Analyse Run.ipynb
+`-- example_adaptation/
+	|-- initialization.py
+	|-- fitness.c
+	|-- init_history.py
+	`-- input.c
+```
+
 
 To launch the evolution, simply run
 
