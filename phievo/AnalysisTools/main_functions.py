@@ -117,7 +117,7 @@ def download_example(example_name,directory=None):
         "somite":"Somites.zip",
         "hox":"StaticHox.zip",
         "hox_pareto":"StaticHox_pareto.zip",
-        "lac_operon":"lac_operon.zip"
+        "lac_operon":"lac_operon.zip",
         "immune":"immune.zip",
     }
     server_seed = "https://github.com/phievo/simulation_examples/blob/master/{}?raw=true"
