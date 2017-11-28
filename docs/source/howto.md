@@ -228,7 +228,7 @@ To get more precise informations, we recommand you to have to look at how
 The program is launched with the *run_evolution.py* script:
 
 ``` bash
-./run_evolution.py -m lac_operon/
+python run_evolution.py -m lac_operon/
 ```
 
 The script loads the parameters and launches the run.
@@ -254,7 +254,7 @@ the run number is 0. To prevent errasing a run by mistake, the code will
 not start if you do not provide a new run number in the initialization file. You can also tell the program explicitly to clear the Seeds with the "-c" or "--clear" option.
 
 ``` bash
-./run_evolution.py -cm lac_operon/
+python run_evolution.py -cm lac_operon/
 ```
 
 ## Restart an evolution

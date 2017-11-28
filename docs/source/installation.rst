@@ -227,19 +227,12 @@ To launch the evolution, simply run
 
 .. code:: bash
 
-        ./run_evolution.py -m example_adaptation
+        python run_evolution.py -m example_adaptation
 
 **Note:** You can add the -c option
 (``./run_evolution.py -cm example_adaptation``) to delete a Seed than
 was created by a former run and prevents a new run to start. Be careful,
 a deleted seed cannot be recovered.
-
-On windows machine we recommand that you explicitly tell the system that
-you are running python (make sure you use the good version).
-
-.. code:: bash
-
-        python run_evolution.py -m example_adaptation
 
 If everything works correctly you should see the evolution starting.
 When an evolution is running it displays regularly updates of its

@@ -265,7 +265,7 @@ The program is launched with the *run\_evolution.py* script:
 
 .. code:: bash
 
-    ./run_evolution.py -m lac_operon/
+    python run_evolution.py -m lac_operon/
 
 The script loads the parameters and launches the run.
 
@@ -298,7 +298,7 @@ clear the Seeds with the "-c" or "--clear" option.
 
 .. code:: bash
 
-    ./run_evolution.py -cm lac_operon/
+    python run_evolution.py -cm lac_operon/
 
 Restart an evolution
 --------------------
