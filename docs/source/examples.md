@@ -13,7 +13,7 @@ The function `download_example` allows to download one of the following examples
 - hox[^3]
 - hox_pareto
 - [lac_operon](example-lac-operon.html)
-- immune
+- immune [^4]
 
 ```python 
 import phievo
@@ -59,4 +59,4 @@ The project downloaded can be analysed using the *Analyse Run.ipynb* notebook.
    
 [^3]: [François P, Siggia ED. Predicting embryonic patterning using mutual entropy fitness and in silico evolution. Development (Cambridge, England). 2010;137(14):2385–2395.](http://dev.biologists.org/content/137/14/2385)
 
-
+[^4]: [Lalanne JB, François P. Principles of adaptive sorting revealed by in silico evolution. Physical Review Letters. 2013 May;110(21):218102.](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.110.218102)

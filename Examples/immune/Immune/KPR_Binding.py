@@ -6,6 +6,20 @@ import phievo.Networks.deriv2 as deriv2
 mutation.dictionary_ranges['KPR_Binding.association']=1.0/mutation.T
 mutation.dictionary_ranges['KPR_Binding.dissociation']=mutation.C
 
+
+
+# Ligand tag
+mutation.species_types["Ligand"] = lambda random_generator:[
+    ["Ligand"],
+]
+classes_eds2.Species.Tags_Species["Ligand"] = []
+
+# Receptor tag
+mutation.species_types["Receptor"] = lambda random_generator:[
+    ["Receptor"],
+]
+classes_eds2.Species.Tags_Species["Receptor"] = []
+
 class KPR_Binding(classes_eds2.Interaction):
     """ Ligand-Receptor interaction, init : rates of association"""
     def __init__(self,a=0):

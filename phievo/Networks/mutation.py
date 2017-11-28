@@ -65,6 +65,12 @@ species_types = {
         ['TF',int(2*random_generator.random())],
         ['Complexable']
     ],
+    "Degradable": lambda random_generator:[
+        ["Degradable", sample_dictionary_ranges('Species.degradation',random_generator)]
+    ],
+    "Phosphorylable": lambda random_generator:[
+        ["Phosphorylable"]
+    ],
     "Kinase":lambda random_generator:[["Kinase"],["Complexable"]],
     "Receptor":lambda random_generator:[["Receptor"],["Complexable"]],
 }
@@ -128,26 +134,27 @@ def sample_dictionary_ranges(key,random_generator):
     else:
         return dice
 
-def random_parameters(Type,random_generator):
-    """Create a set of new random parameters for a Species instance of type Type
+def random_parameters(Types,random_generator):
+    """Create a set of new random parameters for a Species instance of type Types
 
     This used only for initialization and adds attributes to various types.
     Some of which may not be mutable later
 
     Args:
-        Type (str): a species type
+        Types (str): a species type
         random_generator: a random number generator (.random() called here)
 
     Return:
         parameters a list of random parameters that can create a new Species
         or None if an error occured
     """
-    assert Type in list(classes_eds2.Species.Tags_Species.keys())+list(species_types.keys()),"Try to create a  not allowed random species of type "+Type
+    assert Types in list(classes_eds2.Species.Tags_Species.keys())+list(species_types.keys()),"Try to create a  not allowed random species of type "+Types
 
-    if not isinstance(Type,list):
-        Type = [Type]
-    parameters=[['Degradable', sample_dictionary_ranges('Species.degradation',random_generator) ],['Phosphorylable']]
-    for tt in Type:
+    if not isinstance(Types,list):
+        Types = [Types]
+    Types += classes_eds2.Species.default_tags
+    parameters = []
+    for tt in Types:
         parameters += species_types.get(tt,lambda random_generator:[])(random_generator)
     return parameters
 

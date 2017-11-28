@@ -60,8 +60,9 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
     if 'Phosphatase' in net.dict_types:
         P_list = net.dict_types['Phosphatase']
         for i in range(len(P_list)):
-             if(P_list[i].n_phospho == 0):
-                 nP += 1    # all the phosphatase (not phosphorylated).
+            if(P_list[i].n_phospho == 0):
+                nP += 1    # all the phosphatase (not phosphorylated).
+            
     nK = 0
     if 'Kinase' in net.dict_types:
         K_list = net.dict_types['Kinase']

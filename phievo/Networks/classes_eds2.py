@@ -220,6 +220,7 @@ class Species(Node):
                       # tags specific to the IL2 model
                       Common = ['common'], # 1 if the species is a common good, 0 otherwise.
                       Linear_Producer=[])
+    default_tags = parameters=['Degradable','Phosphorylable']
     label='Generic Species'
 
     def __init__(self,listtypes=[]):

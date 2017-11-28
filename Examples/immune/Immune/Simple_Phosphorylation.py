@@ -13,6 +13,12 @@ import random
 # parameters needed to perform evolution.
 mutation.dictionary_ranges['Simple_Phosphorylation.rate']=1.0/mutation.T
 
+mutation.species_types["Phospho"] = lambda random_generator:[
+    ["Phospho",0],
+]
+classes_eds2.Species.default_tags.append("Phospho")
+classes_eds2.Species.Tags_Species["Phospho"] = ["n_phospho"]
+
 # definition of class phosphorylation: sub-class of interaction class (see classes_eds2).
 # contains the parameter quantifying the interaction as well as the input and output of the reaction. 
 # these characteristics define the interaction completely. they are "free standing" initially in that 

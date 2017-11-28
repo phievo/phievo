@@ -1,6 +1,7 @@
 """ initialization script, import and copy data to like named variables in other modules.
 """
 import numpy as np
+import Immune
 # ranges over which parmeters in classes_eds2 classes can vary. Defined in mutation.py
 # NB use 1.0 etc to keep params real not int.
 T=1.0 #typical time scale
@@ -27,7 +28,6 @@ dictionary_ranges['Phosphorylation.threshold']=C
 dictionary_ranges['Phosphorylation.dephosphorylation']=1.0/T
 dictionary_ranges['Simple_Phosphorylation.rate']=1.0/(C*T)
 dictionary_ranges['Simple_Phosphorylation.spontaneous_dephospho']=1.0/T
-dictionary_ranges['Simple_Dephosphorylation.rate']=1.0/(C*T)
 dictionary_ranges['Initial_Concentration.concentration'] = C
 dictionary_ranges['Mutable_Threshold.thresh'] = 1.0
 dictionary_ranges['KPR_Binding.association'] = 2.0/(R*T)
@@ -200,7 +200,7 @@ list_types_output=['Kinase','Phosphatase']
 # =0 serial processing, only one C job running at a time
 # =1 threaded, multiple C jobs started on one machine to use multi-core capabilities
 # =2 multiple computers, cluster, using mpirun See HowTo in /Doc
-prmt['multipro_level'] = 0
+prmt['multipro_level'] = 1
 
 # Parameters for pareto evolution module. Pareto optimization allows one to use multiple
 # fitness functions. When running pareto optimization, network X is only considered better

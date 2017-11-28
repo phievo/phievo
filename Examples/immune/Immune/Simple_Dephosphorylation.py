@@ -142,6 +142,7 @@ def find_phosphorylated_to_remove(self,interaction):
 def new_Simple_Dephosphorylation(self,phosphatase,species1,species2,rate):
 
         dephospho=Simple_Dephosphorylation(rate) #creates the interaction (see function above, an instance of the Node classe)
+        assert abs(species1.n_phospho - species2.n_phospho) ==1, "grammar error"
         
         if(species1.n_phospho - species2.n_phospho == 1):#verifies that the degree of phosphorylation of the two species differ by one.            
             if dephospho.check_grammar([phosphatase,species1],[phosphatase,species2]):                
@@ -192,7 +193,6 @@ def new_random_Simple_Dephosphorylation(self, K, Sp,S):
     
 def random_Simple_Dephosphorylation(self):
         """Create new random  Phosphorylations from list of possible kinase substrates"""
-        
         if 'Phosphatase' in self.dict_types and 'Phosphorylable' in self.dict_types and 'Phospho' in self.dict_types:
             list_possible_Simple_Dephosphorylation=[]
             nP=self.number_nodes('Phosphatase')
