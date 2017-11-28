@@ -11,7 +11,7 @@ and more regularly on this platform.
 install Anaconda
 ~~~~~~~~~~~~~~~~
 
-The \_phievo package depends on python>=3.5. In it is not already
+The \_phievo package depends on python>=3.5. If python is not already
 installed on your computer, we recommand to install it by using the
 `anaconda distribution <https://www.continuum.io/downloads>`__.
 
@@ -162,7 +162,7 @@ script, Analyse Run.ipynb is downloaded when you call the
 
 When using the plotly package, you may find that the plots do dot
 display well in the notebook (white square), the solution to this
-priblem is to increase the io rate allocated to the notebook by using
+problem is to increase the io rate allocated to the notebook by using
 the ``NotebookApp.iopub_data_rate_limit`` option when starting jupyter:
 
 .. code:: bash
@@ -217,7 +217,7 @@ The examples starting with "seed\_" keyword also contain the results of
 the simulations. The results can directly be visualized in the Analyse
 notebook.
 
-After downloading and example project directory and the
+After downloading an example project directory and the
 *run\_evolution.py* script you are all set to start an evolution.
 
 .. code:: bash
@@ -237,7 +237,7 @@ To launch the evolution, simply run
     python run_evolution.py -m example_adaptation
 
 **Note:** You can add the -c option
-(``./run_evolution.py -cm example_adaptation``) to delete a Seed than
+(``./run_evolution.py -cm example_adaptation``) to delete a Seed that
 was created by a former run and prevents a new run to start. Be careful,
 a deleted seed cannot be recovered.
 

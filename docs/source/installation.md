@@ -7,7 +7,7 @@ The software has been successfully tested on the three main operating systems(wi
 
 ### install Anaconda
 The _phievo package depends on python>=3.5.
-In it is not already installed on your computer, we recommand to install it by using the [anaconda distribution](https://www.continuum.io/downloads).
+If python is not already installed on your computer, we recommand to install it by using the [anaconda distribution](https://www.continuum.io/downloads).
 
 Among other things, anaconda provides the standard package manager of python _pip_. Before anything, it is good to check that you are working with the most recent version of pip:
 
@@ -100,7 +100,7 @@ pip install -r https://raw.githubusercontent.com/phievo/phievo/master/extra.txt
 
 Similarly to the ([run_evolution.py](https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py)) script, Analyse Run.ipynb is downloaded when you call the `phievo.download_tools()` function.
 
-When using the plotly package, you may find that the plots do dot display well in the notebook (white square), the solution to this priblem is to increase the io rate allocated to the notebook by using the `NotebookApp.iopub_data_rate_limit` option when starting jupyter:
+When using the plotly package, you may find that the plots do dot display well in the notebook (white square), the solution to this problem is to increase the io rate allocated to the notebook by using the `NotebookApp.iopub_data_rate_limit` option when starting jupyter:
 
 ```bash
 jupyter notebook --NotebookApp.iopub_data_rate_limit=10000000000
@@ -144,7 +144,7 @@ The function `download_example` allows to download one of the following examples
 
 The examples starting with "seed_" keyword also contain the results of the simulations. The results can directly be visualized in the Analyse notebook.
 
-After downloading and example project directory and the *run_evolution.py* script you are all set to start an evolution.
+After downloading an example project directory and the *run_evolution.py* script you are all set to start an evolution.
 
 ```bash
 |-- run_evolution.py
@@ -162,7 +162,7 @@ To launch the evolution, simply run
 ```bash
 python run_evolution.py -m example_adaptation
 ```
-**Note:**  You can add the -c option (`./run_evolution.py -cm example_adaptation`) to delete a Seed than was created by a former run and prevents a new run to start. Be careful, a deleted seed cannot be recovered.
+**Note:**  You can add the -c option (`./run_evolution.py -cm example_adaptation`) to delete a Seed that was created by a former run and prevents a new run to start. Be careful, a deleted seed cannot be recovered.
 
 If everything works correctly you should see the evolution starting. When an evolution is running it displays regularly updates of its current state in the terminal and a `STOP.txt` file is created at the root of the project. The purpose of the STOP file is to have a quick method to check on the current state of a run when it is launched as a background task. When the *STOP* file is deleted, the run stops.
 
