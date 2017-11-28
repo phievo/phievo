@@ -21,7 +21,7 @@ with the most recent version of pip:
 
 .. code:: bash
 
-        pip install --upgrade pip
+    pip install --upgrade pip
 
 **Note:** When multiple versions of python are installed on the same
 computer, you may need to specify the version of python or pip you are
@@ -44,7 +44,7 @@ With pip installed, the installation is straight forward, run:
 
 .. code:: bash
 
-        pip install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.zip?raw=true
+    pip install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.zip?raw=true
 
 Install gcc on windows
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -187,7 +187,7 @@ repository with git:
 
 .. code:: bash
 
-        git clone https://github.com/phievo/phievo.git
+    git clone https://github.com/phievo/phievo.git
 
 This will also downloads all phievo's code.
 
@@ -227,7 +227,7 @@ To launch the evolution, simply run
 
 .. code:: bash
 
-        python run_evolution.py -m example_adaptation
+    python run_evolution.py -m example_adaptation
 
 **Note:** You can add the -c option
 (``./run_evolution.py -cm example_adaptation``) to delete a Seed than

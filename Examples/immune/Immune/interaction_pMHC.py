@@ -7,12 +7,12 @@ from phievo.Networks.LR import *
 from phievo.Networks.Phosphorylation import *
 
 # interactions specific to modelling of the TC-pMHC chemical pathway.
-from immune.Immune.Simple_Phosphorylation import *
-from immune.Immune.Simple_Dephosphorylation import *
-from immune.Immune.KPR_Binding import *
-from immune.Immune.KPR_Unbinding import *
-from immune.Immune.Initial_Concentration import *
-from immune.Immune.Mutable_Threshold import *
+from Immune.Simple_Phosphorylation import *
+from Immune.Simple_Dephosphorylation import *
+from Immune.KPR_Binding import *
+from Immune.KPR_Unbinding import *
+from Immune.Initial_Concentration import *
+from Immune.Mutable_Threshold import *
 from phievo.initialization_code import *
 
 import phievo.Networks.deriv2 as deriv2

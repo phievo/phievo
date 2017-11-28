@@ -12,7 +12,7 @@ In it is not already installed on your computer, we recommand to install it by u
 Among other things, anaconda provides the standard package manager of python _pip_. Before anything, it is good to check that you are working with the most recent version of pip:
 
 ```bash
-	pip install --upgrade pip
+pip install --upgrade pip
 ```
 
 
@@ -24,7 +24,7 @@ Among other things, anaconda provides the standard package manager of python _pi
 
 With pip installed, the installation is straight forward, run:
 ```bash
-	pip install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.zip?raw=true
+pip install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.zip?raw=true
 ```
 
 ### Install gcc on windows
@@ -115,7 +115,7 @@ Several examples are present in in the Example
 Copy the project directory `Examples/Somites` and `run_evolution.py` fom  [github](https://github.com/phievo/phievo) on your computer. Then copy `run_evolution.py` at the same place as the  `Somites/` directory. You can download all the simulations by cloning the repository with git:
 
 ```bash
-	git clone https://github.com/phievo/phievo.git
+git clone https://github.com/phievo/phievo.git
 ```
 
 This will also downloads all phievo's code.
@@ -151,7 +151,7 @@ The examples starting with "seed_" keyword also contain the results of the simul
 To launch the evolution, simply run
 
 ```bash
-	python run_evolution.py -m example_adaptation
+python run_evolution.py -m example_adaptation
 ```
 **Note:**  You can add the -c option (`./run_evolution.py -cm example_adaptation`) to delete a Seed than was created by a former run and prevents a new run to start. Be careful, a deleted seed cannot be recovered.
 
