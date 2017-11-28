@@ -1,5 +1,10 @@
 # Install φ-evo
 
+φ-evo relies on python>=3.5, pip, and c.
+
+The software has been successfully tested on the three main operating systems(windows,mac OSX, and GNU-linux) but **we recommand using a GNU-linux distribution(ubuntu)** as it has been tested more thoroughly and more regularly on this platform.
+
+
 ### install Anaconda
 The _phievo package depends on python>=3.5.
 In it is not already installed on your computer, we recommand to install it by using the [anaconda distribution](https://www.continuum.io/downloads).
@@ -120,7 +125,7 @@ Otherwise you can use the built-in tools by running the following code in a pyth
 ```python
 >>> import phievo
 # Downloads run_evolution.py and Analyse Run.ipynb in  the current directory
->>> phievo.download_tolls() 
+>>> phievo.download_tools() 
 # Downloads an example project directory
 >>> phievo.download_example("adaptation") 
 ```

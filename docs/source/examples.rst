@@ -18,7 +18,7 @@ following examples:
 -  hox [3]_
 -  hox\_pareto
 -  `lac\_operon <example-lac-operon.html>`__
--  immune
+-  immune  [4]_
 
 .. code:: python
 
@@ -81,3 +81,8 @@ References
    entropy fitness and in silico evolution. Development (Cambridge,
    England).
    2010;137(14):2385–2395. <http://dev.biologists.org/content/137/14/2385>`__
+
+.. [4]
+   `Lalanne JB, François P. Principles of adaptive sorting revealed by
+   in silico evolution. Physical Review Letters. 2013
+   May;110(21):218102. <https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.110.218102>`__
