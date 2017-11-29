@@ -1,7 +1,7 @@
 import pydot
 #from phievo.initialization_code import *
 import phievo.Networks.classes_eds2 as ceds2
-from immune.Immune.interaction_pMHC import *
+from Immune.interaction_pMHC import *
 from phievo.AnalysisTools import palette
 # independent of both above routines, goes from Network instance to Dot instance, and latter can be
 # written out as .dot file and viewed with display

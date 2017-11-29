@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 from importlib import import_module
-pretty_graph = import_module('immune.Immune.pretty_graph_2_pMHC')
+pretty_graph = import_module('Immune.pretty_graph_2_pMHC')
 
 
 def Plot_pMHC(self):

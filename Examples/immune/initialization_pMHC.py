@@ -81,7 +81,6 @@ dictionary_mutation['random_Interaction(\'TFHill\')']=0.000
 dictionary_mutation['random_Interaction(\'PPI\')']=0.000
 dictionary_mutation['random_Interaction(\'Phosphorylation\')']=0.000
 dictionary_mutation['random_Interaction(\'Simple_Phosphorylation\')']=0.05
-dictionary_mutation['random_Interaction(\'Simple_Dephosphorylation\')']=0.05
 
 # Rates for nodes to remove
 dictionary_mutation['remove_Interaction(\'TFHill\')']=0.000
