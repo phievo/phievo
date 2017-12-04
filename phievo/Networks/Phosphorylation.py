@@ -20,6 +20,9 @@ mutation.dictionary_ranges['Phosphorylation.hill'] = 0.0
 mutation.dictionary_ranges['Phosphorylation.threshold'] = 0.0 * mutation.C
 mutation.dictionary_ranges['Phosphorylation.dephosphorylation'] = 0.0 / mutation.T
 
+classes_eds2.Species.Tags_Species["Phospho"] = ["n_phospho"]
+
+
 ########################################
 ### Phosphorylation Class definition ###
 ########################################
@@ -119,6 +122,7 @@ def new_Phosphorylation(self,kinase,species,rate,threshold,hill,dephospho):
         species_P.clean_type('Phosphorylable')#Phosphorylable species can not be more phosphorylated
     species_P.clean_type('Phospho')
     species_P.types.append('Phospho')#  phosphorylates
+
     species_P.n_phospho=1
     if phospho.check_grammar([kinase,species],[kinase,species_P]):
         self.add_Node(phospho)
