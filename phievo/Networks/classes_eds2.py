@@ -208,6 +208,7 @@ class Species(Node):
                       TF = ['activity'], #activity of TF; 1 is activator, 0 repressor
                       Kinase = [],
                       Phosphatase = [],
+                      Phospho = ["n_phospho"],
                       Output = ['n_put'], #index as an output
                       Input = ['n_put'], #index as an input
                       Complexable = [],
