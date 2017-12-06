@@ -160,6 +160,17 @@ Similarly to the
 script, Analyse Run.ipynb is downloaded when you call the
 ``phievo.download_tools()`` function.
 
+The jupyter kernel is started with the following command
+
+.. code:: bash
+
+    jupyter notebook
+
+Usually it autmotically opens a new windows in your terminal in which
+you need to select ``Analyse Run.ipynb``. If the windows does not open,
+it can be open manually by copy-pasting the url printed in your shell
+after you ran the command in a wer browser.
+
 When using the plotly package, you may find that the plots do dot
 display well in the notebook (white square), the solution to this
 problem is to increase the io rate allocated to the notebook by using
