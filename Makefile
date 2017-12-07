@@ -1,5 +1,8 @@
 PIP=pip
 
+package:
+	python3 setup.py sdist --format=zip
+
 
 pull:
 	git reset --hard origin/master
@@ -8,8 +11,6 @@ pull:
 push:
 	git push origin master
 
-package:
-	python3 setup.py sdist --format=zip
 
 install_dependencies:
 	sudo $(PIP) install -r requirements.txt

@@ -120,6 +120,7 @@ def download_example(example_name,directory=None):
         "hox_pareto":"StaticHox_pareto.zip",
         "lac_operon":"lac_operon.zip",
         "immune":"immune.zip",
+        "minimal_project":"minimal_project.zip",
     }
     server_seed = "https://github.com/phievo/simulation_examples/blob/master/{}?raw=true"
     existing_seeds = {

@@ -99,7 +99,7 @@ prmt['dt'] = 0.05     # time step
 
 # Needed in evolution_gill to define evol algorithm and create initial network
 prmt['npopulation'] =50
-prmt['ngeneration'] =101
+prmt['ngeneration'] =301
 prmt['tgeneration']=1.0       #initial generation time (for gillespie), reset during evolution
 prmt['noutput']=1    # to define initial network
 prmt['ninput']=1

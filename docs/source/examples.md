@@ -14,6 +14,7 @@ The function `download_example` allows to download one of the following examples
 - hox_pareto
 - [lac_operon](example-lac-operon.html)
 - immune [^4]
+- minimal_project
 
 ```python 
 import phievo

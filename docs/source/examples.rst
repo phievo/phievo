@@ -19,6 +19,7 @@ following examples:
 -  hox\_pareto
 -  `lac\_operon <example-lac-operon.html>`__
 -  immune  [4]_
+-  minimal\_project
 
 .. code:: python
 
