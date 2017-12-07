@@ -1,7 +1,5 @@
 """ initialization script, import and copy data to like named variables in other modules.
 """
-import phievo
-phievo.__verbose__=True
 # ranges over which parmeters in classes_eds2 classes can vary. Defined in mutation.py
 # NB use 1.0 etc to keep params real not int.
 T=1.0 #typical time scale
