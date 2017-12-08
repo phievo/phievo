@@ -47,9 +47,10 @@ count_interactions = ['TFHill', 'PPI', 'Phosphorylation']
 count_keys = list(mutation.dictionary_mutation.keys())
 for i in count_interactions:
     rates0 = [mutation.dictionary_mutation[kk]==0 for kk in count_keys if kk.find(i) >= 0]
+    
     if len(rates0) > 0:
         continue
-    stat_dict[i] = 'dict_types[{0}]'.format(i)
+    stat_dict[i] = lambda net: net.dict_types.get(i,None)
 
 #######################
 ### Dummy Functions ###
