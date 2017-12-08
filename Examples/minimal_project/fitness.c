@@ -2,14 +2,8 @@
 
 static double result[NTRIES];
 
-void fitness( double history[][NSTEP][NCELLTOT], int trackout[],int ntry)  {
-  int trial = 0;
-  int func = 0;
-  for(trial=0;trial<NTRIES;trial++)
-    {
-      result[trial] = 0;
-	
-    }
+void fitness( double history[][NSTEP][NCELLTOT], int trackout[],int trial)  {
+  result[trial] = 0;	    
 }
 
 // Combine the fitnesses obtained in the different trials.

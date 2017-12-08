@@ -1,5 +1,5 @@
-HowTo
-=====
+Create a new project
+====================
 
 This tutorial lists a series examples on how to perform common tasks
 with φ-evo.
@@ -199,18 +199,34 @@ manually <#build-a-network-manually>`__.
 fitness.c
 ~~~~~~~~~
 
-This file contains a C function *treatment\_fitness* used by the
-algorithm to compute the fitnesses during the runs. After the
-integration, the algotithm reads the fitness(es) preinted by this
-function. You are free to add more analysis functions and to redefine
+This file contains two required C functions *fitness* and
+*treatment\_fitness*. The first function function computes the fitness
+each individual trials. Once all the trials have been analysed by
+*fitness*, the *treatment\_fitness* function combines the different
+fitnesses (ex: taking an average, sum, etc.) and prints the summary
+fitness to the shell. The former fitness is read by the python algorithm
+and used to classify the networks among the other networks of the
+population.
+
+You may add more analysis functions and to redefine *fitness* and
 *treatment\_fitness* as long as it prints the network's fitness and has
 the following prototype:
 
 .. code:: c
 
+    static double result[NTRIES];
+
+    void fitness( double history[][NSTEP][NCELLTOT], int trackout[],int trial)
+        {
+            result[trial] = 0;
+        }
+        
     void treatment_fitness(double history[NGENE][NSTEP][NCELLTOT], int trackout[])
-        ...
-        printf("%f",fitness)
+        {
+            for(trial=0;trial<NTRIES;trial++)
+                total_fitness += result[trial];
+            printf("%f",total_fitness)
+        }
 
 The ``trackout`` lists the indexes of the outputs in the networks. You
 can also decide to use the global list ``trackin`` which contains the
