@@ -102,6 +102,10 @@ def check_model_dir(model):
                     inits.pfile[key] = os.path.join(model_dir,ff).replace(os.sep,".")
                 else:
                     raise FileNotFoundError("ERROR: A python file cannot be found:\n{} doesn't match a file.".format(ff+".py"))
+    if hasattr(init_module,"c_libraries"):
+        for key,ff in init_module.c_libraries.items():
+            init_module.c_libraries[key].setdefault("dir",model_dir)
+            init_module.c_libraries[key].setdefault("o",key+".o")
     for key,ff in init_module.cfile.items():
         if not os.path.isfile(ff):
             if os.path.isfile(os.path.join(model_dir,ff)):
@@ -128,8 +132,10 @@ def check_model_dir(model):
             print('Remark: No pfile object in init* file, use default one (see check_model_dir)!')
     try:
         cfile.update(init_module.cfile)
-    except AttributeError:
+    except AttributeError:  
         raise AttributeError("The cfile is not defined in initialization.")
+
+        
     init_module.pfile = pfile
     init_module.cfile = cfile
 
@@ -167,6 +173,10 @@ def init_networks(inits):
     deriv2 = import_module('phievo.Networks.deriv2')
     deriv2.cfile.update(inits.cfile)
 
+    try:
+        deriv2.c_libraries.update(inits.c_libraries)
+    except AttributeError:
+        pass
     # Define default directory for cfile then overwrite with information from inits
     #deriv2.cfile['header'] = os.path.join(ccode_dir,'integrator_header.h')
 

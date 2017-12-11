@@ -30,14 +30,16 @@ if __verbose__:
 from phievo.initialization_code import display_error
 from phievo.Networks.classes_eds2 import *
 from math import sqrt
+import shutil
 import numpy
 import os, sys, select, random
 import subprocess
 
 # Parameters
 workplace_dir = './Workplace/'
-cCompiler = 'gcc'
+cCompiler = 'g++'
 cfile = {}  # see initialization_code.init_deriv2 for the whole definition
+c_libraries={}
 interactions_deriv_inC = {}
 noise_flag = False
 
@@ -143,6 +145,28 @@ def write_deriv_inC(net,programm_file):
     add("\t double rate=0;\n")
     add(deriv2.degrad_deriv_inC(net))#add degradation rates
     add("}\n\n")
+
+def include_lib(prmt):
+    return_str = ""
+    
+    for key,lib in c_libraries.items():        
+        lib_head = os.path.join(prmt["workplace_dir"],lib["h"])
+        lib_src = os.path.join(prmt["workplace_dir"],lib["c"])
+        lib_obj = os.path.join(prmt["workplace_dir"],lib["o"])
+        if not os.path.isfile(lib_head):
+            shutil.copy(os.path.join(lib["dir"],lib["h"]),lib_head)
+            shutil.copy(os.path.join(lib["dir"],lib["c"]),lib_src)            
+        return_str += "#include \"{}\"\n".format(lib["h"])
+    for key,lib in c_libraries.items():
+        cCompiler = prmt.get("compiler","gcc")
+        cmd = [cCompiler ,"-c", lib_src , "-lm" , "-o" , lib_obj]        
+        out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()
+        if out:
+            os.write(sys.stdout.fileno(), out[-1])
+        else:
+            c_libraries[key]["obj"] = lib_obj
+            
+    return return_str
 
 def all_params2C(net, prmt, print_buf, Cseed=0):
     """ Collect all the numerical constants and format them to C like
@@ -254,6 +278,7 @@ def write_program(programm_file,net, prmt, print_buf, Cseed=0):
     """
     # these have to be loaded in this order due to implicit type def's
     required_files2 = ['fitness', 'geometry', 'init_history', 'input', 'integrator', 'main']
+    programm_file.write(include_lib(prmt));
     programm_file.write(all_params2C(net, prmt, print_buf, Cseed))
     programm_file.write(open(cfile['header']).read())
     programm_file.write(open(cfile['utilities']).read())
@@ -284,14 +309,14 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
         (see your fitness.c file) or None if an error occured
     """
 
-    network.write_id()
+    network.write_id()    
     if "workplace_dir" in prmt:
         workplace_dir = prmt["workplace_dir"]
     if not os.path.exists(workplace_dir):
         os.makedirs(workplace_dir)
+        
     cfile_directory = os.path.join(workplace_dir,'built_integrator'+str(nnetwork))
-    #import pdb;pdb.set_trace()
-    # check for outputs
+   
     if 'Output' not in network.dict_types:
         print("No Output for network %i" % nnetwork)
         return None
@@ -303,12 +328,21 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
     # cmd contains the command in the same order as they would be on a full bash commans
     # ex: cmd = ["gcc", "-o", "run",  "test.c"] for "gcc -o run test.c"
     cCompiler = prmt.get("compiler","gcc")
-    cmd = [cCompiler , cfile_directory+".c" , "-lm" , "-o" , cfile_directory]
+
+    ## Compile
+    cmd = [cCompiler ,"-c", cfile_directory+".c" , "-lm" , "-o" , cfile_directory+".o"]
     out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()
-
-
     if out[1]:
-        print('bug in Ccompile for', cfile_directory, 'err=', out[1], 'BYE')
+        os.write(sys.stdout.fileno(), out[-1])
+        sys.exit(1)
+    cmd = [cCompiler ,"-c", cfile_directory+".c" , "-lm" , "-o" , cfile_directory+".o"]
+
+    ## Linking
+    lib_obj = [os.path.join(prmt["workplace_dir"],lib["o"]) for lib in c_libraries.values()]
+    cmd = [cCompiler , cfile_directory+".o"]+lib_obj+["-lm" , "-o" , cfile_directory]
+    out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()
+    if out[1]:
+        os.write(sys.stdout.fileno(), out[-1])
         sys.exit(1)
 
     # Execute the programm
