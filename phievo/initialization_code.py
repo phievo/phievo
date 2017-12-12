@@ -106,6 +106,10 @@ def check_model_dir(model):
         for key,ff in init_module.c_libraries.items():
             init_module.c_libraries[key].setdefault("dir",model_dir)
             init_module.c_libraries[key].setdefault("o",key+".o")
+    if hasattr(init_module,"c_dependencies"):
+        for key,ff in init_module.c_dependencies.items():            
+            init_module.c_dependencies[key] = os.path.join(model_dir,ff)
+            
     for key,ff in init_module.cfile.items():
         if not os.path.isfile(ff):
             if os.path.isfile(os.path.join(model_dir,ff)):
@@ -177,6 +181,12 @@ def init_networks(inits):
         deriv2.c_libraries.update(inits.c_libraries)
     except AttributeError:
         pass
+
+    try:
+        deriv2.c_dependencies.update(inits.c_dependencies)
+    except AttributeError:
+        pass
+
     # Define default directory for cfile then overwrite with information from inits
     #deriv2.cfile['header'] = os.path.join(ccode_dir,'integrator_header.h')
 

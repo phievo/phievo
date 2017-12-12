@@ -40,6 +40,7 @@ workplace_dir = './Workplace/'
 cCompiler = 'g++'
 cfile = {}  # see initialization_code.init_deriv2 for the whole definition
 c_libraries={}
+c_dependencies = {}
 interactions_deriv_inC = {}
 noise_flag = False
 
@@ -166,6 +167,15 @@ def include_lib(prmt):
             
     return return_str
 
+def include_dependencies(prmt):
+    return_str = ""
+    for key,dep_file in c_dependencies.items():
+        dep_file_copy = os.path.join(prmt["workplace_dir"],dep_file.split(os.sep)[-1])
+        if not os.path.isfile(dep_file_copy):
+            shutil.copy(dep_file,dep_file_copy)
+        return_str += "static char {}[] = \"{}\";\n".format(key,os.path.abspath(dep_file_copy))
+    return return_str
+
 def all_params2C(net, prmt, print_buf, Cseed=0):
     """ Collect all the numerical constants and format them to C like
 
@@ -277,6 +287,7 @@ def write_program(programm_file,net, prmt, print_buf, Cseed=0):
     # these have to be loaded in this order due to implicit type def's
     required_files2 = ['fitness', 'geometry', 'init_history', 'input', 'integrator', 'main']
     programm_file.write(include_lib(prmt));
+    programm_file.write(include_dependencies(prmt));
     programm_file.write(all_params2C(net, prmt, print_buf, Cseed))
     programm_file.write(open(cfile['header']).read())
     programm_file.write(open(cfile['utilities']).read())
@@ -357,7 +368,6 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
 
     # Execute the programm
     out = subprocess.Popen(cfile_directory, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-
     if out[1] or len(out[0]) < 1:  # some floating exceptions do not get to stderr, but loose stdout
         print('bug during run (or no stdout) for', cfile_directory, out[1], 'BYE')
         sys.exit(1)
@@ -367,3 +377,4 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
         for arg in out_list:
             if not arg: return None
         return out_list
+    
