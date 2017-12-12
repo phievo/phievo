@@ -169,11 +169,8 @@ def include_lib(prmt):
 
 def include_dependencies(prmt):
     return_str = ""
-    for key,dep_file in c_dependencies.items():
-        dep_file_copy = os.path.join(prmt["workplace_dir"],dep_file.split(os.sep)[-1])
-        if not os.path.isfile(dep_file_copy):
-            shutil.copy(dep_file,dep_file_copy)
-        return_str += "static char {}[] = \"{}\";\n".format(key,os.path.abspath(dep_file_copy))
+    for key,dep_file in c_dependencies.items():       
+        return_str += "static char {}[] = \"{}\";\n".format(key,os.path.abspath(dep_file))
     return return_str
 
 def all_params2C(net, prmt, print_buf, Cseed=0):
