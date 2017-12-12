@@ -148,7 +148,6 @@ def write_deriv_inC(net,programm_file):
 
 def include_lib(prmt):
     return_str = ""
-    
     for key,lib in c_libraries.items():        
         lib_head = os.path.join(prmt["workplace_dir"],lib["h"])
         lib_src = os.path.join(prmt["workplace_dir"],lib["c"])
@@ -157,9 +156,8 @@ def include_lib(prmt):
             shutil.copy(os.path.join(lib["dir"],lib["h"]),lib_head)
             shutil.copy(os.path.join(lib["dir"],lib["c"]),lib_src)            
         return_str += "#include \"{}\"\n".format(lib["h"])
-    for key,lib in c_libraries.items():
-        cCompiler = prmt.get("compiler","gcc")
-        cmd = [cCompiler ,"-c", lib_src , "-lm" , "-o" , lib_obj]        
+        cCompiler = prmt.get("compiler","gcc").split(" ")
+        cmd = cCompiler + ["-c", lib_src ,  "-o" , lib_obj]        
         out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()
         if out:
             os.write(sys.stdout.fileno(), out[-1])
@@ -320,28 +318,40 @@ def compile_and_integrate(network, prmt, nnetwork, print_buf=False, Cseed=0):
     if 'Output' not in network.dict_types:
         print("No Output for network %i" % nnetwork)
         return None
-    # Write the program in a c file
-    with open(cfile_directory+'.c','w') as cfile:
+
+    cCompiler = prmt.get("compiler","gcc").split(" ")
+    if cCompiler[0]=="gcc":
+        end_file =".c"
+    else:
+        end_file =".cc"
+    # Write the program in a c file    
+    with open(cfile_directory+end_file,'w') as cfile:
         write_program(cfile,network, prmt, print_buf, Cseed)
 
     # Compile the program
     # cmd contains the command in the same order as they would be on a full bash commans
     # ex: cmd = ["gcc", "-o", "run",  "test.c"] for "gcc -o run test.c"
-    cCompiler = prmt.get("compiler","gcc")
+    
 
     ## Compile
-    cmd = [cCompiler ,"-c", cfile_directory+".c" , "-lm" , "-o" , cfile_directory+".o"]
+    cmd = cCompiler  + ["-c", cfile_directory+end_file ,  "-o" , cfile_directory+".o"]
     out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()
     if out[1]:
+        print("Main file compilation error:")
         os.write(sys.stdout.fileno(), out[-1])
         sys.exit(1)
-    cmd = [cCompiler ,"-c", cfile_directory+".c" , "-lm" , "-o" , cfile_directory+".o"]
 
     ## Linking
+    
     lib_obj = [os.path.join(prmt["workplace_dir"],lib["o"]) for lib in c_libraries.values()]
-    cmd = [cCompiler , cfile_directory+".o"]+lib_obj+["-lm" , "-o" , cfile_directory]
-    out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()
+    link_info = []
+    for lib in  c_libraries.values():
+        link_info+=[ii for ii in lib.get("link_info",[])]
+    
+    cmd = cCompiler  + [cfile_directory+".o"]+lib_obj+link_info+["-lm" , "-o" , cfile_directory]
+    out = subprocess.Popen(cmd,stderr=subprocess.PIPE).communicate()    
     if out[1]:
+        print("Linking error:")
         os.write(sys.stdout.fileno(), out[-1])
         sys.exit(1)
 

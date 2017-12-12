@@ -211,7 +211,7 @@ def test_project(project_path,network=None,return_sim= False):
         sim.run_dynamics(net=net,trial=sim.inits.prmt['ntries'],erase_buffer=True,return_treatment_fitness=False)
         return sim
     data = sim.run_dynamics(net=net,trial=sim.inits.prmt['ntries'],erase_buffer=True,return_treatment_fitness=True)
-    cfile = glob.glob(os.path.join(project_path,"Workplace","*.c"))[0]
+    cfile = glob.glob(os.path.join(project_path,"Workplace","*c"))[0]
     print("C file created.")
     print("You can recompile by running:")
     print(str.encode("{compiler} {cfile} -lm -o executable".format(compiler=sim.inits.prmt.get('compiler','gcc'),cfile=cfile)))
