@@ -150,9 +150,6 @@ prmt['npareto_functions']= 1 # number of pareto functions
 prmt['rshare']= 0 #radius to use for fitness sharing
 				  # set to zero to turn off
 
-# Control the network and species(time) plotting from evolution_gillespie.py (off for cluster)
-prmt['plot']=0
-
 # To restart from a Restart_* file created in Seed* directories:
 #    Move the Restart file into a new model directory (see run_evolution -m option)
 #    Adjust the entries below as desired and run_evolution module.
@@ -163,12 +160,14 @@ prmt['plot']=0
 # The flag to restart from file is file name, None skips restart file and uses new instances of init functions
 # If restart the numbering of generations continuous with that of restart file.
 # To redo a saved population with different random number, use ['same_seed'] = False
-# Note the 'freq' parameter below, if ~= npopulation then Restart file size ~1/2 Bests file
+# Note the 'freq' parameter below, if ~= npopulation then Restart file size ~1/2 Bests file.
+
 prmt['restart'] = {}
-prmt['restart']['file'] =  None     # None skips restart, otherwise name of file in model directory (-m option run_evolution.py)
-prmt['restart']['kgeneration'] = 2  # restart from After this generation number (see loop in Population.evolution)
-prmt['restart']['freq'] = 500       # save population every freq generations
-prmt['restart']['same_seed'] = True # get seed of random() from restart file to reproduce prior data.
+prmt['restart']['activated'] = False #indicate if you want to restart or not
+prmt['restart']['freq'] = 50  # save population every freq generations
+prmt['restart']['seed'] =  0 # the directory of the population you want to restart from
+prmt['restart']['kgeneration'] = 50  # restart from After this generation number
+prmt['restart']['same_seed'] = True
 
 # necessary imports to define following functions
 import random

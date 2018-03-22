@@ -42,7 +42,7 @@ L=1.0 #typical size for diffusion
 
 dictionary_ranges = {}
 dictionary_ranges['Species.degradation']=1.0/T
-dictionary_ranges['Species.diffusion']=L   # for ligands diffusion
+dictionary_ranges['Species.diffusion']=0
 dictionary_ranges['TModule.rate']=C/T
 dictionary_ranges['TModule.basal']=0.0
 

@@ -208,7 +208,6 @@ class Species(Node):
                       TF = ['activity'], #activity of TF; 1 is activator, 0 repressor
                       Kinase = [],
                       Phosphatase = [],
-                      Phospho = ["n_phospho"],
                       Output = ['n_put'], #index as an output
                       Input = ['n_put'], #index as an input
                       Complexable = [],
@@ -221,7 +220,7 @@ class Species(Node):
                       # tags specific to the IL2 model
                       Common = ['common'], # 1 if the species is a common good, 0 otherwise.
                       Linear_Producer=[])
-    default_tags = parameters=['Degradable','Phosphorylable']
+    default_tags = parameters=['Degradable','Phosphorylable',"Diffusible"]
     label='Generic Species'
 
     def __init__(self,listtypes=[]):
