@@ -54,8 +54,8 @@ class Phosphorylation(classes_eds2.Interaction):
 
     def outputs_to_delete(self,net):
         """Return the phosphorylated species to delete when deleting a Phosphorylation"""
-        listIn = net.graph.predecessors(self)
-        listOut = net.graph.successors(self)
+        listIn = net.graph.list_predecessors(self)
+        listOut = net.graph.list_successors(self)
         return [out for out in listOut if out not in listIn] #to avoid the kinase
     
     def check_grammar(self,input_list,output_list):

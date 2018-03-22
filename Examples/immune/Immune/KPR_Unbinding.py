@@ -21,7 +21,7 @@ class KPR_Unbinding(classes_eds2.Interaction):
 
      #def outputs_to_delete(self,net):
      #     """ Returns Ligand-Receptor complex as physical object to delete for a KPR_Unbinding"""
-     #     return net.graph.successors(self)
+     #     return net.graph.list_successors(self)
 
 ####### Attributes attached to Network for  KPR_Unbinding interaction ######################################
 
@@ -109,8 +109,8 @@ def compute_KPR_Unbinding(net):
 
     if ('KPR_Unbinding' in net.dict_types):
         for index in net.dict_types['KPR_Unbinding']:
-            C=net.graph.predecessors(index)[0] #finds the complex
-            [P1,P2]=net.graph.successors(index) #finds the receptor and ligands
+            C=net.graph.list_predecessors(index)[0] #finds the complex
+            [P1,P2]=net.graph.list_successors(index) #finds the receptor and ligands
             if P1.isinstance('Ligand'):
                 L=P1
                 R=P2
@@ -139,8 +139,8 @@ def compute_gillespie_KPR_Unbinding(net,n_reactions):
     
     if ('KPR_Unbinding' in net.dict_types):
         for index in net.dict_types['KPR_Unbinding']:  # looping over all Simple_Dephosphorylation reactions
-            C = net.graph.predecessors(index)[0]  # a complex
-            [P1,P2] = net.graph.successors(index)  # the receptor and ligand
+            C = net.graph.list_predecessors(index)[0]  # a complex
+            [P1,P2] = net.graph.list_successors(index)  # the receptor and ligand
             if (P1.isinstance('Ligand')):
                 L = P1
                 R = P2

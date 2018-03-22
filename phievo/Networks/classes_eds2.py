@@ -35,7 +35,7 @@ if __verbose__:
     print("Execute classes_eds2.py")
 from phievo.initialization_code import display_error
 from importlib import import_module
-import networkx as NX    # keep name spaces distinct
+import phievo.networkx as nx
 import numpy as np
 import string,copy,sys
 import pickle
@@ -454,7 +454,7 @@ class Network(object):
         """The constructor of the Network, default settings
         See Network for complete doc
         """
-        self.graph = NX.MultiDiGraph(selfloops=True,multiedges=True)
+        self.graph = nx.MultiDiGraph(selfloops=True,multiedges=True)
         self.nodes = self.graph.nodes #proxy
         self.order_node=0
         self.dict_types = dict(Output = [], Input = []) # to filled later with __build_dict_types__()
@@ -526,8 +526,8 @@ class Network(object):
         Return:
             list of the form [catalyst,reactants,products]
         """
-        listIn=self.graph.predecessors(interaction)
-        listOut=self.graph.successors(interaction)
+        listIn=self.graph.list_predecessors(interaction)
+        listOut=self.graph.list_successors(interaction)
         listCata = [spc for spc in listIn if spc in listOut]
         #special case of autocatalysis
         if len(listIn)==1 and listIn[0] in listOut:
@@ -549,7 +549,7 @@ class Network(object):
         """
         list.sort(key=compare_node)
         for inter in self.dict_types.get(Type,[]):
-            inputs=self.graph.predecessors(inter)
+            inputs=self.graph.list_predecessors(inter)
             inputs.sort(key=compare_node)
             if list==inputs: return True
         return False
@@ -564,8 +564,8 @@ class Network(object):
         """
         list.sort(key=compare_node)
         for inter in self.dict_types.get(Type,[]):
-            inputs=self.graph.predecessors(inter)
-            inputs.append(self.graph.successors(inter)[0])#add first successor
+            inputs=self.graph.list_predecessors(inter)
+            inputs.append(self.graph.list_successors(inter)[0])#add first successor
             inputs.sort(key=compare_node)
             if list==inputs: return True
         return False
@@ -595,7 +595,7 @@ class Network(object):
             D_module (:class:`TModule <phievo.Networks.classes_eds2.TModule>`): the 'son' module
 
         """
-        listOut = sorted(self.graph.successors(species),key=compare_node) #careful, for self PPI, counted twice
+        listOut = sorted(self.graph.list_successors(species),key=compare_node) #careful, for self PPI, counted twice
         already_seen_PPI = [] #to keep a list of the PPI already considered
         for interaction in listOut:
             if interaction.isinstance('TFHill'):
@@ -627,7 +627,7 @@ class Network(object):
         self.duplicate_downstream_interactions(species,D_species,module,D_module)
 
         ###duplicate the UPSTREAM TFHills#####
-        listIn=self.graph.predecessors(module) #look at the predecessors of the module before the duplication
+        listIn=self.graph.list_predecessors(module) #look at the list_predecessors of the module before the duplication
         listIn.sort(key=compare_node)#to be deterministic
         for interaction in listIn:
             if interaction.isinstance('TFHill'):
@@ -636,7 +636,7 @@ class Network(object):
                 D_interaction.removable=True
                 self.add_Node(D_interaction)
                 #One looks for the TF upstream of this TFHill
-                predecessor=self.graph.predecessors(interaction)[0]
+                predecessor=self.graph.list_predecessors(interaction)[0]
                 self.graph.add_edge(predecessor,D_interaction)
                 self.graph.add_edge(D_interaction,D_module)
         #self.write_id()
@@ -650,15 +650,16 @@ class Network(object):
         one object can thus appear in several lists.
 
         """
-        self.dict_types=dict(Node=self.graph.nodes())
-        for node in self.graph.nodes():
-            names = node.list_types()
+        self.dict_types=dict(Node=self.graph.list_nodes())
+        for node in self.graph.list_nodes():
+            
+            names = node.list_types() 
             if isinstance(node,Interaction): names.append('Interaction')
             for name in names:
                 self.dict_types.setdefault(name,[]).append(node)
         for key in self.dict_types:
             self.dict_types[key].sort(key=compare_node)
-                
+
     def __write_id__(self):
         """Write the ids for the network
 
@@ -758,8 +759,8 @@ class Network(object):
             if nloop > 1000: raise RuntimeError('Maximum recursion reach in clean_Nodes')
             for inter in self.dict_types.get('Interaction',[]):
                 if self.graph.has_node(inter):
-                    listOut=self.graph.successors(inter)
-                    listIn=self.graph.predecessors(inter)
+                    listOut=self.graph.list_successors(inter)
+                    listIn=self.graph.list_predecessors(inter)
                     if not inter.check_grammar(listIn, listOut):
                         self.remove_Node(inter)
                         modification=True
@@ -772,7 +773,7 @@ class Network(object):
         Args:
             id: integer id of the node
         """
-        for node in self.graph.nodes():
+        for node in self.graph.list_nodes():
             if node.int_id() == id:
                 bRemove = self.remove_Node(node)
                 if not bRemove:

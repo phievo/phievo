@@ -370,7 +370,7 @@ class Mutable_Network(classes_eds2.Network):
         Return:
             boolean indicating if a duplication has been finally done
         """
-        possible_duplicate = [self.graph.successors(interaction)[0] for interaction in self.dict_types['CorePromoter']]
+        possible_duplicate = [self.graph.list_successors(interaction)[0] for interaction in self.dict_types['CorePromoter']]
         possible_duplicate.sort(key = classes_eds2.compare_node) #to be deterministic
 
         if possible_duplicate:

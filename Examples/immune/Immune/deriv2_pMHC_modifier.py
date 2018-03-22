@@ -76,7 +76,7 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
     for i in range(len(S_list)):
         if (S_list[i].isinstance('Kinase') or S_list[i].isinstance('Phosphatase')):
             if not S_list[i].isinstance('pMHC'):
-                out = net.graph.successors(S_list[i])
+                out = net.graph.list_successors(S_list[i])
                 for j in range(len(out)):
                     if out[j].isinstance('Initial_Concentration'):
                         counter += 1
@@ -212,7 +212,7 @@ def write_deriv_inC(net,prmt,programm_file):
     for i in range(len(S_list)):
         if (S_list[i].isinstance('Kinase') or S_list[i].isinstance('Phosphatase') ):
             if not S_list[i].isinstance('pMHC'):
-                out = net.graph.successors(S_list[i])
+                out = net.graph.list_successors(S_list[i])
                 for j in range(len(out)):
                     if out[j].isinstance('Initial_Concentration'):
                         add("KP_LIST[%i] = %i;\n" %(counter, S_list[i].int_id()) )

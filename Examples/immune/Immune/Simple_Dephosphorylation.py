@@ -48,7 +48,7 @@ def check_existing_Simple_Dephosphorylation(self,list):
         return False
 
 def is_phospho_successor(self,Sp,S):
-    listOut = self.graph.successors(S)
+    listOut = self.graph.list_successors(S)
     for i in range(len(listOut)):
         if listOut[i].isinstance('Simple_Phosphorylation'):
             [catalyst,In_phospho,Out_phospho]=self.catal_data(listOut[i])
@@ -86,7 +86,7 @@ def find_phosphorylated_to_remove(self,interaction):
         
         if species_P:
             species_P = species_P[0]
-            Out_Sp=self.graph.successors(species_P)
+            Out_Sp=self.graph.list_successors(species_P)
             for i in range(len(Out_Sp)):
                 if Out_Sp[i].isinstance('Simple_Dephosphorylation'):
                     [phosphatase2,species2_P,species2]=self.catal_data(Out_Sp[i])
@@ -97,7 +97,7 @@ def find_phosphorylated_to_remove(self,interaction):
                             break
         elif species:
             species = species[0]
-            To_S=self.graph.predecessors(species);
+            To_S=self.graph.list_predecessors(species);
             for j in range(len(To_S)):
                 if To_S[j].isinstance('Simple_Dephosphorylation'):
                     [phosphatase2,species2_P,species2]=self.catal_data(To_S[j])
@@ -110,8 +110,8 @@ def find_phosphorylated_to_remove(self,interaction):
                     
         
         if not already_dephosphorylated:
-            listIn=self.graph.predecessors(interaction)
-            listOut=self.graph.successors(interaction)
+            listIn=self.graph.list_predecessors(interaction)
+            listOut=self.graph.list_successors(interaction)
             Bool=False
             for x in listIn:
                 if x in listOut:
@@ -125,8 +125,8 @@ def find_phosphorylated_to_remove(self,interaction):
         else:
             return []
             
-        #listIn=self.graph.predecessors(interaction)
-        #listOut=self.graph.successors(interaction)
+        #listIn=self.graph.list_predecessors(interaction)
+        #listOut=self.graph.list_successors(interaction)
         #Bool=False
         #for x in listIn:
         #    if x in listOut:

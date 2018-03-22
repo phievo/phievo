@@ -88,7 +88,7 @@ def propagate_activity_TFHill(self):
     self.write_id()
     if self.fixed_activity_for_TF:
         for tfh in self.dict_types['TFHill']:
-            tf=self.graph.predecessors(tfh)
+            tf=self.graph.list_predecessors(tfh)
             tfh.activity=tf[0].activity
 
 def new_TFHill(self, tf, hill, threshold, module, activity=0):
@@ -135,7 +135,7 @@ def duplicate_TFHill(self,D_species,interaction,module,D_module):
     self.add_Node(D_interaction)
     #handle the links with the reminder of the network
     self.graph.add_edge(D_species,D_interaction)
-    successors=self.graph.successors(interaction)
+    successors=self.graph.list_successors(interaction)
     self.graph.add_edge(D_interaction,successors[0])#TFHill only one successor so this is OK
     if (successors[0]==module):#specific case for auto regulatory feedback loop, one also needs to plug the TFHill back on the duplicated Tmodule
         D_interaction_2=copy.deepcopy(interaction)
@@ -217,9 +217,9 @@ def compute_transcription(net,module):
             reg=index[0] #detect the corresponding regulations
             current_activity=reg.activity
             if (current_activity==0):
-                listrepressor.append("HillR(history[%i][memory][ncell],%f,%f)"%(net.graph.predecessors(reg)[0].int_id(),reg.threshold,reg.hill))
+                listrepressor.append("HillR(history[%i][memory][ncell],%f,%f)"%(net.graph.list_predecessors(reg)[0].int_id(),reg.threshold,reg.hill))
             else:
-                listactivator.append("HillA(history[%i][memory][ncell],%f,%f)"%(net.graph.predecessors(reg)[0].int_id(),reg.threshold,reg.hill))
+                listactivator.append("HillA(history[%i][memory][ncell],%f,%f)"%(net.graph.list_predecessors(reg)[0].int_id(),reg.threshold,reg.hill))
         l=len(listactivator)
         term = ""
         if(l==0):
@@ -258,8 +258,8 @@ def transcription_deriv_inC(net):
     if ('TModule' in net.dict_types):
         for index in net.dict_types['TModule']:
             if isinstance(index,classes_eds2.TModule):
-                trans=net.graph.successors(index)    #find the CorePromoter
-                output=net.graph.successors(trans[0])    #find the transcribed protein
+                trans=net.graph.list_successors(index)    #find the CorePromoter
+                output=net.graph.list_successors(trans[0])    #find the transcribed protein
                 func=func+"\t memory=step-%i;\n"%trans[0].delay #trans[0].delay must be an integer
                 func=func+"\t if(memory>=0){\n"
                 func=func+deriv2.compute_leap([],[output[0].id],compute_transcription(net,index))
