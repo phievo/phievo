@@ -2,15 +2,15 @@ from distutils.core import setup
 
 setup(
     name='phievo',
-    version='1.0',
-    packages=['phievo','phievo.Networks','phievo.AnalysisTools','phievo.Populations_Types','phievo.Networks','phievo.Networks.PlotGraph'],
+    version='1.1',
+    packages=['phievo','phievo.Networks','phievo.AnalysisTools','phievo.Populations_Types','phievo.Networks','phievo.Networks.PlotGraph','phievo.ConfigurationTools'],
     #package_dir={'phievo': 'phievo'},
-    package_data={'phievo': ['CCodes/*']},
+    package_data={'phievo': ['CCodes/*',"ConfigurationTools/default_cfiles/*"]},
     license='GNU LESSER GENERAL PUBLIC LICENSE',
     description='In silico gene network evolution algorithm.',
     author='P. Francois, A. Henry, M. Hemery',
-    author_email='paulf@physics.mcgill.ca',
-    url='https://bitbucket.org/onnetworkevolution/phievo',
+    author_email='paul.francois2@mcgill.ca',
+    url='https://phievo.github.io/',
     install_requires=[
         "matplotlib>=1.5.3",
         "networkx==1.11",

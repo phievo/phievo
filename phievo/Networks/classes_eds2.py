@@ -216,9 +216,7 @@ class Species(Node):
                       Receptor = [],
                       Phosphorylable = [], #only species with phosphorylated tags can be phosphorylated
                       Diffusible = ['diffusion'],
-                      pMHC = [],
-                      # tags specific to the IL2 model
-                      Common = ['common'], # 1 if the species is a common good, 0 otherwise.
+                      pMHC = [],# tags specific to the IL2 model
                       Linear_Producer=[])
     default_tags = parameters=['Degradable','Phosphorylable',"Diffusible"]
     label='Generic Species'

@@ -120,7 +120,7 @@ prmt['langevin_noise'] = 0
 prmt['npopulation'] =30     # number of species in population
 prmt['ngeneration'] =301    # number of generations of evolution (+1 to get stats last step)
 prmt['tgeneration']=0.01    # initial generation time (for gillespie), reset during evolution
-prmt['freq_plot'] = None     # plot time course every generation%freq_plot = 0
+#prmt['freq_plot'] = None     # plot time course every generation%freq_plot = 0
 prmt['freq_stat'] = 5       # print stats every freq_stat generations
 prmt['frac_mutate'] = 0.5   # fraction of networks to mutate, keep at 1/2
 prmt['redo'] = 1            # rerun the networks that do not change to compute fitness for different IC
