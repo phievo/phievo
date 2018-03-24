@@ -9,14 +9,23 @@ class MultiDiGraph(nx.MultiDiGraph):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
 
-    def list_nodes(self):        
-        return list(self.nodes)
+    if float(nx.__version__)>=2:
+        def list_nodes(self):        
+            return list(self.nodes)
 
-    def list_successors(self,node):
-        return list(self.successors(node))
+        def list_successors(self,node):
+            return list(self.successors(node))
 
-    def list_predecessors(self,node):
-        return list(self.predecessors(node))
-    
+        def list_predecessors(self,node):
+            return list(self.predecessors(node))
+    else:
+        def list_nodes(self):        
+            return self.nodes()
+
+        def list_successors(self,node):
+            return self.successors(node)
+
+        def list_predecessors(self,node):
+            return self.predecessors(node)
 
  

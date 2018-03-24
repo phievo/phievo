@@ -2,12 +2,12 @@
 
 φ-evo relies on python>=3.5, pip, and c.
 
-The software has been successfully tested on the three main operating systems(windows,mac OSX, and GNU-linux) but **we recommand using a GNU-linux distribution(ubuntu)** as it has been tested more thoroughly and more regularly on this platform.
+The software has been successfully tested on the three main operating systems(windows,mac OSX, and GNU-linux) but **we recommend using a GNU-linux distribution(ubuntu)** as it has been tested more thoroughly and more regularly on this platform.
 
 
 ### install Anaconda
 The _phievo package depends on python>=3.5.
-If python is not already installed on your computer, we recommand to install it by using the [anaconda distribution](https://www.continuum.io/downloads).
+If python is not already installed on your computer, we recommend to install it by using the [anaconda distribution](https://www.continuum.io/downloads).
 
 Among other things, anaconda provides the standard package manager of python _pip_. Before anything, it is good to check that you are working with the most recent version of pip:
 
@@ -116,7 +116,7 @@ jupyter notebook --NotebookApp.iopub_data_rate_limit=10000000000
 
 ### Test your installation
 
-To test that everything works properly, we recommand that you run an example simulation. Several examples of simulations are stored in the [github repository](https://github.com/phievo/phievo/tree/master/Examples) Examples directory. You can download all the simulations by cloning the repository with git:
+To test that everything works properly, we recommend that you run an example simulation. Several examples of simulations are stored in the [github repository](https://github.com/phievo/phievo/tree/master/Examples) Examples directory. You can download all the simulations by cloning the repository with git:
 
 ```bash
 git clone https://github.com/phievo/phievo.git

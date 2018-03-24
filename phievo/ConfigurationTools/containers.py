@@ -50,7 +50,7 @@ prmt_descriptions ={
     "ngeneration":"Number of generations",
     "ncelltot":"Number of cells",
     "npopulation":"Population size",
-    "nneighbor":"Number of neighbor",
+    "nneighbor":"Number of neighbors",
     "frac_mutate":"Fraction mutated per gen",
     "ninput":"Number of Inputs",
     "noutput":"Number of Outputs",
@@ -101,12 +101,12 @@ def init_network():\n\
    seed = int(random.random()*100000)\n\
    g = random.Random(seed)\n\
    net = mutation.Mutable_Network(g)\n\
-   for input in range(prmt[\"ninput\"]):\n\
-       parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random)],['TF',1],['Input',input]]\n\
+   for i_ind in range(prmt[\"ninput\"]):\n\
+       parameters=[['Degradable', mutation.sample_dictionary_ranges('Species.degradation',random)],['TF',1],['Input',i_ind]]\n\
        TF=net.new_Species(parameters)\n\
-   for output in range(prmt[\"ninput\"]):\n\
+   for o_ind in range(prmt[\"noutput\"]):\n\
        [tm, prom, o1] = net.random_gene('TF')\n\
-       o1.add_type(['Output',output])\n\
+       o1.add_type(['Output',o_ind])\n\
    net.activator_required=1\n\
    net.fixed_activity_for_TF=0\n\
    net.write_id()\n\

@@ -22,10 +22,8 @@ class float_range_widget:
        
         self.name = name
         name_w = w.HTML(value="<p>{}:</p>".format(name),layout=w.Layout(width=description_width, height=box_height))
-        self.m_w = w.BoundedFloatText(value=m,description='min',step=0.001,layout=w.Layout(width=box_width, height=box_height),min=0,max=M)
-        self.M_w = w.BoundedFloatText(value=M,description='max',step=0.001,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)
-        self.link = w.jslink((self.m_w,"max"),(self.M_w,"value"))
-        
+        self.m_w = w.BoundedFloatText(value=m,description='min',step=0.001,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)
+        self.M_w = w.BoundedFloatText(value=M,description='max',step=0.001,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)        
         self.widget = w.HBox([name_w,self.m_w,self.M_w])
     def set_values(self,values):
         m,M = range_test_arg(values)        
@@ -47,9 +45,8 @@ class int_range_widget(float_range_widget):
         m,M  = range_test_arg(arg)
         self.name = name
         name_w = w.HTML(value="<p>{}:</p>".format(name),layout=w.Layout(width=description_width, height=box_height))
-        self.m_w = w.BoundedIntText(value=m,description='min',step=1,layout=w.Layout(width=box_width, height=box_height),min=0,max=M)
-        self.M_w = w.BoundedIntText(value=M,description='max',step=1,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)
-        self.link = w.jslink((self.m_w,"max"),(self.M_w,"value"))        
+        self.m_w = w.BoundedIntText(value=m,description='min',step=1,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)
+        self.M_w = w.BoundedIntText(value=M,description='max',step=1,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)    
         self.widget = w.HBox([name_w,self.m_w,self.M_w])
  
 
@@ -92,10 +89,11 @@ class tags_widgets:
         self.tags.value = values
 
 class w_restart:
-    def __init__(self,values=None):
+    def __init__(self,values=None,infos=""):
         self.name = "restart"
+        self.infos = w.HTML(value=infos)
         self.widgets = {
-            "activated":w.Checkbox(description="activated",value=False),
+            "activated":w.Checkbox(description="activated",value=False,disabled=True),
             "freq":w.BoundedIntText(description="Saving frequency",value=50,min=0,max=1000000,disabled=False),
             "kgeneration":w.HBox([w.BoundedIntText(description="Restart generation",value=0,min=0,max=1000000,disabled=True),
                           w.Checkbox(description=" ",value=False,disabled=True)]),
@@ -136,7 +134,7 @@ class w_restart:
             self.widgets["same_seed"].value = values["same_seed"]
                 
     def get_widget(self):
-        return w.VBox([self.widgets[key] for key in self.widgets.keys()])
+        return w.VBox([self.infos]+[self.widgets[key] for key in self.widgets.keys()])
     def get_values(self):
         values = {}
         for key in self.widgets.keys():
