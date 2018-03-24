@@ -653,7 +653,7 @@ class Network(object):
                 self.dict_types.setdefault(name,[]).append(node)
         for key in self.dict_types:
             self.dict_types[key].sort(key=compare_node)
-                
+
     def __write_id__(self):
         """Write the ids for the network
 
@@ -759,17 +759,29 @@ class Network(object):
                         self.remove_Node(inter)
                         modification=True
 
-    def delete_clean(self,id,verbose=False):
+    def delete_clean(self,id,target = 'interaction',verbose=False):
         """
         Remove a node according to its id and clean the network
         Warning: This operation renames all the nodes (and changes the id)
-        
+
         Args:
             id: integer id of the node
+            target: string either interaction or species, the type of the node to delete
         """
+        if target == 'interaction':
+            id_target = "n[{}]".format(id)
+        elif target == 'species':
+            id_target = "s[{}]".format(id)
+
         for node in self.graph.nodes():
-            if node.int_id() == id:
-                bRemove = self.remove_Node(node)
+            if node.id == id_target:
+                if node.isinstance('Species'):
+                    bRemove = True
+                    for upstream_interation in self.graph.predecessors(node):
+                        bRemove *= self.remove_Node(upstream_interation)
+                else: #usually node is now an interaction
+                    bRemove = self.remove_Node(node)
+
                 if not bRemove:
                     if verbose: print('Error while removing the node')
                     return False
@@ -805,7 +817,7 @@ class Network(object):
             from phievo.Networks import lovelyGraph
             setattr(Networks,"pretty_graph",lovelyGraph)
         self.write_id()
-        
+
         graph = Networks.pretty_graph.pretty_graph(self,extended=extended)
         if return_graph:
             return graph
