@@ -772,6 +772,8 @@ class Network(object):
             id_target = "n[{}]".format(id)
         elif target == 'species':
             id_target = "s[{}]".format(id)
+        else:
+            return False
 
         for node in self.graph.nodes():
             if node.id == id_target:
@@ -791,6 +793,27 @@ class Network(object):
                 return bClean
         if verbose: print('Node {0} not found!'.format(id))
         return False
+
+    def get_node(self,id,target = 'interaction'):
+        """
+        Return the node correspoding to the specified id and target
+
+        Args:
+            id: integer id of the node
+            target: string either interaction or species, the type of the node to search
+        """
+        if target == 'interaction':
+            id_target = "n[{}]".format(id)
+        elif target == 'species':
+            id_target = "s[{}]".format(id)
+        else:
+            return None
+
+        for node in self.graph.nodes():
+            if node.id == id_target:
+                return node
+
+        return None
 
 ### Other tools ###
     def draw(self,file=None,edgeLegend=False,extended=False,display=True,return_graph=False):
