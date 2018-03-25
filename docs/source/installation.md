@@ -24,7 +24,7 @@ pip install --upgrade pip
 
 With pip installed, the installation is straight forward, run:
 ```bash
-pip install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.zip?raw=true
+pip install https://github.com/phievo/phievo/blob/master/dist/phievo-1.1.zip?raw=true
 ```
 
 ### Install gcc on windows

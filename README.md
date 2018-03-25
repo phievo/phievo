@@ -24,7 +24,7 @@ pip install --upgrade pip
 
 With pip installed, the installation is straight forward, run:
 ```bash
-pip install https://github.com/phievo/phievo/blob/master/dist/phievo-1.0.zip?raw=true
+pip install https://github.com/phievo/phievo/blob/master/dist/phievo-1.1.zip?raw=true
 ```
 
 ### Install gcc on windows
@@ -174,3 +174,13 @@ python run_evolution.py -m example_adaptation
 
 If everything works correctly you should see the evolution starting. When an evolution is running it displays regularly updates of its current state in the terminal and a `STOP.txt` file is created at the root of the project. The purpose of the STOP file is to have a quick method to check on the current state of a run when it is launched as a background task. When the *STOP* file is deleted, the run stops.
 
+### Create a new project
+
+To start a new project, the best is to use an existing example as a template and to modify the relevant parameters.
+
+Similarly to the `Analyse notebook`, we also propose the [Project Creator.ipynb](https://github.com/phievo/phievo/blob/master/Project%20Creator.ipynb) notebook to help with the creation of a new project.
+
+```bash
+jupyter notebook Project\ Creator.ipynb
+
+```
