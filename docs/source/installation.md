@@ -178,4 +178,9 @@ If everything works correctly you should see the evolution starting. When an evo
 
 To start a new project, the best is to use an existing example as a template and to modify the relevant parameters.
 
-Similarly to the `Analyse notebook`, we also propose the [Project Creator.ipynb](https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py) notebook to help with the creation of a new project.
+Similarly to the `Analyse notebook`, we also propose the [Project Creator.ipynb](https://github.com/phievo/phievo/blob/master/Project%20Creator.ipynb) notebook to help with the creation of a new project.
+
+```bash
+jupyter notebook Project\ Creator.ipynb
+
+```

@@ -97,14 +97,17 @@ def download_zip(dir_name,url):
     return 1
     
     
-def download_tools(run_evolution="run_evolution.py",AnalyseRun="AnalyseRun.ipynb"):
+def download_tools(run_evolution="run_evolution.py",AnalyseRun="AnalyseRun.ipynb",ProjectCreator="ProjectCreator.ipynb"):
     url_runevo = "https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py"
     url_jpnb = "https://github.com/phievo/phievo/raw/master/Analyse%20Run.ipynb"
+    url_confnb = "https://github.com/phievo/phievo/raw/master/Project%20Creator.ipynb"
     urlretrieve(url_runevo,run_evolution)
     print("run_evolution.py ... downloaded.")
     urlretrieve(url_jpnb,AnalyseRun)
     print("AnalyseRun.ipynb ... downloaded.")
-    
+    urlretrieve(url_confnb,ProjectCreator)
+    print("ProjectCreator.ipynb ... downloaded.")
+
 def download_example(example_name,directory=None):
     """
     Download an example seed or project.
