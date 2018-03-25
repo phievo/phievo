@@ -69,7 +69,7 @@ class App:
         self.tabs = {
             "dictionary_mutation" : wc.w_table("dictionary_mutation",configurations["dictionary_mutation"],"float_range_widget","<h2>Mutation parameters</h2>"),
             "dictionary_ranges" : wc.w_table("dictionary_ranges",configurations["dictionary_ranges"],"float_range_widget","<h2>Kinetic parameters</h2>"),
-            "restart" : wf.w_restart(infos="<h2>Restart</h2><p>For now restart needs to be defined manually in the initialization file of an existing project.</p><p>This tab can be used to set the frequence at which a complete generation is saved.</p>"),
+            "restart" : wf.w_restart(infos="<h2>Restart</h2><p>For now restart needs to be defined manually in the initialization file of an existing project.</p><p>This tab can be used to set the frequency at which a complete generation is saved.</p>"),
             "prmt":wc.prmt_widget(values=configurations["prmt"],infos="<h2>General simulation parameters</h2>"),
             "codes":wc.widget_initialization("codes","<h2>Initializations codes</h2>"),
             "cfile":wc.ccode_widget("cfile",configurations["cfile"],infos="<h2>cfiles</h2>\n<p>You may leave these setting as default. In this case the blank files will be created in the project directory and can be updated before starting a simulation. The files that already have a setting should be modified only by advanced users.</p><p><b>Note:</b> It is important that you update the fitness.c since its default value returns 1 for all the networks.</p>")

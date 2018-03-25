@@ -9,6 +9,7 @@
    installation
    Presentation
    create_new_project
+   parameters
    analyse
    examples
    example-lac-operon

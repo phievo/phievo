@@ -207,6 +207,54 @@ interactions:
     net = sim.get_best_net(3,5)
     net.draw()
 
+the option *edgeLegend* makes appear all the ids of the different
+species and interactions:
+
+.. code:: python
+
+    net.draw(edgeLegend=True)
+
+Modifying an existing network
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can easily delete an interaction or a species from an existing
+network once you know its id through calling *delete\_clean* and
+specifying the id and the type of the node to remove:
+
+.. code:: python
+
+    net.delete_clean(id=2,target='interaction')
+    net.delete_clean(id=5,target='species')
+
+delete the interaction :math:`2` and species :math:`5` respectively.
+
+To modify a precise node, you can access it with the function
+*get\_node* and then modify it
+
+.. code:: python
+
+    my_species = net.get_node(id=2,target='species')
+    my_species.degradation = 1.0
+
+will set to :math:`1` the degradation rate of species :math:`2`.
+
+Storing and retrieving network
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Once modified, you can store the resulting network in a pickle with:
+
+.. code:: python
+
+    net.store_to_pickle('my_file.net')
+
+and read it later with:
+
+.. code:: python
+
+    net = phievo.read_network('my_file.net')
+
+Note that the net extension is present only for readibility.
+
 Notebook
 --------
 
