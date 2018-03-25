@@ -74,12 +74,8 @@ class NetworkStat(object):
         
         """
         net.write_id()
-
         for lbl, cmd in self.cmd_label.items():
-            try:
-                val = cmd(net)
-            except TypeError:
-                import pdb; pdb.set_trace()
+            val = cmd(net)
             if isinstance(val, list): val = len(val)
             self.stat_box[lbl].add_value(val)
 

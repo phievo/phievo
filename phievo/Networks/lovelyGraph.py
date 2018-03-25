@@ -109,7 +109,7 @@ def pretty_graph(net,extended=True,layout="graphviz"):
 
         for nn in net.dict_types['Node']:
                 if isinstance(nn, TModule):
-                        succ = net.graph.successors(net.graph.successors(nn)[0])[0]
+                        succ = net.graph.list_successors(net.graph.list_successors(nn)[0])[0]
                         succ_name = produce_species_name(succ)
                         if extended:
                                 ## include TModule to the graph
@@ -117,13 +117,13 @@ def pretty_graph(net,extended=True,layout="graphviz"):
                                 post_name = produce_TModule_name(nn)
                                 graph.add_node(post_name,**global_node_attribute['TModule'])
                                 param = dict(**global_edge_attribute['Default'])
-                                param["label"] = produce_CorePromoter_name(net.graph.successors(nn)[0])
+                                param["label"] = produce_CorePromoter_name(net.graph.list_successors(nn)[0])
                                 ee = graph.add_edge(post_name, succ_name,**param)
                         else:
                                 post_species = succ
                                 post_name = succ_name
-                        for pre in net.graph.predecessors(nn):
-                                pre_species = net.graph.predecessors(pre)[0] #only one species input to TFHill
+                        for pre in net.graph.list_predecessors(nn):
+                                pre_species = net.graph.list_predecessors(pre)[0] #only one species input to TFHill
                                 pre_name = produce_species_name(pre_species)
                                 if hasattr(net,"fixed_activity_for_TF"):
                                         if (pre.activity==1):
@@ -157,8 +157,8 @@ def pretty_graph(net,extended=True,layout="graphviz"):
 
                         elif isinstance(nn,PPI):
                                 namePPI = produce_PPI_name(nn)
-                                PPI_components = net.graph.predecessors(nn)
-                                PPI_complex=net.graph.successors(nn)[0]
+                                PPI_components = net.graph.list_predecessors(nn)
+                                PPI_complex=net.graph.list_successors(nn)[0]
                                 graph.add_node(namePPI,**global_node_attribute["PPI"])
                                 param = dict(**global_edge_attribute['PPI'])
                                 param["label"] = produce_PPI_name(nn)
@@ -170,8 +170,8 @@ def pretty_graph(net,extended=True,layout="graphviz"):
 
                         elif isinstance(nn,Degradation):
                                 nameDegrad = produce_Degradation_name(nn)
-                                shreder = net.graph.predecessors(nn)[0]
-                                degraded = net.graph.successors(nn)[0]
+                                shreder = net.graph.list_predecessors(nn)[0]
+                                degraded = net.graph.list_successors(nn)[0]
                                 graph.add_edge(produce_species_name(shreder),produce_species_name(degraded), label=nameDegrad,**global_edge_attribute["Degradation"])
 
                         elif nn.label == "Simple_Phosphorylation":
@@ -198,8 +198,8 @@ def pretty_graph(net,extended=True,layout="graphviz"):
 
                         elif nn.label == "KPR_Binding":
                                 binding_name = 'LR'
-                                binding_components = net.graph.predecessors(nn)
-                                binding_complex=net.graph.successors(nn)[0]
+                                binding_components = net.graph.list_predecessors(nn)
+                                binding_complex=net.graph.list_successors(nn)[0]
                                 graph.add_node(binding_name,**global_node_attribute["Binding"])
                                 param = dict(**global_edge_attribute['Binding'])
                                 param["label"] = binding_name
@@ -211,7 +211,7 @@ def pretty_graph(net,extended=True,layout="graphviz"):
 
                         elif nn.label == "Initial_Concentration":
                                 name_conc = nn.id
-                                spec = net.graph.successors(nn)[0]
+                                spec = net.graph.list_successors(nn)[0]
                                 graph.add_node(name_conc,**global_node_attribute["PPI"])
                                 param = dict(**global_edge_attribute['PPI'])
                                 param["label"] = ""
@@ -222,8 +222,8 @@ def pretty_graph(net,extended=True,layout="graphviz"):
                                 continue
 
                         else:
-                                inputs = net.graph.predecessors(nn)
-                                outputs = net.graph.successors(nn)
+                                inputs = net.graph.list_predecessors(nn)
+                                outputs = net.graph.list_successors(nn)
                                 for inp in inputs:
                                         for out in outputs:
                                                 graph.add_edge(produce_species_name(inp),produce_species_name(out), label=nn.id,**global_edge_attribute["Default"])

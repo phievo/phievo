@@ -8,13 +8,14 @@
 
    installation
    Presentation
+   create_new_project
+   analyse
    examples
    example-lac-operon
-   howto
-   analyse
    new_interaction
+   known_bugs
    phievo
-
+   
 
 Indices and tables
 ==================

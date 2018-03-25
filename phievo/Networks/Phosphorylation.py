@@ -20,6 +20,9 @@ mutation.dictionary_ranges['Phosphorylation.hill'] = 0.0
 mutation.dictionary_ranges['Phosphorylation.threshold'] = 0.0 * mutation.C
 mutation.dictionary_ranges['Phosphorylation.dephosphorylation'] = 0.0 / mutation.T
 
+classes_eds2.Species.Tags_Species["Phospho"] = ["n_phospho"]
+
+
 ########################################
 ### Phosphorylation Class definition ###
 ########################################
@@ -51,8 +54,8 @@ class Phosphorylation(classes_eds2.Interaction):
 
     def outputs_to_delete(self,net):
         """Return the phosphorylated species to delete when deleting a Phosphorylation"""
-        listIn = net.graph.predecessors(self)
-        listOut = net.graph.successors(self)
+        listIn = net.graph.list_predecessors(self)
+        listOut = net.graph.list_successors(self)
         return [out for out in listOut if out not in listIn] #to avoid the kinase
     
     def check_grammar(self,input_list,output_list):
@@ -119,6 +122,7 @@ def new_Phosphorylation(self,kinase,species,rate,threshold,hill,dephospho):
         species_P.clean_type('Phosphorylable')#Phosphorylable species can not be more phosphorylated
     species_P.clean_type('Phospho')
     species_P.types.append('Phospho')#  phosphorylates
+
     species_P.n_phospho=1
     if phospho.check_grammar([kinase,species],[kinase,species_P]):
         self.add_Node(phospho)

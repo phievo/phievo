@@ -97,27 +97,33 @@ def download_zip(dir_name,url):
     return 1
     
     
-def download_tools():
+def download_tools(run_evolution="run_evolution.py",AnalyseRun="AnalyseRun.ipynb",ProjectCreator="ProjectCreator.ipynb"):
     url_runevo = "https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py"
     url_jpnb = "https://github.com/phievo/phievo/raw/master/Analyse%20Run.ipynb"
-    urlretrieve(url_runevo)
+    url_confnb = "https://github.com/phievo/phievo/raw/master/Project%20Creator.ipynb"
+    urlretrieve(url_runevo,run_evolution)
     print("run_evolution.py ... downloaded.")
-    urlretrieve(url_jpnb)
-    print("Analyse Run.ipynb ... downloaded.")
-    
-def download_example(example_name):
+    urlretrieve(url_jpnb,AnalyseRun)
+    print("AnalyseRun.ipynb ... downloaded.")
+    urlretrieve(url_confnb,ProjectCreator)
+    print("ProjectCreator.ipynb ... downloaded.")
+
+def download_example(example_name,directory=None):
     """
     Download an example seed or project.
     """
+
     #server_address = "http://www.physics.mcgill.ca/~henrya/seeds_phievo/{}"
-    #server_examples = "https://github.com/phievo/phievo/blob/master/Examples/{}?raw=true"
-    server_examples = "file:///home/adrien/Documents/Postdoc_PF/development_phievo/Examples/{}"
+    server_examples = "https://github.com/phievo/phievo/blob/master/Examples/{}?raw=true"
+    
     existing_examples = {
         "adaptation":"adaptation.zip",
         "somite":"Somites.zip",
         "hox":"StaticHox.zip",
         "hox_pareto":"StaticHox_pareto.zip",
+        "lac_operon":"lac_operon.zip",
         "immune":"immune.zip",
+        "minimal_project":"minimal_project.zip",
     }
     server_seed = "https://github.com/phievo/simulation_examples/blob/master/{}?raw=true"
     existing_seeds = {
@@ -138,17 +144,19 @@ def download_example(example_name):
             example_name = example_name[5:]
             url = server_seed.format(zip_name)
         except KeyError:
-            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys()))+"\n\t- ".join(list(existing_seeds.keys())))
+            print("Example {} is not available.".format(example_name))
+            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys())+list(existing_seeds.keys())))
             return None
     else:
         try:            
             zip_name = existing_examples[example_name]
             url = server_examples.format(zip_name)
         except KeyError:
-            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys()))+"\n\t- ".join(list(existing_seeds.keys())))
+            print("Example {} is not available.".format(example_name))
+            print("Only the following examples are available:\n\t- "+"\n\t- ".join(list(existing_examples.keys())+list(existing_seeds.keys())))
             return None
-        
-    directory = "example_{}".format(example_name)
+    if not directory:    
+        directory = "example_{}".format(example_name)
     res = download_zip(directory,url)
     if not res:
         return None

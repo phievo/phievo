@@ -105,7 +105,7 @@ def check_existing_Degradation(self,i1,i2):
     """
     if 'Degradation' in self.dict_types: #goes through the list of interactions
         for reaction in self.dict_types['Degradation']:
-            test = self.graph.predecessors(reaction)+self.graph.successors(reaction)
+            test = self.graph.list_predecessors(reaction)+self.graph.list_successors(reaction)
             if test == [i1,i2]:
                 return True
     return False
@@ -183,8 +183,8 @@ def Degradation_deriv_inC(net):
     if ('Degradation' in net.dict_types):
         func="\n/**************Degradation interactions*****************/\n"
         for reaction in net.dict_types['Degradation']:
-            Input1 = net.graph.predecessors(reaction)[0]
-            Input2 = net.graph.successors(reaction)[0]
+            Input1 = net.graph.list_predecessors(reaction)[0]
+            Input2 = net.graph.list_successors(reaction)[0]
             #defines interaction rate
             rate = str(reaction.rate)+' * '+Input1.id+' * '+Input2.id
             #writes down the equation in C

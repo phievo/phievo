@@ -53,7 +53,7 @@ Note that LR Interaction work on an enzymatic frame, (there is a
 
     def outputs_to_delete(self,net):
         """Returns the Ligand-Receptor complex to delete when removing the LR"""
-        return net.graph.successors(self)
+        return net.graph.list_successors(self)
 
 ########## Attributes attached to Network for  LR interaction ##########
 
@@ -157,8 +157,8 @@ def compute_LR(net):
     func = func + "    double increment=0;\n    double rate=0;\n"
     if ('LR' in net.dict_types):
         for index in net.dict_types['LR']:
-            C=net.graph.successors(index)[0]#finds the product of LR interaction
-            [P1,P2]=net.graph.predecessors(index) #find the components
+            C=net.graph.list_successors(index)[0]#finds the product of LR interaction
+            [P1,P2]=net.graph.list_predecessors(index) #find the components
             L,R = (P1,P2) if P1.isinstance('Ligand') else (P2,P1) #determine the ligand and the receptor
             arate="%f*"%index.association+"ligand"+L.id+"*"+R.id+"/("+R.id+"+"+str(index.threshold)+")"
             func=func+deriv2.compute_leap([R.id],[C.id],arate)

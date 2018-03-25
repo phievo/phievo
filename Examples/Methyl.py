@@ -50,7 +50,7 @@ class Methyl(classes_eds2.Interaction):
         """
         Returns the methylated form of the species to delete when the reaction is deleted.
         """
-        return net.graph.successors(self)
+        return net.graph.list_successors(self)
     
 #################################################
 #### Functions to add to the Mutable_Network ####
@@ -145,8 +145,8 @@ def Methyl_deriv_inC(net):
     func_str = "\n/************** Methylations *****************/\n"
     methylations = net.dict_types.get("Methyl",[])
     for methyl_inter in methylations:
-        S = net.graph.predecessors(methyl_inter)[0]
-        S_meth = net.graph.successors(methyl_inter)[0]
+        S = net.graph.list_predecessors(methyl_inter)[0]
+        S_meth = net.graph.list_successors(methyl_inter)[0]
         f_rate = "{M.methyl}*{S.id}".format(M=methyl_inter,S=S)
         b_rate = "{M.demethyl}*{S_m.id}".format(M=methyl_inter,S_m=S_meth)
 

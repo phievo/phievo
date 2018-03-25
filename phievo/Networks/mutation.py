@@ -42,7 +42,7 @@ L=1.0 #typical size for diffusion
 
 dictionary_ranges = {}
 dictionary_ranges['Species.degradation']=1.0/T
-dictionary_ranges['Species.diffusion']=L   # for ligands diffusion
+dictionary_ranges['Species.diffusion']=0
 dictionary_ranges['TModule.rate']=C/T
 dictionary_ranges['TModule.basal']=0.0
 
@@ -64,6 +64,12 @@ species_types = {
         ['Diffusible',sample_dictionary_ranges('Species.diffusion',random_generator)],
         ['TF',int(2*random_generator.random())],
         ['Complexable']
+    ],
+    "Degradable": lambda random_generator:[
+        ["Degradable", sample_dictionary_ranges('Species.degradation',random_generator)]
+    ],
+    "Phosphorylable": lambda random_generator:[
+        ["Phosphorylable"]
     ],
     "Kinase":lambda random_generator:[["Kinase"],["Complexable"]],
     "Receptor":lambda random_generator:[["Receptor"],["Complexable"]],
@@ -128,27 +134,28 @@ def sample_dictionary_ranges(key,random_generator):
     else:
         return dice
 
-def random_parameters(Type,random_generator,multiple_phospho=False):
-    """Create a set of new random parameters for a Species instance of type Type
+def random_parameters(Types,random_generator):
+    """Create a set of new random parameters for a Species instance of type Types
 
     This used only for initialization and adds attributes to various types.
     Some of which may not be mutable later
 
     Args:
-        Type (str): a species type
+        Types (str): a species type
         random_generator: a random number generator (.random() called here)
 
     Return:
         parameters a list of random parameters that can create a new Species
         or None if an error occured
     """
-    assert Type in list(classes_eds2.Species.Tags_Species.keys())+list(species_types.keys()),"Try to create a  not allowed random species of type "+Type
+    assert Types in list(classes_eds2.Species.Tags_Species.keys())+list(species_types.keys()),"Try to create a  not allowed random species of type "+Types
 
-    parameters=[['Degradable', sample_dictionary_ranges('Species.degradation',random_generator) ],['Phosphorylable']]
-
-    if multiple_phospho: parameters.append(['Phospho',0])
-    
-    parameters += species_types.get(Type,lambda random_generator:[])(random_generator)
+    if not isinstance(Types,list):
+        Types = [Types]
+    Types += classes_eds2.Species.default_tags
+    parameters = []
+    for tt in Types:
+        parameters += species_types.get(tt,lambda random_generator:[])(random_generator)
     return parameters
 
 def rand_modify(self,random_generator):
@@ -272,7 +279,11 @@ class Mutable_Network(classes_eds2.Network):
         Return:
             Species: note that it is automatically added to the network
         """
-        return self.new_Species(random_parameters(Type,self.Random))
+        try:
+            ss = self.new_Species(random_parameters(Type,self.Random))
+        except IndexError:
+            import pdb;pdb.set_trace()
+        return ss
 
     def random_Interaction(self,Interaction_Type):
         """ create a new (and unique) interaction
@@ -359,7 +370,7 @@ class Mutable_Network(classes_eds2.Network):
         Return:
             boolean indicating if a duplication has been finally done
         """
-        possible_duplicate = [self.graph.successors(interaction)[0] for interaction in self.dict_types['CorePromoter']]
+        possible_duplicate = [self.graph.list_successors(interaction)[0] for interaction in self.dict_types['CorePromoter']]
         possible_duplicate.sort(key = classes_eds2.compare_node) #to be deterministic
 
         if possible_duplicate:

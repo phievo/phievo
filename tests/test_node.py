@@ -1,7 +1,7 @@
 """
 Test module for the Node class
 phievo.Networks.classes_eds2.Node
-"""
+"""cc
 import unittest
 import phievo
 
@@ -32,7 +32,7 @@ class TestNode(unittest.TestCase):
         B = mock_node(['a','b'])
         C = mock_node(['c','d'])
         cc = phievo.Networks.classes_eds2.check_consistency
-        
+
         self.assertTrue(cc(['a'],[A]))
         self.assertTrue(cc(['b'],[B]))
         self.assertFalse(cc(['a'],[C,A]))

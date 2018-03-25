@@ -60,8 +60,9 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
     if 'Phosphatase' in net.dict_types:
         P_list = net.dict_types['Phosphatase']
         for i in range(len(P_list)):
-             if(P_list[i].n_phospho == 0):
-                 nP += 1    # all the phosphatase (not phosphorylated).
+            if(P_list[i].n_phospho == 0):
+                nP += 1    # all the phosphatase (not phosphorylated).
+            
     nK = 0
     if 'Kinase' in net.dict_types:
         K_list = net.dict_types['Kinase']
@@ -75,7 +76,7 @@ def all_params2C(net, prmt, print_buf,Cseed=0):
     for i in range(len(S_list)):
         if (S_list[i].isinstance('Kinase') or S_list[i].isinstance('Phosphatase')):
             if not S_list[i].isinstance('pMHC'):
-                out = net.graph.successors(S_list[i])
+                out = net.graph.list_successors(S_list[i])
                 for j in range(len(out)):
                     if out[j].isinstance('Initial_Concentration'):
                         counter += 1
@@ -211,7 +212,7 @@ def write_deriv_inC(net,prmt,programm_file):
     for i in range(len(S_list)):
         if (S_list[i].isinstance('Kinase') or S_list[i].isinstance('Phosphatase') ):
             if not S_list[i].isinstance('pMHC'):
-                out = net.graph.successors(S_list[i])
+                out = net.graph.list_successors(S_list[i])
                 for j in range(len(out)):
                     if out[j].isinstance('Initial_Concentration'):
                         add("KP_LIST[%i] = %i;\n" %(counter, S_list[i].int_id()) )

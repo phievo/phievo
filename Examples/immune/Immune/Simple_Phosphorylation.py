@@ -13,6 +13,12 @@ import random
 # parameters needed to perform evolution.
 mutation.dictionary_ranges['Simple_Phosphorylation.rate']=1.0/mutation.T
 
+mutation.species_types["Phospho"] = lambda random_generator:[
+    ["Phospho",0],
+]
+classes_eds2.Species.default_tags.append("Phospho")
+classes_eds2.Species.Tags_Species["Phospho"] = ["n_phospho"]
+
 # definition of class phosphorylation: sub-class of interaction class (see classes_eds2).
 # contains the parameter quantifying the interaction as well as the input and output of the reaction. 
 # these characteristics define the interaction completely. they are "free standing" initially in that 
@@ -60,7 +66,7 @@ def number_Simple_Phosphorylation(self):
             for iS in range(nS):  
                 K=self.dict_types['Kinase'][iK]
                 S=self.dict_types['Phosphorylable'][iS]
-                Out_S=self.graph.successors(S)
+                Out_S=self.graph.list_successors(S)
                 bool_kinase = True
                 bool_K_is_Sp = False
                 for i in range(len(Out_S)):
@@ -90,7 +96,7 @@ def find_Simple_phospho_to_remove(self,interaction):
         
         if species:  # the species could already be deleted.
             species = species[0]
-            Out_S=self.graph.successors(species)
+            Out_S=self.graph.list_successors(species)
             for i in range(len(Out_S)):
                 if Out_S[i].isinstance('Simple_Phosphorylation'):
                     [kinase2,species2,species2_P]=self.catal_data(Out_S[i])
@@ -101,7 +107,7 @@ def find_Simple_phospho_to_remove(self,interaction):
                             break
         elif species_P:
            species_P = species_P[0]
-           To_Sp = self.graph.predecessors(species_P)
+           To_Sp = self.graph.list_predecessors(species_P)
            for j in range(len(To_Sp)):
                if To_Sp[j].isinstance('Simple_Phosphorylation'):
                    [kinase2,species2,species2_P]=self.catal_data(To_Sp[j])
@@ -113,8 +119,8 @@ def find_Simple_phospho_to_remove(self,interaction):
                     
     
         if not already_phosphorylated:
-            listIn=self.graph.predecessors(interaction)
-            listOut=self.graph.successors(interaction)
+            listIn=self.graph.list_predecessors(interaction)
+            listOut=self.graph.list_successors(interaction)
             Bool=False
             for x in listIn:
                 if x in listOut:
@@ -130,7 +136,7 @@ def find_Simple_phospho_to_remove(self,interaction):
         
 
 def check_(self,species,Type):
-    list_successors = self.graph.successors(species)
+    list_successors = self.graph.list_successors(species)
     for i in range(len(list_successors)):
         if list_successors[i].isinstance(Type):
             return True
@@ -144,7 +150,7 @@ def new_Simple_Phosphorylation(self,kinase,species,rate):
         if kinase == species:
             print("Error in new Simple_Phosphorylation: trying to phosphorylate a species with itself as kinase.")
         
-        Out_S=self.graph.successors(species)
+        Out_S=self.graph.list_successors(species)
         already_phosphorylated = False
         for i in range(len(Out_S)):
             if Out_S[i].isinstance('Simple_Phosphorylation'):
@@ -248,7 +254,7 @@ def random_Simple_Phosphorylation(self):
                     K=self.dict_types['Kinase'][iK]
                     S=self.dict_types['Phosphorylable'][iS]
                     
-                    Out_S=self.graph.successors(S)
+                    Out_S=self.graph.list_successors(S)
                     bool_kinase = True
                     bool_K_is_Sp = False
                     already_phosphorylated = False
@@ -308,7 +314,7 @@ def random_Simple_Phosphorylation(self):
 
 
 def isphosphorylated_by_K(self,kinase,S):
-    Out_S=self.graph.successors(S)
+    Out_S=self.graph.list_successors(S)
     for i in range(len(Out_S)):
         if Out_S[i].isinstance('Simple_Phosphorylation'):
             [catalyst,In_phospho,Out_phospho]=self.catal_data(Out_S[i])

@@ -96,12 +96,12 @@ def check_model_dir(model):
     if hasattr(init_module,"pfile"):
 
         for key,ff in init_module.pfile.items():
-            ff=ff.replace(".",os.sep)
+            ff=ff.replace(".",os.sep)            
             if not os.path.isfile(ff+".py"):
                 if os.path.isfile(os.path.join(model_dir,ff)+".py"):
                     inits.pfile[key] = os.path.join(model_dir,ff).replace(os.sep,".")
                 else:
-                    raise FileNotFoundError("ERROR: The python file cannot be found:\n{} doesn't match a file.".format(ff+".py"))
+                    raise FileNotFoundError("ERROR: A python file cannot be found:\n{} doesn't match a file.".format(ff+".py"))
     for key,ff in init_module.cfile.items():
         if not os.path.isfile(ff):
             if os.path.isfile(os.path.join(model_dir,ff)):
@@ -157,11 +157,12 @@ def init_networks(inits):
 
     interaction = import_module(inits.pfile["interaction"])
     try:
-        pretty_graph = import_module(inits.pfile["pretty_graph"])
-        setattr(Networks,"pretty_graph",pretty_graph)
+        #pretty_graph = import_module(inits.pfile["pretty_graph"])
+        setattr(Networks,"pretty_graph",inits.pfile["pretty_graph"])
     except (KeyError, AttributeError) as e:
-        pretty_graph = import_module('phievo.Networks.lovelyGraph')
-        setattr(Networks,"pretty_graph",pretty_graph)
+        #pretty_graph = import_module('phievo.Networks.lovelyGraph')
+        #setattr(Networks,"pretty_graph",pretty_graph)
+        setattr(Networks,"pretty_graph",'phievo.Networks.lovelyGraph')
 
     deriv2 = import_module('phievo.Networks.deriv2')
     deriv2.cfile.update(inits.cfile)

@@ -27,11 +27,11 @@ class Initial_Concentration(classes_eds2.Interaction):
     def outputs_to_delete(self,net):
         """ Returns the species to delete when deleting a Initial_Concentration"""
         #return net.Init_Conc_to_remove(self)
-        return net.graph.predecessors(self)   
+        return net.graph.list_predecessors(self)   
         
 #def Init_Conc_to_remove(self,interaction):
 #        """Returns the species whose initial concentration is specified by Initial_Concentration."""
-#        listOut=self.graph.predecessors(interaction)        
+#        listOut=self.graph.list_predecessors(interaction)        
 #        return listOut
 
 # important function that adds the interaction to the actual graph. 

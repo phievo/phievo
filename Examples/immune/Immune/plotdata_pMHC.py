@@ -77,10 +77,12 @@ def Plot_pMHC(Name, ncelltot, total_size,ntau,list_ligands, position='best', lis
         for tick in ax.yaxis.get_major_ticks():
             tick.label1.set_fontsize(fontsize)
             tick.label1.set_fontweight('bold')
-
-        pylab.xlabel('Position', fontsize=20, fontweight='bold')
         if (k==0):
-            pylab.ylabel('Concentration', fontsize=20, fontweight='bold')
+            pylab.xlabel('Ligand #, 3s', fontsize=20, fontweight='bold')
+        if (k==1):
+            pylab.xlabel('Ligand #,  10s', fontsize=20, fontweight='bold')
+        if (k==0):
+            pylab.ylabel('Output', fontsize=20, fontweight='bold')
         else:
             ax.axes.get_yaxis().set_visible(False)
         pylab.xlim(0,19)

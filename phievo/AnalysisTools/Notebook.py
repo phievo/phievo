@@ -347,7 +347,7 @@ class Plot_Pareto_Fronts(CellModule):
             gen = [int(xx) for xx in self.widget_selectText.value.split(",")]
             #gen = [int(xx) for xx in self.widget_selectText.value.split(",")]
 
-        self.notebook.sim.seeds[self.notebook.seed].plot_pareto_fronts(gen,True)#self._widget_with_indexes.value)
+        self.notebook.sim.seeds[self.notebook.seed].plot_pareto_fronts(gen,max_rank=3)#self._widget_with_indexes.value)
     def update(self):
         if self.notebook.seed is None or self.notebook.type!="pareto":
             self.widget_selectGenerations.options = [None]

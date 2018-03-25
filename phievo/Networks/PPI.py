@@ -43,7 +43,7 @@ class PPI(classes_eds2.Interaction):
 
     def outputs_to_delete(self,net):
         """Return the complex to delete when removing the LR"""
-        return net.graph.successors(self)
+        return net.graph.list_successors(self)
     
     def check_grammar(self,input_list,output_list):
         """checks the grammar for the interactions (custom for PPI)
@@ -115,14 +115,14 @@ def duplicate_PPI(self,species,D_species,interaction,module,D_module):
     self.add_Node(D_interaction)
 
     # Copy the complex and add it to the network
-    Complex=self.graph.successors(interaction)[0]
+    Complex=self.graph.list_successors(interaction)[0]
     D_Complex=copy.deepcopy(Complex)
     D_Complex.mutable=1
     D_Complex.removable=True
     self.add_Node(D_Complex)
 
     self.graph.add_edge(D_interaction,D_Complex)#copies the PPI
-    PPI_components=self.graph.predecessors(interaction)
+    PPI_components=self.graph.list_predecessors(interaction)
     PPI_components.remove(species) # removes the duplicated component
     component=PPI_components[0] #other PPI component
     self.graph.add_edge(component,D_interaction)
@@ -223,9 +223,9 @@ def PPI_deriv_inC(net):
     func="\n/**************Protein protein interactions*****************/\n"
     if ('PPI' in net.dict_types):
         for index in net.dict_types['PPI']:
-            C=net.graph.successors(index)[0]#finds the complex
-            #print net.graph.predecessors(index)
-            list_Pi=net.graph.predecessors(index) #find the components
+            C=net.graph.list_successors(index)[0]#finds the complex
+            #print net.graph.list_predecessors(index)
+            list_Pi=net.graph.list_predecessors(index) #find the components
             P1=list_Pi[0]
             #we need a special case in the new version of networkx for self complexation
             if (len(list_Pi)==1):

@@ -6,6 +6,20 @@ import phievo.Networks.deriv2 as deriv2
 mutation.dictionary_ranges['KPR_Binding.association']=1.0/mutation.T
 mutation.dictionary_ranges['KPR_Binding.dissociation']=mutation.C
 
+
+
+# Ligand tag
+mutation.species_types["Ligand"] = lambda random_generator:[
+    ["Ligand"],
+]
+classes_eds2.Species.Tags_Species["Ligand"] = []
+
+# Receptor tag
+mutation.species_types["Receptor"] = lambda random_generator:[
+    ["Receptor"],
+]
+classes_eds2.Species.Tags_Species["Receptor"] = []
+
 class KPR_Binding(classes_eds2.Interaction):
     """ Ligand-Receptor interaction, init : rates of association"""
     def __init__(self,a=0):
@@ -20,7 +34,7 @@ class KPR_Binding(classes_eds2.Interaction):
 
     def outputs_to_delete(self,net):
         """ Returns Ligand-Receptor complex as physical object to delete for a KPR_Binding"""
-        return net.graph.successors(self) 
+        return net.graph.list_successors(self) 
 
 
 ####### Attributes attached to Network for  KPR_Binding interaction ######################################
@@ -114,8 +128,8 @@ def compute_KPR_Binding(net):
     func="\n/***********KPR_Binding**************/\n"
     if ('KPR_Binding' in net.dict_types):
         for index in net.dict_types['KPR_Binding']:
-            C=net.graph.successors(index)[0]#finds the product of KPR_Binding interaction
-            [P1,P2]=net.graph.predecessors(index) #find the components
+            C=net.graph.list_successors(index)[0]#finds the product of KPR_Binding interaction
+            [P1,P2]=net.graph.list_predecessors(index) #find the components
             if P1.isinstance('Ligand'):
                 L=P1
                 R=P2
@@ -140,8 +154,8 @@ def compute_gillespie_KPR_Binding(net,n_reactions):
     action="\n\t/*****************KPR_Binding*****************/\n"
     if ('KPR_Binding' in net.dict_types):
         for index in net.dict_types['KPR_Binding']:  # looping over all Simple_Dephosphorylation reactions
-            C = net.graph.successors(index)[0]  # the complex
-            [P1,P2] = net.graph.predecessors(index)  # the receptor and ligand
+            C = net.graph.list_successors(index)[0]  # the complex
+            [P1,P2] = net.graph.list_predecessors(index)  # the receptor and ligand
             if (P1.isinstance('Ligand')):
                 L = P1
                 R = P2

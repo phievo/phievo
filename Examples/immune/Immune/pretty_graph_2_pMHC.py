@@ -1,7 +1,7 @@
 import pydot
 #from phievo.initialization_code import *
 import phievo.Networks.classes_eds2 as ceds2
-from immune.Immune.interaction_pMHC import *
+from Immune.interaction_pMHC import *
 from phievo.AnalysisTools import palette
 # independent of both above routines, goes from Network instance to Dot instance, and latter can be
 # written out as .dot file and viewed with display
@@ -106,15 +106,15 @@ def pretty_graph(net,extended=False,layout=None):
     attribute['generic']['color']='0.6 1 1'
     for nn in net.dict_types['Node']:
         if isinstance(nn, ceds2.TModule):  
-            for pre in net.graph.predecessors(nn):
-                pre_species = net.graph.predecessors(pre)[0]  #only one species input to TFHill
+            for pre in net.graph.list_predecessors(nn):
+                pre_species = net.graph.list_predecessors(pre)[0]  #only one species input to TFHill
                 activity=pre.activity
                 if (flag<1):
                     pre_dot_name = map_species[pre_species].name
                 else:
                     pre_dot_name = map_species[pre_species].obj_dict['name']
-                for post in net.graph.successors(nn):
-                    post_species = net.graph.successors(post)[0]  #only one species out from CorePromoter
+                for post in net.graph.list_successors(nn):
+                    post_species = net.graph.list_successors(post)[0]  #only one species out from CorePromoter
                     if (flag<1):
                         post_dot_name = map_species[post_species].name
                     else:
@@ -149,8 +149,8 @@ def pretty_graph(net,extended=False,layout=None):
                 continue
             if isinstance(nn,KPR_Binding):
                 name = 'LR'
-                Complex=net.graph.successors(nn)[0]
-                PPI_components=net.graph.predecessors(nn)
+                Complex=net.graph.list_successors(nn)[0]
+                PPI_components=net.graph.list_predecessors(nn)
                 #nppi=pydot.Node('PPI',label='PPI',style='filled',fillcolor='0.6 1 1',width=0.6,height=0.8)
                 nameLR='LR%i'%nn.int_id()
                 nppi=pydot.Node(nameLR,label='LR',style='filled',fillcolor='0.6 1 1',radius=0.1,fontcolor='#FFFFFF',shape='circle',fixedsize='true', width=0.3,height=0.3)
@@ -163,8 +163,8 @@ def pretty_graph(net,extended=False,layout=None):
                 continue
             if isinstance(nn,KPR_Unbinding):
                 name = 'KPRU'
-                Complex=net.graph.predecessors(nn)[0]
-                [P1,P2]=net.graph.successors(nn)
+                Complex=net.graph.list_predecessors(nn)[0]
+                [P1,P2]=net.graph.list_successors(nn)
                 if P1.isinstance('Ligand'):
                     L=P1
                     R=P2
@@ -177,9 +177,9 @@ def pretty_graph(net,extended=False,layout=None):
                 continue                
             name = nn.label
             print(name)
-            for pre in net.graph.predecessors(nn):
+            for pre in net.graph.list_predecessors(nn):
                 pre_dot_name = map_species[pre].compute_name
-                for post in net.graph.successors(nn):
+                for post in net.graph.list_successors(nn):
                     post_dot_name = map_species[post].compute_name()
                     ee = pydot.Edge(pre_dot_name, post_dot_name,**attribute['generic'] )  # color code interaction types?
                     graph.add_edge( ee )

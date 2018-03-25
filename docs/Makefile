@@ -54,8 +54,13 @@ source/%.rst:source/%.md
 	pandoc --from=markdown --to=rst --output=$@ $<
 	@echo Convert $< to $@
 
+.PHONY: readme
+readme:source/installation.md
+	cp $< ../README.md
+
+
 .PHONY: html
-html:$(RST_FILES)
+html:$(RST_FILES) readme
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."

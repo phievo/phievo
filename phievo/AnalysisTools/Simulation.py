@@ -33,8 +33,9 @@ class Simulation:
         model_files = os.listdir(self.root)
         (model_dir , self.inits , init_file) =tuple(initialization_code.check_model_dir(self.root))
         self.inits.prmt["workplace_dir"] = os.path.join(self.inits.model_dir,"Workplace")
-        setattr(phievo.Networks.mutation,"dictionary_ranges",self.inits.dictionary_ranges)
-
+        phievo.Networks.mutation.dictionary_ranges.update(self.inits.dictionary_ranges)
+        phievo.Networks.mutation.dictionary_ranges['CorePromoter.delay'] = int(
+            0.5 + phievo.Networks.mutation.dictionary_ranges['CorePromoter.delay'] / self.inits.prmt['dt'])
         self.deriv2 = initialization_code.init_networks(self.inits)
         self.plotdata = initialization_code.import_module(self.inits.pfile['plotdata'])
         if mode in ["default"]:
@@ -495,6 +496,7 @@ class Seed_Pareto(Seed):
         Returns:
             matplotlib figure
         """
+        
         net_info,fitnesses = self.pareto_generate_fit_dict(generations,max_rank)
         if not colors and not gradient:colors = {gen:col for gen,col in zip(fitnesses.keys(),palette.color_generate(len(fitnesses)))}
         if gradient:

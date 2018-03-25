@@ -1,5 +1,5 @@
-HowTo
-=====
+Create a new project
+====================
 
 This tutorial lists a series examples on how to perform common tasks with φ-evo.
 
@@ -178,13 +178,24 @@ initial network follows the steps presented in [Build a network manually](#build
 
 ### fitness.c
 
-This file contains a C function *treatment\_fitness* used by the
-algorithm to compute the fitnesses during the runs. After the integration, the algotithm reads the fitness(es) preinted by this function. You are free to add more analysis functions and to redefine *treatment_fitness* as long as it prints the network's fitness and has the following prototype:
+This file contains two required C functions *fitness* and *treatment\_fitness*. The first function function computes the fitness each individual trials. Once all the trials have been analysed by *fitness*, the *treatment\_fitness* function combines the different fitnesses (ex: taking an average, sum, etc.) and prints the summary fitness to the shell. The former fitness is read by the python algorithm and used to classify the networks among the other networks of the population.
+
+ You may add more analysis functions and to redefine *fitness* and *treatment_fitness* as long as it prints the network's fitness and has the following prototype:
 
 ``` c
+static double result[NTRIES];
+
+void fitness( double history[][NSTEP][NCELLTOT], int trackout[],int trial)
+	{
+		result[trial] = 0;
+	}
+	
 void treatment_fitness(double history[NGENE][NSTEP][NCELLTOT], int trackout[])
-    ...
-    printf("%f",fitness)
+	{
+	    for(trial=0;trial<NTRIES;trial++)
+		    total_fitness += result[trial];
+	    printf("%f",total_fitness)
+	}
 ```
 
 The `trackout` lists the indexes of the outputs in the networks. You can also decide to use the global list `trackin` which contains the indexes of the ouputs.
@@ -225,21 +236,38 @@ To get more precise informations, we recommand you to have to look at how
 
 ### Launching a run
 
-The program is launched with the *run_evolution.py* script
+The program is launched with the *run_evolution.py* script:
 
 ``` bash
-./run_evolution.py -m lac_operon/
+python run_evolution.py -m lac_operon/
 ```
 
 The script loads the parameters and launches the run.
+ 
+*run_evolution.py* should be placed in the same project directory as the project directory:
+```bash
+	|
+     --- run_evolution.py
+	 --- (Analyse Run.ipynb)
+     --- example_project/
+	              |
+				   --- initialization.py
+				   --- fitness.c
+				   --- init_history.c
+				   --- input.c
+			
+```
+
+**Note:** *run_evolution.py* is not installed with phievo and must be downloaded manually from [here](https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py) or by running the command `phievo.download_tools()` in a python shell.
 
 To restart a new run, one must provide the *#* of the run (or seed index). By default,
 the run number is 0. To prevent errasing a run by mistake, the code will
 not start if you do not provide a new run number in the initialization file. You can also tell the program explicitly to clear the Seeds with the "-c" or "--clear" option.
 
 ``` bash
-./run_evolution.py -cm lac_operon/
+python run_evolution.py -cm lac_operon/
 ```
+
 ## Restart an evolution
 
 Every *k* generations, the algorithm saves a complete generation in a file called *Restart_file* in the Seed's directory. If interrupted, you can use this *Restart_file* to restart from a backup generation. You can set the restart generation in the initialization file:

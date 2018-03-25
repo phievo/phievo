@@ -5,11 +5,11 @@ For this problem, we created a function init_signal that just make a random gate
 tfitness is defined in the fitness C file
 */
 static double isignal[NSTEP][NCELLTOT][2];
-
-void init_signal( ){
-    int next_time(){
+ int next_time(){
         return 100+(rand()%500);
     }
+void init_signal( ){
+   
     
     int k, t, tnext, val;
     // Construct the first signal
@@ -40,7 +40,7 @@ void init_signal( ){
     }
 }
 
-void init_history(){
+void init_history(kk){
     init_signal();
     int ncell,n_gene;
     for (ncell=0;ncell<NCELLTOT;ncell++){

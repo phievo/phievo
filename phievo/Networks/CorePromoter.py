@@ -54,10 +54,10 @@ class CorePromoter(classes_eds2.Interaction):
 
         Return: list of all the predec. and succ. of self in net
         """
-        toDelete = net.graph.predecessors(self)
-        successorNode = net.graph.successors(self)[0]
+        toDelete = net.graph.list_predecessors(self)
+        successorNode = net.graph.list_successors(self)[0]
         ## Search corepromoters in successorNode predecessors
-        types = [type(inter) is type(self) for inter in net.graph.predecessors(successorNode)]
+        types = [type(inter) is type(self) for inter in net.graph.list_predecessors(successorNode)]
         if sum(types)==1:
             ## Delete successorNode if self is its last corepromoter
             toDelete.append(successorNode)
@@ -148,7 +148,7 @@ def duplicate_gene(self,species):
             D_species.clean_type('Input')
         self.add_Node(D_species)
         #CorePromoter copy
-        listIn=self.graph.predecessors(species)
+        listIn=self.graph.list_predecessors(species)
         listIn.sort(key=classes_eds2.compare_node)#to be deterministic
         for interaction in listIn:
             if interaction.isinstance('CorePromoter'):
@@ -159,7 +159,7 @@ def duplicate_gene(self,species):
         self.add_Node(D_promoter)
 
         #TModule copy (the only pred. of the CorePromoter)
-        module=self.graph.predecessors(promoter)[0]
+        module=self.graph.list_predecessors(promoter)[0]
         D_module=copy.deepcopy(module)
         D_module.mutable=1
         D_module.removable=True
