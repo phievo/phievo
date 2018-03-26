@@ -21,6 +21,9 @@ class w_table:
 
 prmt_order = ["nseed","firstseed","ngeneration","ncelltot","npopulation","nneighbor","frac_mutate","ninput","noutput","ntries","dt","nstep","langevin_noise","tgeneration","redo","pareto","npareto_functions","rshare","multipro_level","freq_stat"]
 
+class drange_woidget:
+    def __init__(self)
+    
 prmt_types ={
     "nseed":"int_widget",
     "firstseed":"int_widget",

@@ -56,7 +56,7 @@ The general simulation parameters are stored in a dictionary called
 -  Number of cells (``ncelltot``): Number of cells in the organism.
 -  Population size (``npopulation``): Number of network in the
    population.
--  Number of neighbors (``nneighbor``):
+-  Number of neighbors (``nneighbor``): Number of neighbors cell has.
 -  Fraction mutated per gen (``frac_mutate``): Fraction of networks in
    the population to mutate at every generation.
 -  Number of Inputs (``ninput``): Number of species with an inputs (with
@@ -76,7 +76,9 @@ The general simulation parameters are stored in a dictionary called
    algorithm.
 -  Number of time steps (``nstep``): Number of integration time step in
    the Euler algorithm.
--  Langevin noise value (``langevin_noise``):
+-  Langevin noise value (``langevin_noise``): Level of the langevin
+   noise in a stochastic simulation. When 0, the integrations are
+   deterministic.
 -  Gillespie generation time (``tgeneration``): The computation of the
    next mutation follows a Gillespie algorithm. ``tgeneration`` defines
    the initial time, then the time ``tgeneration`` is updated to have
@@ -88,9 +90,11 @@ The general simulation parameters are stored in a dictionary called
 -  Number of pareto functions (``npareto_functions``): Number of pareto
    functions defined?
 -  Pareto penalty radius (``rshare``): This parameter prevents a network
-   from being dominated by a networks that with fitnesses that fall too
-   close to it current position in the fitness space. Increasing
-   ``rshare`` helps to explore a larger portion of the fitness space.
+   from being dominated by a networks with fitnesses that fall too close
+   to it current position in the fitness space. Increasing ``rshare``
+   helps to explore a larger portion of the fitness space. `Warmflash et
+   al
+   2012 <http://iopscience.iop.org/article/10.1088/1478-3975/9/5/056001/meta>`__.
 -  Multiple threads (``multipro_level``): Should the algorithm run in
    parallel?
 -  Generation printing frequency (``freq_stat``): During a simulation

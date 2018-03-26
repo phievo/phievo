@@ -10,6 +10,7 @@ from phievo.initialization_code import ccode_dir
 import os
 from shutil import copyfile
 
+doc_url = "file:///home/adrien/Documents/Postdoc_PF/development_phievo/docs/build/html/"
 
 pfile = {"deriv2" : "phievo.Networks.deriv2",
              "interaction" : "phievo.Networks.interaction",
@@ -67,12 +68,12 @@ class App:
                 self.project_exists.value = "Valid new project name."
         w.interactive(update_validity,path=self.project_name)
         self.tabs = {
-            "dictionary_mutation" : wc.w_table("dictionary_mutation",configurations["dictionary_mutation"],"float_range_widget","<h2>Mutation parameters</h2>"),
-            "dictionary_ranges" : wc.w_table("dictionary_ranges",configurations["dictionary_ranges"],"float_range_widget","<h2>Kinetic parameters</h2>"),
-            "restart" : wf.w_restart(infos="<h2>Restart</h2><p>For now restart needs to be defined manually in the initialization file of an existing project.</p><p>This tab can be used to set the frequency at which a complete generation is saved.</p>"),
-            "prmt":wc.prmt_widget(values=configurations["prmt"],infos="<h2>General simulation parameters</h2>"),
-            "codes":wc.widget_initialization("codes","<h2>Initializations codes</h2>"),
-            "cfile":wc.ccode_widget("cfile",configurations["cfile"],infos="<h2>cfiles</h2>\n<p>You may leave these setting as default. In this case the blank files will be created in the project directory and can be updated before starting a simulation. The files that already have a setting should be modified only by advanced users.</p><p><b>Note:</b> It is important that you update the fitness.c since its default value returns 1 for all the networks.</p>")
+            "dictionary_mutation" : wc.w_table("dictionary_mutation",configurations["dictionary_mutation"],"float_widget","<h2>Mutation parameters</h2><p>Set the values of the different mutation rates in the <code>dictionary_mutation</code> dictionary. For more information about <code>dictionary_mutation</code>, see the <a href=\"{}parameters.html#mutation-parameters-dictionary-mutation\">documentation</a>. </p>".format(doc_url)),
+            "dictionary_ranges" : wc.w_table("dictionary_ranges",configurations["dictionary_ranges"],"float_range_widget","<h2>Kinetic parameters</h2><p> Set the ranges over which the kinetic parameters can evolve. These parameters are stored in the <code>dictionary_ranges</code> dictionary. For more information about <code>dictionary_ranges</code>, see the <a href=\"{}parameters.html#kinetic-parameters-dictionary-ranges\">documentation</a>. </p>".format(doc_url)),
+            "restart" : wf.w_restart(infos="<h2>Restart</h2><p>For now restart needs to be defined manually in the initialization file of an existing project.</p><p>This tab can be used to set the frequency at which a complete generation is saved. For more information about restart, see the <a href=\"{}parameters.html#restart-parameters-prmt-restart\">documentation</a>.</p>".format(doc_url)),
+            "prmt":wc.prmt_widget(values=configurations["prmt"],infos="<h2>General simulation parameters</h2><p>Set the global settings in the <code>prmt</code> dictionary to define how phievo should work. More information is available in the <a href=\"{}parameters.html#general-simulation-parameters-prmt\">documentation</a></p>"),
+            "codes":wc.widget_initialization("codes","<h2>Initializations codes</h2><p>Set the code that will generate the initial networks. It is  possible to update the <code>init_network</code> and <code>fitness_treatment</code> functions after the creation of the project in the <code>initialization.py</code> file. For more information about the intialization file, see the <a href=\"{}create_new_project.html#initialization-py\">documentation</a>.</p>"),
+            "cfile":wc.ccode_widget("cfile",configurations["cfile"],infos="<h2>cfiles</h2>\n<p>You may leave these setting as default. In this case the blank files will be created in the project directory and can be updated before starting a simulation. The files that already have a setting should be modified only by advanced users.</p><p><b>Note:</b> It is important that you update the fitness.c since its default value returns 1 for all the networks. For more information about the C files, see the <a href=\"{}file:///home/adrien/Documents/Postdoc_PF/development_phievo/docs/build/html/create_new_project.html#run-a-simulation\">documentation</a>.</p>")
         }
         self.w_tab = w.Tab()
         self.w_tab.children = [self.tabs[key].get_widget() for key in self.tabs.keys()]
