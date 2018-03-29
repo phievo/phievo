@@ -55,12 +55,13 @@ class CorePromoter(classes_eds2.Interaction):
         Return: list of all the predec. and succ. of self in net
         """
         toDelete = net.graph.list_predecessors(self)
-        successorNode = net.graph.list_successors(self)[0]
-        ## Search corepromoters in successorNode predecessors
-        types = [type(inter) is type(self) for inter in net.graph.list_predecessors(successorNode)]
-        if sum(types)==1:
-            ## Delete successorNode if self is its last corepromoter
-            toDelete.append(successorNode)
+        if net.graph.list_successors(self):
+            successorNode = net.graph.list_successors(self)[0]
+            ## Search corepromoters in successorNode predecessors
+            types = [type(inter) is type(self) for inter in net.graph.list_predecessors(successorNode)]
+            if sum(types)==1:
+                ## Delete successorNode if self is its last corepromoter
+                toDelete.append(successorNode)
         return toDelete
 
     def string_param(self):
