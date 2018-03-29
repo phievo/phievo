@@ -212,8 +212,8 @@ class init_network_widget:
     def __init__(self,infos=""):
         self.infos = w.HTML(value=infos)
         self.add_species_w = add_species_widget()
-        self.nb_inputs = 2
-        self.nb_outputs = 2
+        self.nb_inputs = 1
+        self.nb_outputs = 1
         self.table = w.HTML(value="")
         self.default_network = w.ToggleButton(description="Create a default network",value=False,layout=w.Layout(width="30%", height="40px"))
         self.fixed_activity_for_TF = w.Checkbox(description="Fixed Activity for TF",value=False)
@@ -225,7 +225,7 @@ class init_network_widget:
         self.clear_button = w.Button(description="Clear",button_style="danger")
         self.clear_button.on_click(self.clear)
         self.update_counters()
-        self.infos = w.HTML("<h2>Create a initial network</h2><p>The intial network is used to intialize the first population before starting the simulation.</p><p>The initial network can either be created manually or left to default by activating the <code>Create a default network</code> button (In the latter case, the network generated with the tool is not taken into account). A default networks has only the appropriate number of inputs and outputs and no interactions.</p>")
+        self.infos = w.HTML("<h2>Create an initial network</h2><p>The network is used to initialize the first population before starting the simulation.</p><p>The initial network can either be created manually or left to default by activating the <code>Create a default network</code> button (In the latter case, the network generated with the tool is not taken into account). A default networks has only the appropriate number of inputs and outputs and no interactions.</p>")
         
     def clear(self,button,clearall=True):
         self.net = empty_net()

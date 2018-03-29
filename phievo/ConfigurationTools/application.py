@@ -10,7 +10,7 @@ from phievo.initialization_code import ccode_dir
 import os
 from shutil import copyfile
 
-doc_url = "file:///home/adrien/Documents/Postdoc_PF/development_phievo/docs/build/html/"
+doc_url = "http://phievo.readthedocs.io/en/latest/"
 
 pfile = {"deriv2" : "phievo.Networks.deriv2",
              "interaction" : "phievo.Networks.interaction",
@@ -90,6 +90,14 @@ class App:
 
         self.create_button = w.Button(description="Write project",button_style="info")
         self.create_button.on_click(self.write)
+        def update_ninput(val):
+            self.tabs["init"].nb_inputs = self.tabs["prmt"].obj_dict["ninput"].value.value
+            self.tabs["init"].update_counters()
+        w.interactive(update_ninput,val=self.tabs["prmt"].obj_dict["ninput"].value)
+        def update_noutput(val):
+            self.tabs["init"].nb_outputs = self.tabs["prmt"].obj_dict["ninput"].value.value
+            self.tabs["init"].update_counters()
+        w.interactive(update_noutput,val=self.tabs["prmt"].obj_dict["noutput"].value)
     def get_widget(self):
         pname_box = w.HBox([self.project_name,self.project_exists])
         return w.VBox([pname_box,self.w_tab,self.create_button])
