@@ -207,6 +207,15 @@ setattr(classes_eds2.Network,'duplicate_gene',duplicate_gene)
 
 ########## Attributes attached to Mutable_Network for CorePromoter ##########
 
+def new_custom_random_gene(self,ltypes):
+    rate = mutation.sample_dictionary_ranges('TModule.rate',self.Random)
+    basal = mutation.sample_dictionary_ranges('TModule.basal',self.Random)
+    delay=int(mutation.sample_dictionary_ranges('CorePromoter.delay',self.Random))
+    #ltypes.remove("Species")
+    return self.new_gene(rate,delay,ltypes,basal)
+
+setattr(classes_eds2.Network,'new_custom_random_gene',new_custom_random_gene)
+
 def random_gene(self,Type='Species'):
     """Create a new random gene with a species of type Type
 
@@ -223,6 +232,7 @@ def random_gene(self,Type='Species'):
     basal = mutation.sample_dictionary_ranges('TModule.basal',self.Random)
     delay=int(mutation.sample_dictionary_ranges('CorePromoter.delay',self.Random))
     parameters=mutation.random_parameters(Type,self.Random)
+    
     return self.new_gene(rate, delay, parameters,basal)
 
 def random_enhancer(self,Type='TModule'):
