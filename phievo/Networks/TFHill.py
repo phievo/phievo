@@ -104,12 +104,10 @@ def new_TFHill(self, tf, hill, threshold, module, activity=0):
     Return:
         :class:`TFHill <phievo.Networks.TFHill.TFHill>`: return the new interaction or None if an error occured
     """
-
     if self.fixed_activity_for_TF:
         activity_tfh=tf.activity
     else:
         activity_tfh=activity
-
     r = TFHill(hill, threshold,activity_tfh)
     if r.check_grammar([tf], [module]):
         self.add_TFHill(tf, r, module)

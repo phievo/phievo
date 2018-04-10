@@ -101,6 +101,7 @@ class add_tag_widget:
         else:
             toreturn = None
         return toreturn
+        
     def clear(self):
         self.is_on.value = self.is_on_d
         if hasattr(self,"param"):
@@ -118,7 +119,7 @@ class add_species_widget:
         self.add_button = w.Button(description="Add",button_style="info")
         self.israndom = w.Checkbox(value=True,description=" ")
 
-        self.output_counter = w.HTML("inputs: ()")
+        self.output_counter = w.HTML("outputs: ()")
         self.input_counter = w.HTML("inputs: ()")
         self.g_basal= w.BoundedFloatText(description="basal:",value=0,step=0.001,layout=w.Layout(width="15%", height="40px"),disabled=True)
         self.g_rate = w.BoundedFloatText(description="rate:",value=1,step=0.001,layout=w.Layout(width="15%", height="40px"),disabled=True)
@@ -255,38 +256,43 @@ class init_network_widget:
             return None
         species_tags = []
         code,data = self.add_species_w.get_command()
+        #print(code)
         species_tags = re.findall("\"\w+\"",code[0])
         species_tags = [tag.replace("\"","") for tag in species_tags]
-        code[0] = code[0].format(ind_o=ind,ind_i=ind)
+        code[0] = code[0].format(ind_o=len(self.outputs),ind_i=len(self.inputs))
+        #print(code[0])
         code[1] = code[1].replace("[ind]","[{}]".format(ind))
+        #print(code[1])
         result = re.search("\"(Output|Input)\",(\d+)",code[0])
+        #print(result)
         if not result:
             if (len(self.inputs)<self.nb_inputs or len(self.outputs)<self.nb_outputs):          
                 self.add_species_w.error("All inputs and outputs must be added before adding other species.")
                 return None
         else:
-            trackind = int(result.group(2))
-            if trackind>(self.nb_outputs+self.nb_inputs):
-                self.add_species_w.error("Track trackindex ({}) cannot be larger than the total number of inputs plus outputs.".format(trackind))
-                return None
-            if trackind in self.inputs:
-                self.add_species_w.error("Track trackindex {} is already an input.".format(trackind))
-                return None
-            if trackind in self.outputs:
-                self.add_species_w.error("Track trackindex {} is already an output.".format(trackind))
-                return None
+            # why do we need the following lines ?
+            #trackind = int(result.group(2))
+            #if trackind>(self.nb_outputs+self.nb_inputs):
+            #    self.add_species_w.error("Track trackindex ({}) cannot be larger than the total number of inputs plus outputs.".format(trackind))
+            #    return None
+            #if trackind in self.inputs:
+            #    self.add_species_w.error("Track trackindex {} is already an input.".format(trackind))
+            #    return None
+            #if trackind in self.outputs:
+            #    self.add_species_w.error("Track trackindex {} is already an output.".format(trackind))
+            #    return None
             
             if result.group(1)=="Input":
                 if len(self.inputs)==self.nb_inputs:
                     self.add_species_w.error("There is already enough inputs in the network.")
                     return None
-                self.inputs.append(trackind)
+                self.inputs.append(ind)
                 
             elif result.group(1)=="Output":
                 if len(self.outputs)==self.nb_outputs:
                     self.add_species_w.error("There is already enough outputs in the network.")
                     return None
-                self.outputs.append(trackind)
+                self.outputs.append(ind)
                 
         
         if "gene" in code[1]:
@@ -318,7 +324,7 @@ class init_network_widget:
     def get_widget(self):
         self.accordion = w.Accordion(children=[self.add_species_w.get_widget(),self.add_inter_w.get_widget()])
         self.accordion.set_title(0, 'Add Species')
-        self.accordion.set_title(1, 'Add Integration')
+        self.accordion.set_title(1, 'Add Interaction')
         infos_manual = w.HTML("<p>Before building a network manually, we recomend reading the <a href=\"http://phievo.readthedocs.io/en/latest/create_new_project.html#build-a-network-manually\">documentation</a>.</p>")
         fixed_activity_info = w.HTML("When a TF has a fixed activity, only the default type of the TF is considered (activator or repressor). The type of the TFHill does not matter.")
         return w.VBox([self.infos,self.default_network,infos_manual,self.accordion,fixed_activity_info,self.fixed_activity_for_TF,self.table,self.clear_button])
@@ -328,7 +334,8 @@ class init_network_widget:
            return default_initialization_code
         else:
             code = "import random\nfrom phievo.Networks import mutation\n\ndef init_network():\n\tseed = int(random.random()*100000)\n\tg = random.Random(seed)\n\tnet = mutation.Mutable_Network(g)\n\ts_d,tm_d,prom_d = {},{},{}\n"
-        return code + "\n".join(self.code)+"\n\tnet.activator_required=1\n\tnet.fixed_activity_for_TF={}\n\treturn net\n".format(self.fixed_activity_for_TF.value)    
+        code= code + "\n\tnet.activator_required=0\n\tnet.fixed_activity_for_TF={}\n".format(self.fixed_activity_for_TF.value)
+        return code + "\n".join(self.code)+"\n\treturn net\n"    
     
 class interaction_widget:
     def __init__(self,net):

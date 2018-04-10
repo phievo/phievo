@@ -6,7 +6,7 @@ import phievo.ConfigurationTools.containers as wc
 import phievo.ConfigurationTools.initnetwork as inet
 from phievo.Networks import mutation
 from phievo.Networks import initialization
-from phievo.initialization_code import ccode_dir
+from phievo.initialization_code import ccode_dir,python_path
 import os
 from shutil import copyfile
 
@@ -18,9 +18,9 @@ pfile = {"deriv2" : "phievo.Networks.deriv2",
              "plotdata" : "phievo.Networks.plotdata"}
 
 cfile = {
-    "fitness":"",
-    "init_history":"",
-    "input":"",
+    "fitness":  os.path.join(python_path,'Examples/adaptation/fitness_adaptation.c'),
+    "init_history":  os.path.join(python_path,'Examples/adaptation/init_history_adaptation.c'),
+    "input": os.path.join(python_path,'Examples/adaptation/input_adaptation.c'),
     "header" : os.path.join(ccode_dir,'integrator_header.h'),
     "utilities" : os.path.join(ccode_dir,'utilities.c'),
     "geometry" : os.path.join(ccode_dir,'linear_geometry.c'),
@@ -30,6 +30,18 @@ cfile = {
 
 prmt = initialization.prmt
 restart = prmt.pop("restart")
+
+mutation.dictionary_ranges['CorePromoter.delay']=0   # convert to int(T/dt) in run_evolution.py
+mutation.dictionary_ranges['TFHill.hill']=5.0
+mutation.dictionary_ranges['TFHill.threshold']=mutation.C
+mutation.dictionary_ranges['PPI.association']=1.0/(mutation.C*mutation.T)
+mutation.dictionary_ranges['PPI.disassociation']=1.0/mutation.T
+mutation.dictionary_ranges['Phosphorylation.rate']=1.0/mutation.T
+mutation.dictionary_ranges['Phosphorylation.hill']=5.0
+mutation.dictionary_ranges['Phosphorylation.threshold']=mutation.C
+mutation.dictionary_ranges['Phosphorylation.dephosphorylation']=1.0/mutation.T
+
+
 
 configurations = {
     "dictionary_ranges":mutation.dictionary_ranges,
@@ -95,7 +107,7 @@ class App:
             self.tabs["init"].update_counters()
         w.interactive(update_ninput,val=self.tabs["prmt"].obj_dict["ninput"].value)
         def update_noutput(val):
-            self.tabs["init"].nb_outputs = self.tabs["prmt"].obj_dict["ninput"].value.value
+            self.tabs["init"].nb_outputs = self.tabs["prmt"].obj_dict["noutput"].value.value
             self.tabs["init"].update_counters()
         w.interactive(update_noutput,val=self.tabs["prmt"].obj_dict["noutput"].value)
     def get_widget(self):
@@ -126,6 +138,8 @@ class App:
                 val = key+".c"
                 copyfile(os.path.join(dir_path,val),os.path.join(proj_dir,val))
             elif val==configurations["cfile"][key]:
+                to_write.append(to_dict("cfile",key,val))
+                print("Using {}".format(os.path.join(proj_dir,val)))
                 continue
             else:
                 old_path = val

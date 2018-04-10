@@ -772,16 +772,29 @@ class Network(object):
             target: string either interaction or species, the type of the node to delete
         """
 
-        for node in self.graph.list_nodes():
-            if node.int_id() == id:
-                bRemove = self.remove_Node(node)
-                if not bRemove:
-                    if verbose: print('Error while removing the node')
-                    return False
-                bClean = self.clean_Nodes(verbose)
-                if not bClean and verbose:
+        #for node in self.graph.list_nodes():
+        #    if node.int_id() == id:
+        #        bRemove = self.remove_Node(node)
+        #        if not bRemove:
+        #            if verbose: print('Error while removing the node')
+        #            return False
+        #        bClean = self.clean_Nodes(verbose)
+        #        if not bClean and verbose:
+        #            if verbose: print('Error while cleaning the network')
+        #        return bClean
+        node=self.get_node(id,target)
+        if (target=='species'):
+            node.clean_type('Output')
+            node=self.graph.list_predecessors(node)[0]
+        if self.check_Node(node,[]):
+            bRemove = self.remove_Node(node)
+            if not bRemove:
+                if verbose: print('Error while removing the node')
+                return False
+            bClean = self.clean_Nodes(verbose)
+            if not bClean and verbose:
                     if verbose: print('Error while cleaning the network')
-                return bClean
+            return bClean
         if verbose: print('Node {0} not found!'.format(id))
         return False
 

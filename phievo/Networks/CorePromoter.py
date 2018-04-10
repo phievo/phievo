@@ -212,7 +212,7 @@ def new_custom_random_gene(self,ltypes):
     rate = mutation.sample_dictionary_ranges('TModule.rate',self.Random)
     basal = mutation.sample_dictionary_ranges('TModule.basal',self.Random)
     delay=int(mutation.sample_dictionary_ranges('CorePromoter.delay',self.Random))
-    #ltypes.remove("Species")
+    ltypes.remove(["Species"])
     return self.new_gene(rate,delay,ltypes,basal)
 
 setattr(classes_eds2.Network,'new_custom_random_gene',new_custom_random_gene)
