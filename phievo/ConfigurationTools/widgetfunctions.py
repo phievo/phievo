@@ -15,22 +15,22 @@ def range_test_arg(arg):
             assert arg>=0,bad_arg_msg
             m,M = 0,arg
         return m,M
-    
+
 class float_range_widget:
     def __init__(self,name,arg):
         m,M  = range_test_arg(arg)
-       
+
         self.name = name
         name_w = w.HTML(value="<p>{}:</p>".format(name),layout=w.Layout(width=description_width, height=box_height))
         self.m_w = w.BoundedFloatText(value=m,description='min',step=0.001,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)
-        self.M_w = w.BoundedFloatText(value=M,description='max',step=0.001,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)        
+        self.M_w = w.BoundedFloatText(value=M,description='max',step=0.001,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)
         self.widget = w.HBox([name_w,self.m_w,self.M_w])
     def set_values(self,values):
-        m,M = range_test_arg(values)        
+        m,M = range_test_arg(values)
         self.M_w.value = M
         self.m_w.max = M
         self.m_w.value = m
-        
+
     def get_widget(self):
         return self.widget
     def get_values(self):
@@ -38,20 +38,20 @@ class float_range_widget:
             return self.M_w.value
         else:
             return [self.m_w.value,self.M_w.value]
-    
-    
+
+
 class int_range_widget(float_range_widget):
     def __init__(self,name,arg):
         m,M  = range_test_arg(arg)
         self.name = name
         name_w = w.HTML(value="<p>{}:</p>".format(name),layout=w.Layout(width=description_width, height=box_height))
         self.m_w = w.BoundedIntText(value=m,description='min',step=1,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)
-        self.M_w = w.BoundedIntText(value=M,description='max',step=1,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)    
+        self.M_w = w.BoundedIntText(value=M,description='max',step=1,layout=w.Layout(width=box_width, height=box_height),min=0,max=100000)
         self.widget = w.HBox([name_w,self.m_w,self.M_w])
- 
 
-        
-    
+
+
+
 class bool_widget:
     def __init__(self,name,value=False):
         self.value = w.Checkbox(description=" ",value=bool(value),layout=w.Layout(wheight=box_width2))
@@ -62,24 +62,24 @@ class bool_widget:
         return self.value.value
     def set_values(self,value):
         self.value.value = bool(value)
-        
+
 class int_widget(bool_widget):
     def __init__(self,name,value=1):
         super(int_widget,self).__init__(name,value)
         self.value = w.BoundedIntText(value=value,description=' ',step=1,layout=w.Layout(width=box_width, height=box_width2),min=0,max=1000000)
     def set_values(self,value):
         self.value.value = int(value)
-        
+
 class float_widget(bool_widget):
     def __init__(self,name,value=1):
         super(float_widget,self).__init__(name,value)
         self.value = w.BoundedFloatText(value=value,description=' ',step=0.001,layout=w.Layout(width=box_width, height=box_width2),min=0,max=1000000)
     def set_values(self,value):
         self.value.value = float(value)
-        
+
 class tags_widgets:
     def __init__(self,name,choices,values=""):
-        self.name = w.HTML(value="<p>{} (press shift for multiple):</p>".format(name),layout=w.Layout(width=description_width, height=box_height))
+        self.name = w.HTML(value="<p>{} <br>(shift/ctrl for multiple choices):</p>".format(name),layout=w.Layout(width=description_width, height=2*box_height))
         self.tags = w.SelectMultiple(description=" ",value=values,options=choices,layout=w.Layout(wheight=box_width2))
     def get_widget(self):
         return w.HBox([self.name,self.tags])
@@ -101,7 +101,7 @@ class w_restart:
                           w.Checkbox(description=" ",value=False,disabled=True)]),
             "same_seed":w.Checkbox(description="Restart with the same seed",value=True,disabled=True),
         }
-        
+
         def run_activate(value):
             for key in ["kgeneration","seed"]:
                 self.widgets[key].children[1].disabled = not value
@@ -111,8 +111,8 @@ class w_restart:
         def activate_kgeneration(value):
             self.widgets["kgeneration"].children[0].disabled = not self.widgets["kgeneration"].children[1].value
         w.interactive(run_activate,value=self.widgets["activated"])
-        w.interactive(activate_seed,value=self.widgets["seed"].children[1])   
-        w.interactive(activate_kgeneration,value=self.widgets["kgeneration"].children[1]) 
+        w.interactive(activate_seed,value=self.widgets["seed"].children[1])
+        w.interactive(activate_kgeneration,value=self.widgets["kgeneration"].children[1])
         if values:
             self.set_values(values)
     def set_values(self,values):
@@ -132,7 +132,7 @@ class w_restart:
             else:
                 self.widgets["kgeneration"].children[1].value=False
             self.widgets["same_seed"].value = values["same_seed"]
-                
+
     def get_widget(self):
         return w.VBox([self.infos]+[self.widgets[key] for key in self.widgets.keys()])
     def get_values(self):
@@ -189,7 +189,7 @@ class code_path_widget:
                 self.activate.button_style = "success"
             else:
                 self.activate.button_style = "danger"
-        
+
         self.activate.on_click(unlock)
         w.interactive(check_file,path=self.value)
     def get_values(self):
