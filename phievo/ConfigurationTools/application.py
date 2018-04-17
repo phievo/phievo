@@ -18,9 +18,9 @@ pfile = {"deriv2" : "phievo.Networks.deriv2",
              "plotdata" : "phievo.Networks.plotdata"}
 
 cfile = {
-    "fitness":  os.path.join(python_path,'Examples/adaptation/fitness_adaptation.c'),
-    "init_history":  os.path.join(python_path,'Examples/adaptation/init_history_adaptation.c'),
-    "input": os.path.join(python_path,'Examples/adaptation/input_adaptation.c'),
+    "fitness":  "Create a template file",
+    "init_history":  "Create a template file",
+    "input": "Create a template file",
     "header" : os.path.join(ccode_dir,'integrator_header.h'),
     "utilities" : os.path.join(ccode_dir,'utilities.c'),
     "geometry" : os.path.join(ccode_dir,'linear_geometry.c'),
@@ -91,9 +91,9 @@ class App:
             "dictionary_mutation" : wc.w_table("dictionary_mutation",configurations["dictionary_mutation"],"float_widget","<h2>Mutation parameters</h2><p>Set the values of the different mutation rates in the <code>dictionary_mutation</code> dictionary. For more information about <code>dictionary_mutation</code>, see the <a href=\"{}parameters.html#mutation-parameters-dictionary-mutation\">documentation</a>. </p>".format(doc_url)),
             "dictionary_ranges" : wc.w_table("dictionary_ranges",configurations["dictionary_ranges"],"float_range_widget","<h2>Kinetic parameters</h2><p> Set the ranges over which the kinetic parameters can evolve. These parameters are stored in the <code>dictionary_ranges</code> dictionary. For more information about <code>dictionary_ranges</code>, see the <a href=\"{}parameters.html#kinetic-parameters-dictionary-ranges\">documentation</a>. </p>".format(doc_url)),
             "restart" : wf.w_restart(infos="<h2>Restart</h2><p>For now restart needs to be defined manually in the initialization file of an existing project.</p><p>This tab can be used to set the frequency at which a complete generation is saved. For more information about restart, see the <a href=\"{}parameters.html#restart-parameters-prmt-restart\">documentation</a>.</p>".format(doc_url)),
-            "prmt":wc.prmt_widget(values=configurations["prmt"],infos="<h2>General simulation parameters</h2><p>Set the global settings in the <code>prmt</code> dictionary to define how phievo should work. More information is available in the <a href=\"{}parameters.html#general-simulation-parameters-prmt\">documentation</a></p>"),
+            "prmt":wc.prmt_widget(values=configurations["prmt"],infos="<h2>General simulation parameters</h2><p>Set the global settings in the <code>prmt</code> dictionary to define how phievo should work. More information is available in the <a href=\"{}parameters.html#general-simulation-parameters-prmt\">documentation</a>.</p>".format(doc_url)),
             "init":inet.init_network_widget(),
-            "cfile":wc.ccode_widget("cfile",configurations["cfile"],infos="<h2>cfiles</h2>\n<p>You may leave these setting as default. In this case blank files will be created in the project directory and can be updated before starting a simulation. The files that already have a setting should be modified by advanced users only.</p><p><b>Note:</b> It is important that you update the dummy fitness.c file created by this utility since its default value returns 1 for all the networks. For more information about the C files, see the <a href=\"{}file:///home/adrien/Documents/Postdoc_PF/development_phievo/docs/build/html/create_new_project.html#run-a-simulation\">documentation</a>.</p>")
+            "cfile":wc.ccode_widget("cfile",configurations["cfile"],infos="<h2>cfiles</h2>\n<p>You may leave these settings as default, blank files will be created in the project directory and can be updated before starting a simulation. The files that already have a setting should be modified by advanced users only.</p><p><b>Note:</b> It is important that you update the dummy fitness.c file created by this utility since its default value returns 1 for all the networks. For more information about the C files, see the <a href=\"{}create_new_project.html#run-a-simulation\">documentation</a>.</p>".format(doc_url))
         }
         self.w_tab = w.Tab()
         self.w_tab.children = [self.tabs[key].get_widget() for key in self.tabs.keys()]
@@ -131,12 +131,14 @@ class App:
             to_write.append(to_dict("dictionary_mutation",key,val))
 
         dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),"default_cfiles")
-        print(dir_path)
+
         to_write += ["\n## Cfiles\ncfile = {}"]
-        for key,val in data["cfile"].items():            
-            if val=="":
+        for key,val in data["cfile"].items():
+            info = ""
+            if val=="Create a template file":
                 val = key+".c"
                 copyfile(os.path.join(dir_path,val),os.path.join(proj_dir,val))
+                info = "(Review this file before running a simulation)."
             elif val==configurations["cfile"][key]:
                 to_write.append(to_dict("cfile",key,val))
                 print("Using {}".format(os.path.join(proj_dir,val)))
@@ -146,7 +148,7 @@ class App:
                 val = os.path.split(val)[-1]
                 copyfile(old_path,os.path.join(proj_dir,val))
             to_write.append(to_dict("cfile",key,val))
-            print("Wrote {}".format(os.path.join(proj_dir,val)))
+            print("Wrote {} {}".format(os.path.join(proj_dir,val),info))
 
         tags = dict(list_types_output=data["prmt"].pop("list_types_output"),list_unremovable=data["prmt"].pop("list_unremovable"))
         to_write += ["\n## General simulation parameters\nprmt = {}"]

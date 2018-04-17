@@ -243,7 +243,7 @@ There two simple ways to get the ids of a node:
 
 where ``net`` is the network under consideration. By default the
 interactions ids are not displayed on a network layout, the option
-``edgeLegend`` must be set to ``True`` to display the legends.
+``edgeLegend`` must be set to ``True`` to display them.
 
 To modify a precise node, you can access it with the function
 *get\_node* and then modify it

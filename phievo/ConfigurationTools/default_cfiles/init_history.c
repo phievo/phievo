@@ -1,6 +1,9 @@
 // Sets gene concentration at t=0, this function is used before starting the integration.
 // For more details:
 // http://phievo.readthedocs.io/en/latest/create_new_project.html#init-history-c
+// Examples of init_history can be found in the example projects:
+// https://github.com/phievo/phievo/tree/master/Examples
+
 
 void init_history(int trial)  {
   int ncell,n_gene;

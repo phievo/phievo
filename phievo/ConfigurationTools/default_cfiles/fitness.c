@@ -1,7 +1,9 @@
-// Fitnes function
+// Fitness function
+// !!! THIS FILE MUST BE UPDATED WITH AN ACTUAL FITNESS FUNCTION !!!
 // For more details:
 // http://phievo.readthedocs.io/en/latest/create_new_project.html#fitness-c
-
+// Examples of fitnesses can be found in the example projects:
+// https://github.com/phievo/phievo/tree/master/Examples
 // Store the results for individual trials.
 static double result[NTRIES];
 

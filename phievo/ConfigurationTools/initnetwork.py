@@ -325,7 +325,7 @@ class init_network_widget:
         self.accordion = w.Accordion(children=[self.add_species_w.get_widget(),self.add_inter_w.get_widget()])
         self.accordion.set_title(0, 'Add Species')
         self.accordion.set_title(1, 'Add Interaction')
-        infos_manual = w.HTML("<p>Before building a network manually, we recomend reading the <a href=\"http://phievo.readthedocs.io/en/latest/create_new_project.html#build-a-network-manually\">documentation</a>.</p>")
+        infos_manual = w.HTML("<p>Before building a network manually, we recommend that you read the <a href=\"http://phievo.readthedocs.io/en/latest/create_new_project.html#build-a-network-manually\">documentation</a>.</p>")
         fixed_activity_info = w.HTML("When a TF has a fixed activity, only the default type of the TF is considered (activator or repressor). The type of the TFHill does not matter.")
         return w.VBox([self.infos,self.default_network,infos_manual,self.accordion,fixed_activity_info,self.fixed_activity_for_TF,self.table,self.clear_button])
 

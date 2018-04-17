@@ -2,6 +2,8 @@
 // at specific times duric the simulation.
 // More details:
 // http://phievo.readthedocs.io/en/latest/create_new_project.html#input-c
+// Examples of inputs can be found in the example projects:
+// https://github.com/phievo/phievo/tree/master/Examples
 
 void inputs(int pas,int ncell,int trial)
 {
