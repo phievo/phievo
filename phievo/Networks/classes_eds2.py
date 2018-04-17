@@ -785,7 +785,11 @@ class Network(object):
         node=self.get_node(id,target)
         if (target=='species'):
             node.clean_type('Output')
-            node=self.graph.list_predecessors(node)[0]
+            try:
+                node=self.graph.list_predecessors(node)[0]
+            except IndexError:
+                node = node
+                print(node)
         if self.check_Node(node,[]):
             bRemove = self.remove_Node(node)
             if not bRemove:

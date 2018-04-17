@@ -207,8 +207,7 @@ class Graph:
 
         plt.rc('font', family='sans-serif')
         #fig = plt.figure(figsize=(width,height))
-        fig = plt.figure()
-        ax = fig.gca()
+        fig,ax = plt.subplots()
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
 

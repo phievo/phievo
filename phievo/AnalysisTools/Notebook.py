@@ -8,6 +8,8 @@ import os
 from phievo.AnalysisTools import Simulation
 ## Load plotly_graph in order to use plotly in the notebook
 import phievo.AnalysisTools.plotly_graph as plotly_graph
+import phievo
+import re
 plotly_graph.run_in_nb()
 
 found_str = "<p style=\"color:#31B404;font-size: 30px;\">✔</p>"
@@ -41,6 +43,7 @@ class Notebook(object):
         self.plot_evolution_observable = Plot_Evolution_Observable(self)
         self.select_generation = Select_Generation(self)
         self.plot_layout = Plot_Layout(self)
+        self.delete_nodes = Delete_Nodes(self)
         self.run_dynamics = Run_Dynamics(self)
         self.plot_dynamics = Plot_Dynamics(self)
         self.plot_cell_profile = Plot_Cell_Profile(self)
@@ -229,6 +232,7 @@ class Plot_Layout(CellModule):
     def plot_layout(self,button):
         plt.close()
         clear_output()
+        self.display()
         self.notebook.net.draw()
 
     def update(self):
@@ -374,3 +378,94 @@ class Plot_Pareto_Fronts(CellModule):
         to_display = widgets.VBox([instructions,widgets.HBox([self.widget_selectGenerations,self.widget_selectText]),self.widget_plot])
         #to_display = widgets.VBox([self.widget_plot])
         display(to_display)
+
+def get_interactions(net):
+    """
+    Returns a dictionary of the interactions that are not CorePromoters.
+    The key of the dictionary is a formated string containing the species of the interactions.
+    """
+    net.write_id()
+    def find_species(func):
+        parents = func(inter)
+        all_species = False
+        while not all_species:
+            new_parents = []
+            all_species = True
+            #import pdb;pdb.set_trace()
+            for pp in parents:
+                
+                if type(pp) is phievo.Networks.classes_eds2.Species:
+                    
+                    new_parents += [pp]
+                else:
+             
+                    new_parents += func(pp)
+                    all_species = False
+            parents = new_parents
+        return parents
+    inter_dict = {}
+    for inter in net.dict_types.get("Interaction",[]):
+        inter_type = re.search("\.(\w+)'",str(type(inter))).group(1)
+        if inter_type == "CorePromoter":
+            continue
+        predecessors = find_species(net.graph.list_predecessors)
+        sucessors = find_species(net.graph.list_successors)
+
+        to_str = lambda species: ",".join([re.sub("\[|\]","", ss.id) for ss in species])
+        inter_key = " ".join([inter_type,"(",to_str(predecessors),"->",to_str(sucessors),")"])
+        inter_dict[inter_key] = inter
+    return inter_dict
+
+def get_species(net):
+        return {re.sub("\[|\]","", ss.id):ss for ss in net.dict_types["Species"]}
+
+
+class Delete_Nodes(CellModule):
+    def __init__(self,Notebook):
+        super(Delete_Nodes, self).__init__(Notebook)
+        self.notebook.dependencies_dict["seed"].append(self)
+        self.notebook.dependencies_dict["generation"].append(self)
+        self.select_s = widgets.Dropdown(description="Species:",options={})
+        self.button_s = widgets.Button(description="Delete",button_style="danger")
+        self.select_i = widgets.Dropdown(description="Interaction:",options={})
+        self.button_i = widgets.Button(description="Delete",button_style="danger")
+        
+        self.widget_list = [self.select_s,self.button_s,self.select_i,self.button_i]
+        for i in range(len(self.widget_list)):
+            self.widget_list[i].disabled = True
+    def plot_layout(self,button):
+        plt.close()
+        clear_output()
+        self.notebook.net.draw()
+
+    def update(self):
+        if self.notebook.generation is None:
+            for i in range(len(self.widget_list)):
+                self.widget_list[i].disabled = True
+        else:
+            for i in range(len(self.widget_list)):
+                self.widget_list[i].disabled = False
+            self.select_s.options = get_species(self.notebook.net)
+            self.select_i.options = get_interactions(self.notebook.net)
+    def delete_species(self,button):
+        clear_output()
+        self.display()
+        if "Input" not in self.select_s.value.list_types():
+            index = int(re.search("\d+",self.select_s.value.id).group(0))
+            self.notebook.net.delete_clean(index,target="species")
+            self.notebook.net.write_id()
+            self.update()
+        else:
+            print("Cannot delete Input species.")
+    def delete_interaction(self,button):
+        clear_output()
+        self.display()        
+        index = int(re.search("\d+",self.select_i.value.id).group(0))        
+        self.notebook.net.delete_clean(index,target="interaction")
+        self.notebook.net.write_id()
+        self.update()
+    def display(self,first_time=True):
+        if first_time:
+            self.button_s.on_click(self.delete_species)
+            self.button_i.on_click(self.delete_interaction)
+        display(widgets.VBox([widgets.HBox([self.select_s,self.button_s]),widgets.HBox([self.select_i,self.button_i])]))
