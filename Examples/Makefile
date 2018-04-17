@@ -6,7 +6,9 @@ test:
 $(ZIP_NAMES):%.zip:%
 	@rm -f $@ 
 	(cd $< && zip -r ../$@ *)
-zip:$(ZIP_NAMES)
+all_zip:
+	zip -r Examples.zip */
+zip:$(ZIP_NAMES) all_zip
 
 clean:
 	rm -f  $(ZIP_NAMES)
