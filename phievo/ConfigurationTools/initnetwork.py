@@ -133,8 +133,10 @@ class add_species_widget:
             self.tags["Input"].enable()            
             if self.tags["Input"].is_on.value:
                 self.tags["Output"].disable()
+                self.isGene.value=False
             else:
                 self.tags["Output"].enable()
+                self.isGene.value=True
         def input_not_gene2(val):
             self.g_basal.disabled = not self.isGene.value or not self.g_custom.value
             self.g_delay.disabled = not self.isGene.value or not self.g_custom.value
@@ -183,6 +185,9 @@ class add_species_widget:
     def get_command(self):
         tags = [tag for tag in [self.tags[key].get_tag() for key in self.tags.keys()] if tag]
         param = "\tparam = {}".format(tags_to_str(tags))
+        if not self.isGene.value:
+            #remove tag Species from  floating Species
+            tags.remove(['Species'])
         if self.isGene.value:
             if self.g_custom.value:
                 function = "\ttm_d[ind],prom_d[ind],s_d[ind] = net.new_gene({rate},{delay},param,{basal})".format(rate=self.g_rate.value,delay=self.g_delay.value,basal=self.g_basal.value)

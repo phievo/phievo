@@ -56,10 +56,10 @@ default_fitness_treatment = "def fitness_treatment(population):\n\
         This function can be used to artificially transform the\n\
         the True fitness of the networks in the population. \n\
     \"\"\"\n\
-    # Uncomment the next two lines to add radomness to the fitness: \n\
+    # Comment the next two lines to remove added radomness from the fitness: \n\
 \n\
-    # for nnetwork in range(population.npopulation):\n\
-    #     population.genus[nnetwork].fitness += 0.001*random.random()"
+    for nnetwork in range(population.npopulation):\n\
+         population.genus[nnetwork].fitness += 0.001*random.random()"
 def to_dict(dict_name,key,val):
     if type(val) is str:
         to_return = "{}[\"{}\"] = \"{}\"".format(dict_name,key,val)
