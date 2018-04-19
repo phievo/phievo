@@ -47,6 +47,7 @@ class Notebook(object):
         self.run_dynamics = Run_Dynamics(self)
         self.plot_dynamics = Plot_Dynamics(self)
         self.plot_cell_profile = Plot_Cell_Profile(self)
+        self.save_network = Save_Network(self)
 
 class CellModule():
     """
@@ -137,7 +138,7 @@ class Select_Seed(CellModule):
             self.widget_select_seed.value = None
         else:
             self.widget_select_seed.disabled = False
-            self.widget_select_seed.options = {"Seed {}".format(i):i for i,seed in self.notebook.sim.seeds.items()}            
+            self.widget_select_seed.options = {"Seed {}".format(i):i for i,seed in self.notebook.sim.seeds.items()}
             self.widget_select_seed.value = self.widget_select_seed.options[list(self.widget_select_seed.options.keys())[0]]
             self.notebook.seed = self.widget_select_seed.value
 
@@ -169,7 +170,6 @@ class Plot_Evolution_Observable(CellModule):
             self.widget_Yobs.options = list(self.widget_Xobs.options)
             self.widget_Xobs.value = "generation"
             self.widget_Yobs.value = self.notebook.sim.seeds[self.notebook.seed].default_observable
-
 
 class Select_Generation(CellModule):
     def __init__(self,Notebook):
@@ -244,6 +244,28 @@ class Plot_Layout(CellModule):
     def display(self):
         self.button_plotLayout.on_click(self.plot_layout)
         display(self.button_plotLayout)
+
+class Save_Network(CellModule):
+    def __init__(self,Notebook):
+        super(Save_Network, self).__init__(Notebook)
+        self.notebook.dependencies_dict["seed"].append(self)
+        self.notebook.dependencies_dict["generation"].append(self)
+        self.widget_filename = widgets.Text(value='my_network.net',placeholder='Name of network',description='file.net',disabled=False)
+        self.button_saveNetwork = widgets.Button(description="Save network",disabled=True)
+
+    def save_network(self,button):
+        self.notebook.net.store_to_pickle(self.widget_filename.value)
+
+    def update(self):
+        if self.notebook.generation is None:
+            self.button_saveNetwork.disabled = True
+        else:
+            self.button_saveNetwork.disabled = False
+
+    def display(self):
+        self.button_saveNetwork.on_click(self.save_network)
+        main_options = widgets.VBox([self.widget_filename,self.button_saveNetwork])
+        display(main_options)
 
 class Run_Dynamics(CellModule):
     def __init__(self,Notebook):
@@ -332,7 +354,6 @@ class Plot_Cell_Profile(CellModule):
         self.button_plotdynamics.on_click(self.plot_dynamics)
         display(widgets.HBox([self.widget_selectInput,self.widget_selectTime,self.button_plotdynamics]))
 
-
 class Plot_Pareto_Fronts(CellModule):
     def __init__(self,Notebook):
         super(Plot_Pareto_Fronts, self).__init__(Notebook)
@@ -393,12 +414,12 @@ def get_interactions(net):
             all_species = True
             #import pdb;pdb.set_trace()
             for pp in parents:
-                
+
                 if type(pp) is phievo.Networks.classes_eds2.Species:
-                    
+
                     new_parents += [pp]
                 else:
-             
+
                     new_parents += func(pp)
                     all_species = False
             parents = new_parents
@@ -429,7 +450,7 @@ class Delete_Nodes(CellModule):
         self.button_s = widgets.Button(description="Delete",button_style="danger")
         self.select_i = widgets.Dropdown(description="Interaction:",options={})
         self.button_i = widgets.Button(description="Delete",button_style="danger")
-        
+
         self.widget_list = [self.select_s,self.button_s,self.select_i,self.button_i]
         for i in range(len(self.widget_list)):
             self.widget_list[i].disabled = True
@@ -459,8 +480,8 @@ class Delete_Nodes(CellModule):
             print("Cannot delete Input species.")
     def delete_interaction(self,button):
         clear_output()
-        self.display()        
-        index = int(re.search("\d+",self.select_i.value.id).group(0))        
+        self.display()
+        index = int(re.search("\d+",self.select_i.value.id).group(0))
         self.notebook.net.delete_clean(index,target="interaction")
         self.notebook.net.write_id()
         self.update()
