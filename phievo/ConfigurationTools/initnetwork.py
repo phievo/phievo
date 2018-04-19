@@ -2,7 +2,9 @@ import ipywidgets as w
 from IPython.display import display
 import random
 from phievo.Networks import mutation
-import re 
+import re
+import tempfile,os
+import subprocess
 tag_choices = {
     "Species":(True,),
     "Degradable":(True,"rate","Float",0.5,"Species.degradation"),
@@ -125,7 +127,6 @@ class add_species_widget:
         self.g_rate = w.BoundedFloatText(description="rate:",value=1,step=0.001,layout=w.Layout(width="15%", height="40px"),disabled=True)
         self.g_delay = w.BoundedFloatText(description="delay:",value=0,step=0.001,layout=w.Layout(width="15%", height="40px"),disabled=True)
         self.g_custom = w.Checkbox(description="Custom parameters",value=False,disabled=False)
-        
         self.message =w.HTML("")
         def input_not_gene1(val):
             self.isGene.disabled = self.tags["Input"].is_on.value
@@ -178,16 +179,19 @@ class add_species_widget:
         for key in self.tags.keys():
             self.tags[key].clear()
         self.message.value = ""
+
+        
     def error(self,message):
         self.add_button.description = "Clear"
         self.add_button.button_style = "danger"
         self.message.value = "Error: "+message
     def get_command(self):
         tags = [tag for tag in [self.tags[key].get_tag() for key in self.tags.keys()] if tag]
-        param = "\tparam = {}".format(tags_to_str(tags))
+        
         if not self.isGene.value:
             #remove tag Species from  floating Species
             tags.remove(['Species'])
+        param = "\tparam = {}".format(tags_to_str(tags))
         if self.isGene.value:
             if self.g_custom.value:
                 function = "\ttm_d[ind],prom_d[ind],s_d[ind] = net.new_gene({rate},{delay},param,{basal})".format(rate=self.g_rate.value,delay=self.g_delay.value,basal=self.g_basal.value)
@@ -195,6 +199,7 @@ class add_species_widget:
                 function = "\ttm_d[ind],prom_d[ind],s_d[ind] = net.new_custom_random_gene(param)"
         else:
             function = "\ts_d[ind] = net.new_Species(param)"
+
         return [param,function],tags
                 
 
@@ -223,6 +228,7 @@ class init_network_widget:
         self.table = w.HTML(value="")
         self.default_network = w.ToggleButton(description="Create a default network",value=False,layout=w.Layout(width="30%", height="40px"))
         self.fixed_activity_for_TF = w.Checkbox(description="Fixed Activity for TF",value=False)
+        self.layout = w.HTML("")
         self.clear(1,clearall=False)
         self.add_inter_w = interaction_widget(self)
         
@@ -230,6 +236,9 @@ class init_network_widget:
         self.add_inter_w.add_button.on_click(self.add_inter)
         self.clear_button = w.Button(description="Clear",button_style="danger")
         self.clear_button.on_click(self.clear)
+        
+        
+        
         self.update_counters()
         self.infos = w.HTML("<h2>Create an initial network</h2><p>The network is used to initialize the first population before starting the simulation.</p><p>The initial network can either be created manually or left to default by activating the <code>Create a default network</code> button (In the latter case, the network generated with the tool is not taken into account). A default networks has only the appropriate number of inputs and outputs and no interactions.</p>")
         
@@ -248,11 +257,12 @@ class init_network_widget:
         self.table.value = ""
         self.default_network.value = False
         self.fixed_activity_for_TF.value = False
+        self.layout.value = ""
         if clearall:
             self.add_species_w.clear()
             self.add_inter_w.clear()
         self.update_counters()
-        
+    
     def add_species(self,button):
         ind = len(self.species)
         
@@ -264,7 +274,7 @@ class init_network_widget:
         #print(code)
         species_tags = re.findall("\"\w+\"",code[0])
         species_tags = [tag.replace("\"","") for tag in species_tags]
-        code[0] = code[0].format(ind_o=len(self.outputs),ind_i=len(self.inputs))
+        code[0] = code[0].format(ind_i=len(self.inputs),ind_o=len(self.outputs))
         #print(code[0])
         code[1] = code[1].replace("[ind]","[{}]".format(ind))
         #print(code[1])
@@ -316,6 +326,7 @@ class init_network_widget:
         self.add_species_w.clear()
         self.write_network()
         
+        
     def write_network(self):
         self.table.value = "<b>Network:</b>\n"+"\n".join(self.species_list) + "\n" + "\n".join(self.inter_list)
     def add_inter(self,button):
@@ -323,6 +334,7 @@ class init_network_widget:
         self.code += [code]
         exec(convert_code_selfnet(code))
         self.write_network()
+        self.plot_net()
     def update_counters(self):
         self.add_species_w.input_counter.value = "inputs: ({}/{})".format(len(self.inputs),self.nb_inputs)
         self.add_species_w.output_counter.value = "outputs: ({}/{})".format(len(self.outputs),self.nb_outputs)
@@ -332,8 +344,22 @@ class init_network_widget:
         self.accordion.set_title(1, 'Add Interaction')
         infos_manual = w.HTML("<p>Before building a network manually, we recommend that you read the <a href=\"http://phievo.readthedocs.io/en/latest/create_new_project.html#build-a-network-manually\">documentation</a>.</p>")
         fixed_activity_info = w.HTML("When a TF has a fixed activity, only the default type of the TF is considered (activator or repressor). The type of the TFHill does not matter.")
-        return w.VBox([self.infos,self.default_network,infos_manual,self.accordion,fixed_activity_info,self.fixed_activity_for_TF,self.table,self.clear_button])
+        return w.VBox([self.infos,self.default_network,infos_manual,self.accordion,fixed_activity_info,self.fixed_activity_for_TF,self.table,self.layout,self.clear_button])
 
+    def plot_net(self):
+        if not self.default_network.value:
+            index = random.randint(10000000000,100000000000)
+            path_temp_net = "net{}.svg".format(index)
+            code_path = "code_network{}.py".format(index)
+            code = self.get_values()
+
+            code += "\nnet = init_network()\nnet.write_id()\nnet.draw(file=\"{}\")".format(path_temp_net)
+            with open(code_path,"w") as code_file:
+                code_file.write(code)
+            subprocess.run(["python3",code_path])
+            self.layout.value = "<img src=\"{}\" style=\"heigh:10px\">".format(path_temp_net)
+            #os.remove(code_path)
+            #os.remove(path_temp_net)
     def get_values(self):
         if self.default_network.value:
            return default_initialization_code
