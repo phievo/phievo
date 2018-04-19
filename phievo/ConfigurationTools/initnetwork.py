@@ -38,34 +38,34 @@ def init_network():\n\
 "
 def tags_to_str(tags):
     array = ["[\"{}\",{}]".format(*tt) if len(tt)==2 else "[\"{}\"]".format(*tt) for tt in tags]
-    
+
     return "["+",".join(array)+"]"
 class add_tag_widget:
     def __init__(self,tag,state=False,param=None,ptype=None,defaultvalue=0,draw_random=""):
         self.tag = tag
-        self.tag_w = w.HTML(description=" ",value="<p><b>{}</b></p>".format(tag),layout=w.Layout(width="15%", height="40px"))
+        self.tag_w = w.HTML(description=" ",value="<p><b>{}</b></p>".format(tag),layout=w.Layout(width="20%", height="40px"))
         self.is_on = w.Checkbox(value=bool(state),description=" ",layout=w.Layout(width="15%", height="40px"))
         self.is_on_d = self.is_on.value
-        
+
         if param:
             self.custom_p = w.Checkbox(description="custom parameters",value=False,disabled=not state)
             self.param = getattr(w,"Bounded{}Text".format(ptype))(value=defaultvalue,description=param,disabled=not state or not self.custom_p.value,layout=w.Layout(width="20%", height="40px"))
-            
+
             if tag=="TF":
                 self.param = w.Dropdown(options={"repressor by default":0,"activator by default":1},value=1,disabled=not self.is_on.value)
                 self.custom_p.value = True
-            
+
             def activate(b):
                 if self.tag!="TF":
                     self.custom_p.disabled = not self.is_on.value
                 self.param.disabled = not self.is_on.value or not self.custom_p.value
-                
-            
+
+
             w.interactive(activate,b=self.is_on)
             w.interactive(activate,b=self.custom_p)
             self.param_d = self.param.value
         self.draw_random = 'mutation.sample_dictionary_ranges(\"{}\",net.Random)'.format(draw_random)
-    
+
     def get_widget(self):
         inhbox = [self.is_on,self.tag_w]
         if hasattr(self,"param"):
@@ -84,8 +84,8 @@ class add_tag_widget:
             self.is_on.disabled = True
             self.custom_p.disabled = True
             self.param.disabled = True
-    
-            
+
+
     def get_tag(self):
         if self.is_on.value:
             toreturn = [self.tag]
@@ -103,7 +103,7 @@ class add_tag_widget:
         else:
             toreturn = None
         return toreturn
-        
+
     def clear(self):
         self.is_on.value = self.is_on_d
         if hasattr(self,"param"):
@@ -114,8 +114,8 @@ class add_tag_widget:
 
 class add_species_widget:
     def __init__(self):
-        #self.select_ = 
-        self.isGene = w.Checkbox(value=True,description="gene",layout=w.Layout(width="15%", height="40px"))
+        #self.select_ =
+        self.isGene = w.Checkbox(value=True,description="gene",layout=w.Layout(width="20%", height="40px"))
         self.tags = {key:add_tag_widget(key,*val) for key,val in tag_choices.items()}
         self.tags["Input"].is_on.disabled = True
         self.add_button = w.Button(description="Add",button_style="info")
@@ -130,8 +130,8 @@ class add_species_widget:
         self.message =w.HTML("")
         def input_not_gene1(val):
             self.isGene.disabled = self.tags["Input"].is_on.value
-            
-            self.tags["Input"].enable()            
+
+            self.tags["Input"].enable()
             if self.tags["Input"].is_on.value:
                 self.tags["Output"].disable()
                 self.isGene.value=False
@@ -141,14 +141,14 @@ class add_species_widget:
         def input_not_gene2(val):
             self.g_basal.disabled = not self.isGene.value or not self.g_custom.value
             self.g_delay.disabled = not self.isGene.value or not self.g_custom.value
-            self.g_rate.disabled = not self.isGene.value or not self.g_custom.value            
+            self.g_rate.disabled = not self.isGene.value or not self.g_custom.value
             self.g_custom.disabled = not self.isGene.value
             if self.isGene.value:
                 self.tags["Input"].disable()
             else:
                 self.tags["Input"].enable()
         def inp_not_out(val):
-            self.tags["Output"].enable()            
+            self.tags["Output"].enable()
             if self.tags["Output"].is_on.value:
                 self.tags["Input"].disable()
             else:
@@ -157,7 +157,7 @@ class add_species_widget:
         w.interactive(input_not_gene2,val=self.isGene)
         w.interactive(input_not_gene2,val=self.g_custom)
         w.interactive(inp_not_out,val=self.tags["Output"].is_on)
-        
+
     def get_widget(self):
         return w.VBox(
                       [self.input_counter]\
@@ -180,14 +180,14 @@ class add_species_widget:
             self.tags[key].clear()
         self.message.value = ""
 
-        
+
     def error(self,message):
         self.add_button.description = "Clear"
         self.add_button.button_style = "danger"
         self.message.value = "Error: "+message
     def get_command(self):
         tags = [tag for tag in [self.tags[key].get_tag() for key in self.tags.keys()] if tag]
-        
+
         if not self.isGene.value:
             #remove tag Species from  floating Species
             tags.remove(['Species'])
@@ -201,7 +201,7 @@ class add_species_widget:
             function = "\ts_d[ind] = net.new_Species(param)"
 
         return [param,function],tags
-                
+
 
 def empty_net():
     import random
@@ -233,17 +233,17 @@ class init_network_widget:
         self.plot_button.on_click(self.plot_net)
         self.clear(1,clearall=False)
         self.add_inter_w = interaction_widget(self)
-        
+
         self.add_species_w.add_button.on_click(self.add_species)
         self.add_inter_w.add_button.on_click(self.add_inter)
         self.clear_button = w.Button(description="Clear",button_style="danger")
         self.clear_button.on_click(self.clear)
-        
-        
-        
+
+
+
         self.update_counters()
         self.infos = w.HTML("<h2>Create an initial network</h2><p>The network is used to initialize the first population before starting the simulation.</p><p>The initial network can either be created manually or left to default by activating the <code>Create a default network</code> button (In the latter case, the network generated with the tool is not taken into account). A default networks has only the appropriate number of inputs and outputs and no interactions.</p>")
-        
+
     def clear(self,button,clearall=True):
         self.net = empty_net()
         self.code = []
@@ -264,10 +264,10 @@ class init_network_widget:
             self.add_species_w.clear()
             self.add_inter_w.clear()
         self.update_counters()
-    
+
     def add_species(self,button):
         ind = len(self.species)
-        
+
         if self.add_species_w.add_button.description=="Clear":
             self.add_species_w.clear()
             return None
@@ -283,7 +283,7 @@ class init_network_widget:
         result = re.search("\"(Output|Input)\",(\d+)",code[0])
         #print(result)
         if not result:
-            if (len(self.inputs)<self.nb_inputs or len(self.outputs)<self.nb_outputs):          
+            if (len(self.inputs)<self.nb_inputs or len(self.outputs)<self.nb_outputs):
                 self.add_species_w.error("All inputs and outputs must be added before adding other species.")
                 return None
         else:
@@ -298,20 +298,20 @@ class init_network_widget:
             #if trackind in self.outputs:
             #    self.add_species_w.error("Track trackindex {} is already an output.".format(trackind))
             #    return None
-            
+
             if result.group(1)=="Input":
                 if len(self.inputs)==self.nb_inputs:
                     self.add_species_w.error("There is already enough inputs in the network.")
                     return None
                 self.inputs.append(ind)
-                
+
             elif result.group(1)=="Output":
                 if len(self.outputs)==self.nb_outputs:
                     self.add_species_w.error("There is already enough outputs in the network.")
                     return None
                 self.outputs.append(ind)
-                
-        
+
+
         if "gene" in code[1]:
             self.types["Genes"].append(ind)
         for key in self.types.keys():
@@ -321,22 +321,22 @@ class init_network_widget:
         self.species_list.append("<p>S{} ({})</p>".format(ind,",".join(species_tags)))
         self.code += code
         temp_code = convert_code_selfnet(self.code)
-        
+
         exec(temp_code)
         self.add_inter_w.update_widgets()
         self.update_counters()
         self.add_species_w.clear()
         self.write_network()
-        
-        
+
+
     def write_network(self):
         self.table.value = "<b>Network:</b>\n"+"\n".join(self.species_list) + "\n" + "\n".join(self.inter_list)
     def add_inter(self,button):
         code = self.add_inter_w.get_command()
         self.code += [code]
-        
+
         self.write_network()
-        
+
     def update_counters(self):
         self.add_species_w.input_counter.value = "inputs: ({}/{})".format(len(self.inputs),self.nb_inputs)
         self.add_species_w.output_counter.value = "outputs: ({}/{})".format(len(self.outputs),self.nb_outputs)
@@ -350,12 +350,12 @@ class init_network_widget:
 
     def plot_net(self,button):
         if not self.default_network.value:
-            
-            path_temp_net = "net_project_creator{}.svg".format(random.randint(10000000000,100000000000))                        
+
+            path_temp_net = "net_project_creator{}.svg".format(random.randint(10000000000,100000000000))
             code_path = "code_network_project_creator{}.py".format(random.randint(10000000000,100000000000))
             code = self.get_values()
             self.old_plot = path_temp_net
-            
+
             code += "\nnet = init_network()\nnet.write_id()\nnet.draw(file=\"{}\")".format(path_temp_net)
             self.layout.value = ""
             with open(code_path,"w") as code_file:
@@ -375,8 +375,8 @@ class init_network_widget:
         else:
             code = "import random\nfrom phievo.Networks import mutation\n\ndef init_network():\n\tseed = int(random.random()*100000)\n\tg = random.Random(seed)\n\tnet = mutation.Mutable_Network(g)\n\ts_d,tm_d,prom_d = {},{},{}\n"
         code= code + "\n\tnet.activator_required=0\n\tnet.fixed_activity_for_TF={}\n".format(self.fixed_activity_for_TF.value)
-        return code + "\n".join(self.code)+"\n\treturn net\n"    
-    
+        return code + "\n".join(self.code)+"\n\treturn net\n"
+
 class interaction_widget:
     def __init__(self,net):
         self.net = net
@@ -397,7 +397,7 @@ class interaction_widget:
         return w.VBox(to_return)
     def update_widgets(self):
         for key in self.interactions.keys():
-            
+
             self.interactions[key].update_inter_state(False)
     def get_command(self):
         for key in self.interactions.keys():
@@ -406,7 +406,7 @@ class interaction_widget:
                 self.interactions[key].clear()
                 return command
     def clear(self):
-        for key in self.interactions.keys():            
+        for key in self.interactions.keys():
             self.interactions[key].clear()
 
 class TFHill_widget:
@@ -418,16 +418,16 @@ class TFHill_widget:
         self.s1 = w.Dropdown(description="TF",options={"S{}".format(key):key for key in self.net.types["TF"]})
         self.s2 = w.Dropdown(description="Gene",options={"S{}".format(key):key for key in self.net.types["Genes"]})
         self.custom_p = w.Checkbox(description="custom parameters",value=False)
-        
+
         self.n = w.FloatText(description="n",value=1,step=0.0001)
         self.h = w.FloatText(description="h",value=1,step=0.0001)
         self.activity = w.Dropdown(description="Type",options={"activation":1,"repression":0})
         self.update_param_state(False)
         self.update_inter_state(False)
-        
+
         w.interactive(self.update_inter_state,button=self.is_on)
         w.interactive(self.update_param_state,button=self.custom_p)
-        
+
     def update_param_state(self,button):
         state = not (self.custom_p.value and self.is_on.value)
         self.n.disabled = state
@@ -443,7 +443,7 @@ class TFHill_widget:
         self.s1.options = {"S{}".format(key):key for key in self.net.types["TF"]}
         self.s2.options = {"S{}".format(key):key for key in self.net.types["Genes"]}
         self.custom_p.disabled = not self.is_on.value
-        
+
         self.update_param_state(1)
     def clear(self):
         self.is_on.value = False
@@ -477,24 +477,24 @@ class Phosphorylation_widget:
         self.s1 = w.Dropdown(description="Phosphorylable",options={"S{}".format(key):key for key in self.net.types["Phosphorylable"]})
         self.s2 = w.Dropdown(description="Kinase",options={"S{}".format(key):key for key in self.net.types["Kinase"]})
         self.custom_p = w.Checkbox(description="custom parameters",value=False,layout=w.Layout(width="23%", height="40px"))
-        
+
         self.kp = w.FloatText(description="k_p",value=1,step=0.0001,layout=w.Layout(width="15%", height="40px"))
         self.n = w.FloatText(description="n",value=1,step=0.0001,layout=w.Layout(width="15%", height="40px"))
         self.h = w.FloatText(description="h",value=1,step=0.0001,layout=w.Layout(width="15%", height="40px"))
         self.kd = w.FloatText(description="k_d",value=1,step=0.0001,layout=w.Layout(width="15%", height="40px"))
-        
+
         self.update_param_state(False)
         self.update_inter_state(False)
         w.interactive(self.update_inter_state,button=self.is_on)
         w.interactive(self.update_param_state,button=self.custom_p)
-        
+
     def update_param_state(self,button):
         state = not (self.custom_p.value and self.is_on.value)
         self.n.disabled = state
         self.h.disabled = state
         self.kp.disabled = state
         self.kd.disabled = state
-        
+
     def update_inter_state(self,button):
         if self.is_on.value:
             for key in self.interactions.interactions.keys():
@@ -506,7 +506,7 @@ class Phosphorylation_widget:
         self.s2.options = {"S{}".format(key):key for key in self.net.types["Kinase"]}
         self.custom_p.disabled = not self.is_on.value
         self.update_param_state(1)
-        
+
     def clear(self):
         self.is_on.value = False
         self.n.value=1
@@ -528,7 +528,7 @@ class Phosphorylation_widget:
             h = self.h.value
             kp = self.kp.value
             kd = self.kd.value
-            
+
             command = "\ts_d[{ind}],temp = net.new_Phosphorylation(s_d[{s2}],s_d[{s1}],{kp},{h},{n},{kd})".format(s1=self.s1.value,s2=self.s2.value,n=n,h=h,kp=kp,kd=kd,ind=ind)
         else:
             command = "\ts_d[{ind}],temp = net.new_random_Phosphorylation(s_d[{s2}],s_d[{s1}])".format(s1=self.s1.value,s2=self.s2.value,ind=ind)
@@ -542,12 +542,12 @@ class Phosphorylation_widget:
         for key in self.net.types.keys():
             if key in types:
                 self.net.types[key].append(ind)
-        
+
         self.net.species.append(ind)
         self.net.species_list.append("<p>S{} ({})</p>".format(ind,",".join(species_tags)))
-        self.net.inter_list.append("<p>Phosphorylation (S{} -(S{})-> S{})</p>".format(self.s1.value,self.s2.value,ind))        
+        self.net.inter_list.append("<p>Phosphorylation (S{} -(S{})-> S{})</p>".format(self.s1.value,self.s2.value,ind))
         return command
-    
+
 class PPI_widget:
     def __init__(self,net_widget,interactions = None):
         self.key = "PPI"
@@ -557,21 +557,21 @@ class PPI_widget:
         self.s1 = w.Dropdown(description="Species 1",options={"S{}".format(key):key for key in self.net.types["Complexable"]})
         self.s2 = w.Dropdown(description="Species 2",options={"S{}".format(key):key for key in self.net.types["Complexable"]})
         self.custom_p = w.Checkbox(description="custom parameters",value=False,layout=w.Layout(width="23%", height="40px"))
-        
+
         self.kp = w.FloatText(description="k+",value=1,step=0.0001,layout=w.Layout(width="15%", height="40px"))
         self.km = w.FloatText(description="k-",value=1,step=0.0001,layout=w.Layout(width="15%", height="40px"))
-        
+
         self.update_param_state(False)
         self.update_inter_state(False)
         w.interactive(self.update_inter_state,button=self.is_on)
         w.interactive(self.update_param_state,button=self.custom_p)
-  
-        
+
+
     def update_param_state(self,button):
         state = not (self.custom_p.value and self.is_on.value)
         self.kp.disabled = state
         self.km.disabled = state\
-        
+
     def update_inter_state(self,button):
         if self.is_on.value:
             for key in self.interactions.interactions.keys():
@@ -599,22 +599,22 @@ class PPI_widget:
         ind = len(self.net.species)
         if self.custom_p.value:
             kp = self.kp.value
-            km = self.km.value            
+            km = self.km.value
             command = "\ttemp,s_d[{ind}] = net.new_PPI(s_d[{s2}],s_d[{s1}],{kp},{km})".format(s1=self.s1.value,s2=self.s2.value,kp=kp,km=km,ind=ind)
         else:
             command = "\ttemp,s_d[{ind}] = net.new_random_PPI(s_d[{s2}],s_d[{s1}])".format(s1=self.s1.value,s2=self.s2.value,ind=ind)
         types1 = eval("self.net.s_d[{s1}].list_types()".format(s1=self.s1.value))
         types2 = eval("self.net.s_d[{s1}].list_types()".format(s1=self.s2.value))
         species_tags = list(set(types1 + types2 + ["Complex","Degradable","Phosphorylable"]))
-        
+
         species_tags.remove("Complexable")
         if "Input" in species_tags:species_tags.remove("Input")
         if "Output" in species_tags:species_tags.remove("Output")
         self.net.species.append(ind)
         for key in self.net.types.keys():
             if key in species_tags:
-                self.net.types[key].append(ind)        
- 
+                self.net.types[key].append(ind)
+
         self.net.inter_list.append("<p>PPI (S{} + S{} -> S{})</p>".format(self.s1.value,self.s2.value,ind))
         self.net.species_list.append("<p>S{} ({})</p>".format(ind,",".join(species_tags)))
         return command
