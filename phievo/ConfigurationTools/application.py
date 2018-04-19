@@ -86,6 +86,7 @@ class App:
                 self.project_exists.value = "A project cannot be an empty string or an existing directory."
             else:
                 self.project_exists.value = "Valid new project name."
+            self.update_create_button()
         w.interactive(update_validity,path=self.project_name)
         self.tabs = {
             "dictionary_mutation" : wc.w_table("dictionary_mutation",configurations["dictionary_mutation"],"float_widget","<h2>Mutation parameters</h2><p>Set the values of the different mutation rates in the <code>dictionary_mutation</code> dictionary. For more information about <code>dictionary_mutation</code>, see the <a href=\"{}parameters.html#mutation-parameters-dictionary-mutation\">documentation</a>. </p>".format(doc_url)),
@@ -100,8 +101,9 @@ class App:
         for i,name in enumerate(list(self.tabs.keys())):
             self.w_tab.set_title(i,tab_labels[name])
 
-        self.create_button = w.Button(description="Write project",button_style="info")
+        self.create_button = w.Button(description="Write project",button_style="info",disabled=True)
         self.create_button.on_click(self.write)
+        self.create_info = w.HTML("Please enter a valid project directory.")
         def update_ninput(val):
             self.tabs["init"].nb_inputs = self.tabs["prmt"].obj_dict["ninput"].value.value
             self.tabs["init"].update_counters()
@@ -112,8 +114,14 @@ class App:
         w.interactive(update_noutput,val=self.tabs["prmt"].obj_dict["noutput"].value)
     def get_widget(self):
         pname_box = w.HBox([self.project_name,self.project_exists])
-        return w.VBox([pname_box,self.w_tab,self.create_button])
-
+        return w.VBox([pname_box,self.w_tab,w.HBox([self.create_button,self.create_info])])
+    def update_create_button(self):
+        if self.project_exists.value == "Valid new project name.":
+            self.create_info.value = ""
+            self.create_button.disabled = False
+        else:
+            self.create_info.value = "Please enter a valid project directory."
+            self.create_button.disabled = True
     def get_values(self):
         return {key:self.tabs[key].get_values() for key in self.tabs.keys()}
 

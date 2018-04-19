@@ -229,6 +229,8 @@ class init_network_widget:
         self.default_network = w.ToggleButton(description="Create a default network",value=False,layout=w.Layout(width="30%", height="40px"))
         self.fixed_activity_for_TF = w.Checkbox(description="Fixed Activity for TF",value=False)
         self.layout = w.HTML("")
+        self.plot_button = w.Button(description="Plot network")
+        self.plot_button.on_click(self.plot_net)
         self.clear(1,clearall=False)
         self.add_inter_w = interaction_widget(self)
         
@@ -332,9 +334,9 @@ class init_network_widget:
     def add_inter(self,button):
         code = self.add_inter_w.get_command()
         self.code += [code]
-        exec(convert_code_selfnet(code))
+        
         self.write_network()
-        self.plot_net()
+        
     def update_counters(self):
         self.add_species_w.input_counter.value = "inputs: ({}/{})".format(len(self.inputs),self.nb_inputs)
         self.add_species_w.output_counter.value = "outputs: ({}/{})".format(len(self.outputs),self.nb_outputs)
@@ -344,23 +346,30 @@ class init_network_widget:
         self.accordion.set_title(1, 'Add Interaction')
         infos_manual = w.HTML("<p>Before building a network manually, we recommend that you read the <a href=\"http://phievo.readthedocs.io/en/latest/create_new_project.html#build-a-network-manually\">documentation</a>.</p>")
         fixed_activity_info = w.HTML("When a TF has a fixed activity, only the default type of the TF is considered (activator or repressor). The type of the TFHill does not matter.")
-        return w.VBox([self.infos,self.default_network,infos_manual,self.accordion,fixed_activity_info,self.fixed_activity_for_TF,self.table,self.layout,self.clear_button])
+        return w.VBox([self.infos,self.default_network,infos_manual,self.accordion,fixed_activity_info,self.fixed_activity_for_TF,self.table,self.plot_button,self.layout,self.clear_button])
 
-    def plot_net(self):
+    def plot_net(self,button):
         if not self.default_network.value:
-            index = random.randint(10000000000,100000000000)
-            path_temp_net = "net{}.svg".format(index)
-            code_path = "code_network{}.py".format(index)
+            
+            path_temp_net = "net_project_creator{}.svg".format(random.randint(10000000000,100000000000))                        
+            code_path = "code_network_project_creator{}.py".format(random.randint(10000000000,100000000000))
             code = self.get_values()
-
+            self.old_plot = path_temp_net
+            
             code += "\nnet = init_network()\nnet.write_id()\nnet.draw(file=\"{}\")".format(path_temp_net)
+            self.layout.value = ""
             with open(code_path,"w") as code_file:
                 code_file.write(code)
             subprocess.run(["python3",code_path])
-            self.layout.value = "<img src=\"{}\" style=\"heigh:10px\">".format(path_temp_net)
-            #os.remove(code_path)
+            self.layout.value = "<img src=\"{}\">".format(path_temp_net)
+            os.remove(code_path)
             #os.remove(path_temp_net)
     def get_values(self):
+        if hasattr(self,"old_plot"):
+            try:
+                os.remove(self.old_plot)
+            except FileNotFoundError:
+                pass
         if self.default_network.value:
            return default_initialization_code
         else:
@@ -597,10 +606,15 @@ class PPI_widget:
         types1 = eval("self.net.s_d[{s1}].list_types()".format(s1=self.s1.value))
         types2 = eval("self.net.s_d[{s1}].list_types()".format(s1=self.s2.value))
         species_tags = list(set(types1 + types2 + ["Complex","Degradable","Phosphorylable"]))
+        
         species_tags.remove("Complexable")
         if "Input" in species_tags:species_tags.remove("Input")
         if "Output" in species_tags:species_tags.remove("Output")
         self.net.species.append(ind)
+        for key in self.net.types.keys():
+            if key in species_tags:
+                self.net.types[key].append(ind)        
+ 
         self.net.inter_list.append("<p>PPI (S{} + S{} -> S{})</p>".format(self.s1.value,self.s2.value,ind))
         self.net.species_list.append("<p>S{} ({})</p>".format(ind,",".join(species_tags)))
         return command
