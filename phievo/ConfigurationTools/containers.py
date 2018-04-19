@@ -2,7 +2,7 @@ import phievo.ConfigurationTools.widgetfunctions as wf
 import ipywidgets as w
 
 class w_table:
-    
+
     def __init__(self,name,parameters,w_type,infos=""):
         self.name = name
         self.infos = infos
@@ -11,7 +11,7 @@ class w_table:
         self.obj_dict = {key:getattr(wf,w_type[key])(key,val) for key,val in parameters.items()}
     def get_widget(self):
         infos = w.HTML(value="{}".format(self.infos))
-        return w.VBox([infos]+[self.obj_dict[key].get_widget() for key in self.obj_dict.keys()])
+        return w.VBox([infos]+[self.obj_dict[key].get_widget() for key in sorted(self.obj_dict)])
     def get_values(self):
         return {key:self.obj_dict[key].get_values() for key in self.obj_dict.keys()}
 
@@ -21,7 +21,7 @@ class w_table:
 
 prmt_order = ["nseed","firstseed","ngeneration","ncelltot","npopulation","nneighbor","frac_mutate","ninput","noutput","ntries","dt","nstep","langevin_noise","tgeneration","redo","pareto","npareto_functions","rshare","multipro_level","freq_stat"]
 
-    
+
 prmt_types ={
     "nseed":"int_widget",
     "firstseed":"int_widget",
@@ -73,7 +73,7 @@ class prmt_widget:
     def __init__(self,values = None,infos=""):
         self.infos = w.HTML(value=infos)
         self.obj_dict = {key:getattr(wf,prmt_types[key])(prmt_descriptions[key],1) for key in prmt_order}
-        if values: 
+        if values:
             self.set_values(values)
         def activate_pareto(action):
             for key in ["npareto_functions","rshare"]:
@@ -84,14 +84,14 @@ class prmt_widget:
         tag_choices.remove("Output")
         tag_choices.remove("Input")
         self.obj_dict["list_types_output"] = wf.tags_widgets("Possible outputs",tag_choices,["TF"])
-        
+
     def get_widget(self):
         return w.VBox([self.infos]+[self.obj_dict[key].get_widget() for key in prmt_order+["list_unremovable","list_types_output"]])
-    
+
     def set_values(self,values):
         for key,val in values.items():
             self.obj_dict[key].set_values(val)
-            
+
     def get_values(self):
         return {key:self.obj_dict[key].get_values() for key in self.obj_dict.keys()}
 

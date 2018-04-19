@@ -97,8 +97,8 @@ class App:
             "cfile":wc.ccode_widget("cfile",configurations["cfile"],infos="<h2>cfiles</h2>\n<p>You may leave these settings as default, blank files will be created in the project directory and can be updated before starting a simulation. The files that already have a setting should be modified by advanced users only.</p><p><b>Note:</b> It is important that you update the dummy fitness.c file created by this utility since its default value returns 1 for all the networks. For more information about the C files, see the <a href=\"{}create_new_project.html#run-a-simulation\">documentation</a>.</p>".format(doc_url))
         }
         self.w_tab = w.Tab()
-        self.w_tab.children = [self.tabs[key].get_widget() for key in self.tabs.keys()]
-        for i,name in enumerate(list(self.tabs.keys())):
+        self.w_tab.children = [self.tabs[key].get_widget() for key in sorted(self.tabs)]
+        for i,name in enumerate(sorted(self.tabs)):
             self.w_tab.set_title(i,tab_labels[name])
 
         self.create_button = w.Button(description="Write project",button_style="info",disabled=True)
@@ -162,15 +162,15 @@ class App:
         to_write += ["\n## General simulation parameters\nprmt = {}"]
         for key,val in data["prmt"].items():
             to_write.append(to_dict("prmt",key,val))
-            
-        to_write += ["\n## General simulation parameters\nprmt[\"restart\"] = {}"]        
+
+        to_write += ["\n## General simulation parameters\nprmt[\"restart\"] = {}"]
         for key,val in data["restart"].items():
             to_write.append("prmt[\"restart\"]"+to_dict("",key,val))
 
         to_write += ["\n## Outputs and unremovables"]
         for key,val in tags.items():
             to_write.append("{} = {}".format(key,val))
-            
+
         to_write += ["\n## Initialize networks"]
         to_write.append(data["init"])
         to_write += ["\n## Fitness treatment function"]
@@ -179,7 +179,5 @@ class App:
         to_write = to_write.replace("\t","    ")
         with open(os.path.join(proj_dir,"initialization.py"),"w") as init_file:
             init_file.write(to_write)
-            
-            print("Wrote {}".format(os.path.join(proj_dir,"initialization.py")))
 
-        
+            print("Wrote {}".format(os.path.join(proj_dir,"initialization.py")))
