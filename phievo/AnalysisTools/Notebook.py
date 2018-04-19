@@ -150,15 +150,17 @@ class Plot_Evolution_Observable(CellModule):
         self.widget_replot_observable = widgets.Button(description="Plot",disabled=True)
         self.notebook.dependencies_dict["seed"].append(self)
     def replot_observable(self,b):
+        
         plt.close()
         clear_output()
+        display(self.plot_observable_options)
         self.notebook.sim.custom_plot(self.notebook.seed,self.widget_Xobs.value,[self.widget_Yobs.value])
 
 
     def display(self):
         self.widget_replot_observable.on_click(self.replot_observable)
-        plot_observable_options = widgets.VBox([widgets.HBox([self.widget_Xobs,self.widget_Yobs]),widgets.HBox([self.widget_replot_observable])])
-        display(plot_observable_options)
+        self.plot_observable_options = widgets.VBox([widgets.HBox([self.widget_Xobs,self.widget_Yobs]),widgets.HBox([self.widget_replot_observable])])
+        display(self.plot_observable_options)
 
     def update(self):
         if self.notebook.seed is None:
@@ -308,6 +310,7 @@ class Plot_Dynamics(CellModule):
     def plot_dynamics(self,button):
         plt.close()
         clear_output()
+        display(self.widget)
         self.notebook.sim.Plot_TimeCourse(self.widget_selectInput.value,cell=self.widget_selectCell.value)
 
     def update(self):
@@ -323,7 +326,8 @@ class Plot_Dynamics(CellModule):
 
     def display(self):
         self.button_plotdynamics.on_click(self.plot_dynamics)
-        display(widgets.HBox([self.widget_selectInput,self.widget_selectCell,self.button_plotdynamics]))
+        self.widget = widgets.HBox([self.widget_selectInput,self.widget_selectCell,self.button_plotdynamics])
+        display(self.widget)
 
 class Plot_Cell_Profile(CellModule):
     def __init__(self,Notebook):
@@ -337,6 +341,7 @@ class Plot_Cell_Profile(CellModule):
     def plot_dynamics(self,button):
         plt.close()
         clear_output()
+        display(self.widget)
         self.notebook.sim.Plot_Profile(trial_index=self.widget_selectInput.value,time=self.widget_selectTime.value)
 
     def update(self):
@@ -352,7 +357,8 @@ class Plot_Cell_Profile(CellModule):
 
     def display(self):
         self.button_plotdynamics.on_click(self.plot_dynamics)
-        display(widgets.HBox([self.widget_selectInput,self.widget_selectTime,self.button_plotdynamics]))
+        self.widget = widgets.HBox([self.widget_selectInput,self.widget_selectTime,self.button_plotdynamics])
+        display(self.widget)
 
 class Plot_Pareto_Fronts(CellModule):
     def __init__(self,Notebook):
@@ -367,6 +373,7 @@ class Plot_Pareto_Fronts(CellModule):
     def plot_function(self,button):
         plt.close()
         clear_output()
+        display(self.widget)
         gen = self.widget_selectGenerations.value
         if self.widget_selectText.value:
             gen = [int(xx) for xx in self.widget_selectText.value.split(",")]
@@ -396,9 +403,9 @@ class Plot_Pareto_Fronts(CellModule):
         #interactive(self.read_selected,generations=self.widget_selectGenerations)
         self.widget_plot.on_click(self.plot_function)
         instructions  = widgets.HTML("<p>Press <i>ctrl</i>, <i>cmd</i>, or <i>shift</i>  for multi-select</p>")
-        to_display = widgets.VBox([instructions,widgets.HBox([self.widget_selectGenerations,self.widget_selectText]),self.widget_plot])
+        self.widget = widgets.VBox([instructions,widgets.HBox([self.widget_selectGenerations,self.widget_selectText]),self.widget_plot])
         #to_display = widgets.VBox([self.widget_plot])
-        display(to_display)
+        display(self.widget)
 
 def get_interactions(net):
     """
