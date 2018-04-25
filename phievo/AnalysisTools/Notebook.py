@@ -33,6 +33,7 @@ class Notebook(object):
         ## may be added with new functions.
         self.seed = None
         self.generation = None
+        
         self.net = None
         self.type = None ## Ex of type: "pareto"
         self.extra_variables = {} ## Allows to add new variables with a new cell
@@ -48,6 +49,8 @@ class Notebook(object):
         self.plot_dynamics = Plot_Dynamics(self)
         self.plot_cell_profile = Plot_Cell_Profile(self)
         self.save_network = Save_Network(self)
+    def get_net(self):
+        return self.net
 
 class CellModule():
     """
@@ -193,13 +196,13 @@ class Select_Generation(CellModule):
             for cell in self.notebook.dependencies_dict["generation"]:
                 cell.update()
     def display(self):
-
-        widget1 = widgets.VBox([widgets.HTML("Select Best Network"),interactive(self.read_best_generation,gen_index=self.widget_gen)])
-        widget2 = widgets.VBox([widgets.HTML("Select Backup Network"),interactive(self.read_restart_generation,gen_index=self.widget_restart_gen,net_index=self.widget_restart_net)])
-
-
-        to_display = widgets.HBox([widget1,widget2])
-        display(to_display)
+        if not hasattr(self,"to_display"):
+            select1 = interactive(self.read_best_generation,gen_index=self.widget_gen)
+            select2 = interactive(self.read_restart_generation,gen_index=self.widget_restart_gen,net_index=self.widget_restart_net)
+            widget1 = widgets.VBox([widgets.HTML("Select Best Network"),select1])
+            widget2 = widgets.VBox([widgets.HTML("Select Backup Network"),select2])
+            self.to_display = widgets.HBox([widget1,widget2])
+        display(self.to_display)
 
     def update(self):
         if self.notebook.seed is None:
@@ -467,19 +470,29 @@ class Delete_Nodes(CellModule):
         self.notebook.net.draw()
 
     def update(self):
-        if self.notebook.generation is None:
+        if self.notebook.net is None:
             for i in range(len(self.widget_list)):
                 self.widget_list[i].disabled = True
         else:
             for i in range(len(self.widget_list)):
                 self.widget_list[i].disabled = False
             self.select_s.options = get_species(self.notebook.net)
+            if len(self.select_s.options)==0:
+                self.button_s.disabled = True
+            else:
+                self.select_s.value = list(self.select_s.options.values())[0]
+                
             self.select_i.options = get_interactions(self.notebook.net)
+            if len(self.select_i.options)==0:
+                self.button_i.disabled = True
+            else:
+                self.select_i.value = list(self.select_i.options.values())[0]
+
     def delete_species(self,button):
         clear_output()
         self.display()
         if "Input" not in self.select_s.value.list_types():
-            index = int(re.search("\d+",self.select_s.value.id).group(0))
+            index = int(re.search("\d+",self.select_s.value.id).group(0))            
             self.notebook.net.delete_clean(index,target="species")
             self.notebook.net.write_id()
             self.update()
@@ -488,6 +501,7 @@ class Delete_Nodes(CellModule):
     def delete_interaction(self,button):
         clear_output()
         self.display()
+        
         index = int(re.search("\d+",self.select_i.value.id).group(0))
         self.notebook.net.delete_clean(index,target="interaction")
         self.notebook.net.write_id()
