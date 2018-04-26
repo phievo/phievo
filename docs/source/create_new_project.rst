@@ -292,7 +292,7 @@ the project directory:
 
         |
          --- run_evolution.py
-         --- (Analyse Run.ipynb)
+         --- (AnalyzeRun.ipynb)
          --- example_project/
                       |
                        --- initialization.py

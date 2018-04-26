@@ -99,8 +99,8 @@ def download_zip(dir_name,url):
     
 def download_tools(run_evolution="run_evolution.py",AnalyseRun="AnalyseRun.ipynb",ProjectCreator="ProjectCreator.ipynb"):
     url_runevo = "https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py"
-    url_jpnb = "https://github.com/phievo/phievo/raw/master/Analyse%20Run.ipynb"
-    url_confnb = "https://github.com/phievo/phievo/raw/master/Project%20Creator.ipynb"
+    url_jpnb = "https://github.com/phievo/phievo/raw/master/AnalyzeRun.ipynb"
+    url_confnb = "https://github.com/phievo/phievo/raw/master/ProjectCreator.ipynb"
     urlretrieve(url_runevo,run_evolution)
     print("run_evolution.py ... downloaded.")
     urlretrieve(url_jpnb,AnalyseRun)

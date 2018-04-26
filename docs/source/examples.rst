@@ -52,7 +52,7 @@ phievo:
     import phievo
     phievo.download_example("seed_adaptation")
 
-The project downloaded can be analysed using the *Analyse Run.ipynb*
+The project downloaded can be analysed using the *AnalyzeRun.ipynb*
 notebook.
 
 Hox pareto

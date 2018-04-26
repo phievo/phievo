@@ -1,4 +1,4 @@
 # Known Bugs
 
-## Disabling scrolling bar in Analyse Run.ipynb
+## Disabling scrolling bar in AnalyzeRun.ipynb
 cell>All Output>Toggle Scrolling

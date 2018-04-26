@@ -248,7 +248,7 @@ The script loads the parameters and launches the run.
 ```bash
 	|
      --- run_evolution.py
-	 --- (Analyse Run.ipynb)
+	 --- (AnalyzeRun.ipynb)
      --- example_project/
 	              |
 				   --- initialization.py

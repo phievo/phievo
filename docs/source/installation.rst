@@ -140,11 +140,11 @@ You can either manually download it or open a python terminal and run
 The former utility also downloads a jupyter notebook that can be used to
 analyse the results of a simulation in current directory.
 
-Analyse notebook
+Analyze notebook
 ~~~~~~~~~~~~~~~~
 
 We provide a `jupyter
-notebook <https://github.com/phievo/phievo/blob/master/Analyse%20Run.ipynb>`__
+notebook <https://github.com/phievo/phievo/blob/master/AnalyzeRun.ipynb>`__
 at the root of the `github
 repository <https://github.com/phievo/phievo>`__ to help with the
 analysis of the runs. If you wand to run it, you will need to install
@@ -157,7 +157,7 @@ several extra python libraries, to help with this, they are writen in
 
 Similarly to the
 (`run\_evolution.py <https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py>`__)
-script, Analyse Run.ipynb is downloaded when you call the
+script, Analyze Run.ipynb is downloaded when you call the
 ``phievo.download_tools()`` function.
 
 The jupyter kernel is started with the following command
@@ -167,7 +167,7 @@ The jupyter kernel is started with the following command
     jupyter notebook
 
 Usually it autmotically opens a new windows in your terminal in which
-you need to select ``Analyse Run.ipynb``. If the windows does not open,
+you need to select ``AnalyzeRun.ipynb``. If the windows does not open,
 it can be open manually by copy-pasting the url printed in your shell
 after you ran the command in a wer browser.
 
@@ -202,7 +202,7 @@ a python shell:
 .. code:: python
 
     >>> import phievo
-    # Downloads run_evolution.py and Analyse Run.ipynb in  the current directory
+    # Downloads run_evolution.py and AnalyzeRun.ipynb in  the current directory
     >>> phievo.download_tools() 
     # Downloads an example project directory
     >>> phievo.download_example("adaptation") 
@@ -225,7 +225,7 @@ following examples:
 -  seed\_hox\_pareto\_light
 
 The examples starting with "seed\_" keyword also contain the results of
-the simulations. The results can directly be visualized in the Analyse
+the simulations. The results can directly be visualized in the Analyze
 notebook.
 
 After downloading an example project directory and the
@@ -234,7 +234,7 @@ After downloading an example project directory and the
 .. code:: bash
 
     |-- run_evolution.py
-    |-- Analyse Run.ipynb
+    |-- AnalyzeRun.ipynb
     `-- example_adaptation/
         |-- initialization.py
         |-- fitness.c
@@ -265,11 +265,11 @@ Create a new project
 To start a new project, the best is to use an existing example as a
 template and to modify the relevant parameters.
 
-Similarly to the ``Analyse notebook``, we also propose the `Project
-Creator.ipynb <https://github.com/phievo/phievo/blob/master/Project%20Creator.ipynb>`__
+Similarly to the ``Analyze notebook``, we also propose the
+`ProjectCreator.ipynb <https://github.com/phievo/phievo/blob/master/ProjectCreator.ipynb>`__
 notebook to help with the creation of a new project.
 
 .. code:: bash
 
-    jupyter notebook Project\ Creator.ipynb
+    jupyter notebook ProjectCreator.ipynb
 

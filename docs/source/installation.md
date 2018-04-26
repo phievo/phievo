@@ -91,21 +91,21 @@ You can either manually download it or open a python terminal and run
 
 The former utility also downloads a jupyter notebook that can be used to analyse the results of a simulation in current directory.
 
-### Analyse notebook
+### Analyze notebook
 
-We provide a [jupyter notebook](https://github.com/phievo/phievo/blob/master/Analyse%20Run.ipynb) at the root of the [github repository](https://github.com/phievo/phievo) to help with the analysis of the runs. If you wand to run it, you will need to install several extra python libraries, to help with this, they are writen in [extra.txt](https://raw.githubusercontent.com/phievo/phievo/master/extra.txt).
+We provide a [jupyter notebook](https://github.com/phievo/phievo/blob/master/AnalyzeRun.ipynb) at the root of the [github repository](https://github.com/phievo/phievo) to help with the analysis of the runs. If you wand to run it, you will need to install several extra python libraries, to help with this, they are writen in [extra.txt](https://raw.githubusercontent.com/phievo/phievo/master/extra.txt).
 ```bash
 pip install -r https://raw.githubusercontent.com/phievo/phievo/master/extra.txt
 ```
 
-Similarly to the ([run_evolution.py](https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py)) script, Analyse Run.ipynb is downloaded when you call the `phievo.download_tools()` function.
+Similarly to the ([run_evolution.py](https://raw.githubusercontent.com/phievo/phievo/master/run_evolution.py)) script, Analyze Run.ipynb is downloaded when you call the `phievo.download_tools()` function.
 
 The jupyter kernel is started with the following command
 
 ```bash
 jupyter notebook
 ```
-Usually it autmotically opens a new windows in your terminal in which you need to select `Analyse Run.ipynb`. If the windows does not open, it can be open manually by copy-pasting the url printed in your shell after you ran the command in a wer browser.
+Usually it autmotically opens a new windows in your terminal in which you need to select `AnalyzeRun.ipynb`. If the windows does not open, it can be open manually by copy-pasting the url printed in your shell after you ran the command in a wer browser.
 
 
 When using the plotly package, you may find that the plots do dot display well in the notebook (white square), the solution to this problem is to increase the io rate allocated to the notebook by using the `NotebookApp.iopub_data_rate_limit` option when starting jupyter:
@@ -128,7 +128,7 @@ To download a single example there is a built-in tool that can be run in a pytho
 
 ```python
 >>> import phievo
-# Downloads run_evolution.py and Analyse Run.ipynb in  the current directory
+# Downloads run_evolution.py and AnalyzeRun.ipynb in  the current directory
 >>> phievo.download_tools() 
 # Downloads an example project directory
 >>> phievo.download_example("adaptation") 
@@ -150,13 +150,13 @@ The function `download_example` allows to download one of the following examples
 - seed_lacOperon_pruning
 - seed_hox_pareto_light
 
-The examples starting with "seed_" keyword also contain the results of the simulations. The results can directly be visualized in the Analyse notebook.
+The examples starting with "seed_" keyword also contain the results of the simulations. The results can directly be visualized in the Analyze notebook.
 
 After downloading an example project directory and the *run_evolution.py* script you are all set to start an evolution.
 
 ```bash
 |-- run_evolution.py
-|-- Analyse Run.ipynb
+|-- AnalyzeRun.ipynb
 `-- example_adaptation/
 	|-- initialization.py
 	|-- fitness.c
@@ -178,9 +178,9 @@ If everything works correctly you should see the evolution starting. When an evo
 
 To start a new project, the best is to use an existing example as a template and to modify the relevant parameters.
 
-Similarly to the `Analyse notebook`, we also propose the [Project Creator.ipynb](https://github.com/phievo/phievo/blob/master/Project%20Creator.ipynb) notebook to help with the creation of a new project.
+Similarly to the `Analyze notebook`, we also propose the [ProjectCreator.ipynb](https://github.com/phievo/phievo/blob/master/ProjectCreator.ipynb) notebook to help with the creation of a new project.
 
 ```bash
-jupyter notebook Project\ Creator.ipynb
+jupyter notebook ProjectCreator.ipynb
 
 ```
