@@ -627,13 +627,13 @@ class Network(object):
         listIn=self.graph.list_predecessors(module) #look at the list_predecessors of the module before the duplication
         listIn.sort(key=compare_node)#to be deterministic
         for interaction in listIn:
-            if interaction.isinstance('TFHill'):
+            predecessor=self.graph.list_predecessors(interaction)[0]
+            if interaction.isinstance('TFHill') and not self.check_existing_link([predecessor,D_module],'TFHill'):
                 D_interaction=copy.deepcopy(interaction)
                 D_interaction.mutable=1
                 D_interaction.removable=True
                 self.add_Node(D_interaction)
                 #One looks for the TF upstream of this TFHill
-                predecessor=self.graph.list_predecessors(interaction)[0]
                 self.graph.add_edge(predecessor,D_interaction)
                 self.graph.add_edge(D_interaction,D_module)
         #self.write_id()

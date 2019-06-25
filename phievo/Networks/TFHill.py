@@ -136,6 +136,7 @@ def duplicate_TFHill(self,D_species,interaction,module,D_module):
     successors=self.graph.list_successors(interaction)
     self.graph.add_edge(D_interaction,successors[0])#TFHill only one successor so this is OK
     if (successors[0]==module):#specific case for auto regulatory feedback loop, one also needs to plug the TFHill back on the duplicated Tmodule
+    # POTENTIAL BUG : check conflict with classes_eds2.duplicate_species_and_interactions.
         D_interaction_2=copy.deepcopy(interaction)
         D_interaction_2.mutable=1
         D_interaction_2.removable=True
@@ -181,6 +182,18 @@ def random_TFHill(self):
         n_pTFH=len(possible_TFHill)
         if not (n_pTFH==self.number_TFHill()):
             print("Potential Bug : Inconsistency in Computation of number of TFHill")
+            print(n_pTFH)
+            print(self.number_nodes('TFHill'))
+            print(self.number_nodes('TF'))
+            print(self.number_nodes('TModule'))
+            for pair in possible_TFHill:
+                print(pair[0].int_id(),pair[1].int_id())
+            for tfh in self.dict_types['TFHill']:
+                successors=self.graph.list_successors(tfh)
+                predecessors=self.graph.list_predecessors(tfh)
+                print(predecessors,successors)
+                print(predecessors[0].int_id(),successors[0].int_id(),tfh.hill,tfh.threshold,tfh.activity)
+            
         if (n_pTFH==0):
             print("In random_TFHill : No other posible TFHill")
             return None
