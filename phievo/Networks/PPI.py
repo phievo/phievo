@@ -190,7 +190,7 @@ def random_PPI(self):
             P1=list_complexable[ip1]
             if not self.check_existing_binary([P1],'PPI') and not self.check_existing_binary([P1,P1],'PPI'):
                 list_possible_PPI.append([P1,P1])
-                for ip2 in range(ip1):
+            for ip2 in range(ip1):
                     P2=list_complexable[ip2]
                     if not self.check_existing_binary([P1,P2],'PPI'):
                         list_possible_PPI.append([P1,P2])
