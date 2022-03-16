@@ -40,7 +40,7 @@ void init_signal( ){
     }
 }
 
-void init_history(kk){
+void init_history(int kk){
     init_signal();
     int ncell,n_gene;
     for (ncell=0;ncell<NCELLTOT;ncell++){
